@@ -64,3 +64,11 @@ Este archivo mantiene las decisiones pendientes dentro del repositorio. No progr
 - **Pendiente de activar:** copiar el script del repositorio al proyecto Apps Script, redeploy, configurar secretos y probar los endpoints en vivo.
 - **Pendiente de implementar:** control de usuario por rol, registro histórico de aprobaciones, PDF por plan, límites mensuales reales de gasto, mensajes automáticos de WhatsApp.
 - Referencia de instalación: `INSTALACION_BETA_1_0.md`.
+
+
+## Ajuste metodológico posterior — sin API durante esta fase (28-10-2026)
+- El botón de llamada directa a IA se retira del panel. `creative_exchange.py` prepara un encargo TXT para ChatGPT con contexto, criterios y referencias; el director de arte revisa el contenido antes de compartirlo y puede importar el JSON validado.
+- La investigación estratégica **precede** a la ejecución gráfica; la API integrada queda para una etapa posterior, si las pruebas con clientes justifican costo y complejidad.
+- Se incorpora guardado y recuperación manual de revisiones humanas en la pestaña `Revisiones` del backend, después de desplegar la actualización de Apps Script.
+- El desarrollo de PDF por planes continúa pendiente, tal como se priorizó. No debe concederse un manual de marca a un plan que no lo contrata.
+- Para desplegar esta versión, seguir `INSTALACION_BETA_1_0.md`.
