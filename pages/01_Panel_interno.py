@@ -283,8 +283,9 @@ with tabs[2]:
         st.caption("API habilitada: "+model+" · facturación externa a ChatGPT")
         permitted=st.checkbox("Confirmo autorización para enviar las respuestas de este briefing a la API de OpenAI.",
                               key="ai_consent_"+rid)
-        if st.button("Generar tres propuestas con IA",disabled=not permitted,type="primary",key="ai_btn_"+rid):
+        if st.button("Generar tres propuestas con IA",disabled=(not permitted or st.session_state.get("ai_calls_session",0)>=3),type="primary",key="ai_btn_"+rid):
             try:
+                st.session_state["ai_calls_session"]=st.session_state.get("ai_calls_session",0)+1
                 with st.spinner("Analizando la marca y sus alternativas..."):
                     out=propose_with_ai(answers,ai_key,model=model)
                 st.session_state["ai_result_"+rid]=out
@@ -316,6 +317,9 @@ with tabs[2]:
     if latest:
         st.info("Tres propuestas generadas, aún sin aprobación.")
         st.write(latest.get("diagnostico",""))
+        usage=latest.get("_usage") or {}
+        if usage:
+            st.caption("Costo estimado en USD: "+str(usage.get("estimated_cost_usd","no disponible"))+" · Tokens: "+str(usage.get("input_tokens",0))+" entrada / "+str(usage.get("output_tokens",0))+" salida.")
         for p in latest.get("propuestas",[]):
             with st.expander(p["nombre"]+" · Evidencias y aplicaciones"):
                 st.write(p["argumento"])
