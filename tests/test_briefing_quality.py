@@ -1,6 +1,7 @@
 import unittest
 from briefing_quality import diagnose, field_quality
 from creative_handoff import build_handoff
+from strategic_audit import audit_briefing
 
 class BriefingQualityTests(unittest.TestCase):
     def test_gibberish_is_flagged(self):
@@ -67,6 +68,30 @@ class HandoffTests(unittest.TestCase):
         result=diagnose(answers)
         self.assertFalse(any(x["field"]=="referentes" for x in result["flags"]))
         self.assertEqual(result["optional_answered"],0)
+
+class StrategicAuditTests(unittest.TestCase):
+    def test_tourism_gaps_even_with_fully_written_brief(self):
+        a={"negocio":"Somos una empresa de turismo de naturaleza en la Región de Los Ríos",
+           "productos":"Ofrecemos caminatas guiadas de medio día en grupos pequeños",
+           "objetivo":"Conseguir consultas", "publico":"Parejas y familias que visitan Valdivia",
+           "materiales":"Tenemos muchas fotografías y testimonios",
+           "condiciones":"Queremos lanzar una campaña de verano"}
+        result=audit_briefing(a)
+        ids={q["id"] for q in result["preguntas_priorizadas"]}
+        self.assertIn("precios",ids)
+        self.assertIn("seguridad",ids)
+        self.assertIn("indicador",ids)
+        self.assertTrue(result["apto_para_producir"] is False)
+
+    def test_avoid_duplicate_questions_when_info_explicit(self):
+        a={"negocio":"Cafetería de barrio", "productos":"Tenemos una carta disponible con precios actualizados",
+           "condiciones":"Atendemos de lunes a viernes, presupuesto mensual para pauta y pedidos por WhatsApp",
+           "materiales":"Tenemos fotos con permiso para publicar"}
+        ids={q["id"] for q in audit_briefing(a)["preguntas_priorizadas"]}
+        self.assertNotIn("horarios",ids)
+        self.assertNotIn("carta",ids)
+        self.assertNotIn("permisos",ids)
+        self.assertNotIn("conversion",ids)
 
 if __name__=="__main__":
     unittest.main()
