@@ -82,7 +82,7 @@ if not items:
 with st.container():
     c1,c2,c3=st.columns(3)
     c1.metric("Briefings visibles",len(items))
-    c2.metric("Aptos para revisión",sum(x.get("status")=="apto_para_revision" for x in items))
+    c2.metric("Marcados para revisión",sum(x.get("status")=="apto_para_revision" for x in items))
     c3.metric("Con adjuntos",sum(bool(x.get("attachments")) for x in items))
 
 query=st.text_input("Buscar marca",placeholder="Nombre de la marca")
@@ -97,7 +97,7 @@ st.divider()
 st.subheader(chosen.get("brand") or "Sin nombre")
 left,right=st.columns(2)
 left.write("**Estado:** "+str(chosen.get("status") or "Sin estado"))
-right.write("**Suficiencia:** "+str(chosen.get("score",0))+"/100")
+right.write("**Completitud orientativa:** "+str(chosen.get("score",0))+"/100")
 if (chosen.get("diagnostic") or {}).get("engine")=="heuristic_beta_0_5":
     st.caption("Evaluación Beta 0.5: reglas heurísticas de claridad. No es comprensión semántica ni aprobación creativa.")
 else:
