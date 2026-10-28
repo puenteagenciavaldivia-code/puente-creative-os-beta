@@ -46,7 +46,7 @@ def validate_review(review,record,audit):
         if state not in ALLOWED_STATES - {"pendiente"}:
             errors.append("Falta resolver la pregunta: "+key)
         if state in ("confirmado","descartado"):
-            note=(item.get("nota") or "").strip() if isinstance(item,dict) else ""
+            note=str(item.get("nota") or "").strip() if isinstance(item,dict) else ""
             if len(note)<8:
                 errors.append("Explica con al menos ocho caracteres la decisión: "+key)
     unknown=set(decisions)-ids
@@ -80,7 +80,7 @@ def validate_review(review,record,audit):
         errors.append("La dirección seleccionada debe coincidir con una de las corrientes comparadas.")
     if not chosen:
         errors.append("Todavía no se ha seleccionado una corriente madre.")
-    if not str(review.get("observaciones") or "").strip():
+    if len(str(review.get("observaciones") or "").strip())<15:
         errors.append("Escribe una justificación editorial para la selección.")
     if any(isinstance(item,dict) and item.get("estado")=="aclarar" for item in decisions.values()):
         errors.append("Existen preguntas pendientes de aclaración con el cliente.")
