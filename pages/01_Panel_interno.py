@@ -283,14 +283,14 @@ with tabs[2]:
         st.warning("Hay aclaraciones pendientes. Puedes investigar de manera preliminar, pero no aprobar producción.")
     prompt=build_creative_prompt(answers,audit)
     with st.expander("Revisar el contenido antes de compartirlo"):
-        st.text_area("Texto de investigación",value=prompt,height=260,
+        approved_prompt=st.text_area("Texto de investigación",value=prompt,height=260,
             key="creative_prompt_preview_"+rid,
             help="Revisa que no haya información privada, confidencial o sin autorización.")
     st.download_button("Descargar encargo de investigación para ChatGPT (.txt)",
-        data=prompt.encode("utf-8"),
+        data=approved_prompt.encode("utf-8"),
         file_name="puente-investigacion-"+str(record["submission_id"])[:8]+".txt",
         mime="text/plain",key="creative_prompt_download_"+rid)
-    st.caption("Abre ChatGPT, pega el texto revisado y solicita el análisis. Cuando apruebes las alternativas, puedes registrarlas aquí o importar el JSON.")
+    st.caption("El archivo contiene exactamente el texto revisado en el desplegable. Abre ChatGPT, pega el encargo y analiza las alternativas antes de registrar la decisión.")
     with st.expander("Importar tres alternativas estructuradas de ChatGPT"):
         raw=st.text_area("Pega solamente el JSON de propuestas",height=180,key="creative_json_"+rid)
         if st.button("Validar e importar propuestas",key="import_directions_"+rid):
