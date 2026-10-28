@@ -45,3 +45,14 @@ La app Streamlit envía un JSON a un webhook de Google Apps Script SOLO cuando e
 - Actualizar `Código.gs` con `apps_script.gs`, guardar y publicar **Nueva versión de la implementación existente** para activar la acción `admin_list`. No crear otra URL.
 - Probar ingreso con contraseña incorrecta y correcta, recuperación de registros, archivos y cierre de sesión.
 - Seguridad: es solo una beta, protegida con una contraseña compartida y tokens independientes. No cuenta con identidad por usuario, MFA, auditoría robusta ni controles de tasa. No usar con clientes reales ni datos confidenciales antes de implementar autenticación fuerte, seguridad contra fuerza bruta y política de retención.
+
+
+## Beta 0.5 — Diagnóstico estratégico preliminar (heurístico)
+- `briefing_quality.py` reemplaza la puntuación de campos simplemente llenos por una estimación de claridad y especificidad. Penaliza respuestas vacías, demasiado breves, genéricas, repetitivas o claramente de prueba.
+- Los campos esenciales de negocio, servicios, diferenciación, público y objetivo impiden una calificación de «apto para revisión» si no aportan información suficiente.
+- Se guardan `dimension_scores`, `field_quality`, `flags`, `follow_up_questions` y la versión del motor en el JSON del briefing, con visualización en el panel.
+- Los registros anteriores conservan su puntuación original y se identifican como anteriores a la versión 0.5. No se recalculan automáticamente.
+- El panel debe seguir requiriendo contraseña; ninguna respuesta ni token se añade a código público.
+- No necesita cambiar Apps Script ni sus secretos: el receptor ya guarda el JSON del diagnóstico sin conocer su contenido.
+- Pruebas de regresión incluidas en `tests/test_briefing_quality.py`: ejecutar `python -m unittest discover -s tests`.
+- **Limitación crítica:** estas reglas no comprenden semántica, no verifican afirmaciones, no detectan contradicciones complejas ni recomiendan corrientes madre. La puntuación nunca sustituye el criterio humano; evitar uso externo hasta auditoría de falsos positivos y seguridad.
