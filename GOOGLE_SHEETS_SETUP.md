@@ -56,3 +56,18 @@ La app Streamlit envía un JSON a un webhook de Google Apps Script SOLO cuando e
 - No necesita cambiar Apps Script ni sus secretos: el receptor ya guarda el JSON del diagnóstico sin conocer su contenido.
 - Pruebas de regresión incluidas en `tests/test_briefing_quality.py`: ejecutar `python -m unittest discover -s tests`.
 - **Limitación crítica:** estas reglas no comprenden semántica, no verifican afirmaciones, no detectan contradicciones complejas ni recomiendan corrientes madre. La puntuación nunca sustituye el criterio humano; evitar uso externo hasta auditoría de falsos positivos y seguridad.
+
+
+## Beta 0.6 — Cliente comprensible + ficha de entrada Creative OS
+- Se mantienen las cinco etapas y las veinte preguntas, pero la redacción utiliza lenguaje cotidiano.
+- Se alternan ejemplos de servicios, comercios y otros negocios para evitar orientar todas las respuestas hacia cafeterías.
+- Las respuestas de texto con poca especificidad muestran una sugerencia amable. La sugerencia no bloquea el avance.
+- Antes de enviar aparece una pantalla para revisar y corregir secciones. El envío ocurre únicamente después de «Confirmar y enviar».
+- El cliente no ve el puntaje técnico interno: recibe una confirmación de recepción para revisión humana.
+- El diagnóstico separa respuestas opcionales no informadas de respuestas obligatorias débiles. Se registra la cobertura de preguntas opcionales.
+- El módulo `creative_handoff.py` transforma los datos del briefing en un objeto de traspaso estructurado: bloques de declaraciones, datos pendientes por tarea, alertas y decisiones creativas vacías.
+- El panel interno permite ver la ficha y descargar `puente-ficha-creative-os.json`, sin modificar Google Sheets ni Apps Script.
+- Los registros anteriores se pueden exportar en el mismo formato, pero los que no tengan análisis de calidad de Beta 0.5 se consideran pendientes de evaluación, no listos automáticamente.
+- Las corrientes madre, arquetipos, conceptos, interpretación profunda y aprobación de producción siguen siendo **decisiones del equipo**, no del algoritmo.
+- No publicar para clientes reales hasta validar el despliegue de Streamlit, privacidad, permisos y comportamiento del inicio de sesión. El acceso con contraseña compartida es solo para beta.
+- GitHub Actions verifica sintaxis y pruebas de regresión en futuros commits (si Actions está habilitado en el repositorio).
