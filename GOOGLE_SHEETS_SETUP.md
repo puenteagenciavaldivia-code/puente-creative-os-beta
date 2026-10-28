@@ -35,3 +35,13 @@ La app Streamlit envía un JSON a un webhook de Google Apps Script SOLO cuando e
 - Mantener exactamente la implementación anterior, la URL /exec y el token; no crear otra app web.
 - Prueba: completar un briefing ficticio, adjuntar un PNG pequeño, finalizar, comprobar la columna K y el archivo en Drive. Si aparece error, revisar Ejecuciones de Apps Script y repetir con otro briefing.
 - Limitaciones: no se verifica el contenido real más allá del MIME y extensión declarados; no admite SVG, archivos grandes ni videos. Antes de recibir datos de clientes reales, se necesitan mejoras de seguridad, validación, borrado/retención y pruebas de carga.
+
+## Beta 0.4 — Panel interno de revisión
+- Página de Streamlit: `pages/01_Panel_interno.py`. Menú lateral «Panel interno».
+- Acceso mediante contraseña `ADMIN_PANEL_PASSWORD` definida exclusivamente en los Secrets de Streamlit.
+- Lectura de los 100 registros más recientes, búsqueda por marca, revisión de respuestas, suficiencia y enlaces privados de Drive.
+- Receptor Apps Script requiere `ADMIN_READ_TOKEN` en **Configuración del proyecto > Propiedades de secuencia de comandos**. Este valor debe ser ALEATORIO, DIFERENTE del `WEBHOOK_TOKEN`, y no publicarse en GitHub.
+- Streamlit Secrets debe incluir `ADMIN_READ_TOKEN = "mismo valor de Apps Script"` y `ADMIN_PANEL_PASSWORD = "otra contraseña exclusiva"`. Mantener sin cambios `SHEETS_WEBHOOK_URL` y `SHEETS_WEBHOOK_TOKEN`.
+- Actualizar `Código.gs` con `apps_script.gs`, guardar y publicar **Nueva versión de la implementación existente** para activar la acción `admin_list`. No crear otra URL.
+- Probar ingreso con contraseña incorrecta y correcta, recuperación de registros, archivos y cierre de sesión.
+- Seguridad: es solo una beta, protegida con una contraseña compartida y tokens independientes. No cuenta con identidad por usuario, MFA, auditoría robusta ni controles de tasa. No usar con clientes reales ni datos confidenciales antes de implementar autenticación fuerte, seguridad contra fuerza bruta y política de retención.
