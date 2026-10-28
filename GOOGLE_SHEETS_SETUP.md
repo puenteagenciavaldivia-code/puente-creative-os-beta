@@ -141,3 +141,11 @@ La app Streamlit envía un JSON a un webhook de Google Apps Script SOLO cuando e
 - Debes agregar la propiedad de script `CLARIFICATIONS_ADMIN_TOKEN` y los Secrets `CLARIFICATIONS_ADMIN_TOKEN` y `APP_PUBLIC_URL`. Se requiere implementar **nueva versión** de Apps Script. La versión desplegada anterior no tiene los endpoints.
 - No incluir claves de OpenAI en el repositorio. Uso de API optativo y con costo por tokens; límite de tres intentos por sesión (no sustituto del presupuesto en la plataforma).
 - Se necesitan pruebas de integración reales antes de informar a clientes o considerar que el backend está activado.
+
+
+## Ajuste metodológico posterior — sin API durante esta fase (28-10-2026)
+- El botón de llamada directa a IA se retira del panel. `creative_exchange.py` prepara un encargo TXT para ChatGPT con contexto, criterios y referencias; el director de arte revisa el contenido antes de compartirlo y puede importar el JSON validado.
+- La investigación estratégica **precede** a la ejecución gráfica; la API integrada queda para una etapa posterior, si las pruebas con clientes justifican costo y complejidad.
+- Se incorpora guardado y recuperación manual de revisiones humanas en la pestaña `Revisiones` del backend, después de desplegar la actualización de Apps Script.
+- El desarrollo de PDF por planes continúa pendiente, tal como se priorizó. No debe concederse un manual de marca a un plan que no lo contrata.
+- Para desplegar esta versión, seguir `INSTALACION_BETA_1_0.md`.
