@@ -8,6 +8,7 @@ from design_methodology import CRITERIA, BIBLIOGRAPHY
 from ai_art_direction import validate_suggestions
 from clarifications import build_request,validate_request,build_reply,validate_reply,attach_reply
 from creative_preselection import preselect
+from dashboard_helpers import public_clarification_url,invitation_copy,whatsapp_share_url,mailto_url
 
 class BriefingQualityTests(unittest.TestCase):
     def test_gibberish_is_flagged(self):
@@ -243,6 +244,27 @@ class NoApiFallbackTests(unittest.TestCase):
 
     def test_empty_brief_produces_no_prefill(self):
         self.assertEqual(preselect({}),[])
+
+class InvitationLinkTests(unittest.TestCase):
+    def test_secure_link_never_contains_briefing_data(self):
+        token="a"*64
+        url=public_clarification_url("https://puente-test.streamlit.app",token)
+        self.assertIn("/Aclaraciones?t=",url)
+        self.assertNotIn("BOSQUE ADENTRO",url)
+        self.assertIn(token,url)
+
+    def test_link_rejects_other_hosts(self):
+        for host in ("https://evil.test","http://puente.streamlit.app",
+                     "https://puente.streamlit.app.evil.org"):
+            with self.assertRaises(ValueError):
+                public_clarification_url(host,"b"*64)
+
+    def test_invites_use_same_link(self):
+        link=public_clarification_url("https://puente-test.streamlit.app","a"*64)
+        msg=invitation_copy("Bosque Adentro",link)
+        self.assertIn(link,msg)
+        self.assertIn("https://wa.me/?text=",whatsapp_share_url(msg))
+        self.assertIn("mailto:cliente@example.com",mailto_url("cliente@example.com","Bosque Adentro",msg))
 
 if __name__=="__main__":
     unittest.main()
