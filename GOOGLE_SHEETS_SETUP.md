@@ -24,3 +24,14 @@ La app Streamlit envía un JSON a un webhook de Google Apps Script SOLO cuando e
 - El formulario calcula cobertura de campos y alertas básicas, no comprensión estratégica por IA.
 - Guardar únicamente los datos necesarios; definir quién accede, tiempo de conservación y borrado antes de invitar a personas reales.
 - Si se modifica el Apps Script, se debe actualizar la implementación existente para publicar la nueva versión.
+
+
+## Beta 0.3 — Adjuntos visuales
+- La sección «Universo visual» permite PNG/JPG/WEBP/PDF, máximo 5 archivos, 3 MB cada uno.
+- Los archivos se transmiten uno a uno al mismo webhook y se almacenan en una carpeta privada de Drive del propietario («PUENTE Creative OS — Adjuntos»), bajo subcarpetas con ID del briefing.
+- La columna K «adjuntos_drive» almacena los enlaces. No compartir la carpeta con acceso público.
+- Se exige consentimiento para compartir los archivos. Solo usar material de prueba hasta comprobar el recorrido completo.
+- **Es obligatorio actualizar el proyecto Apps Script ya creado manualmente**: sustituir Código.gs por el apps_script.gs actual; Guardar; Implementar > Administrar implementaciones > Editar > Nueva versión > Implementar. Revisar la autorización adicional de Drive.
+- Mantener exactamente la implementación anterior, la URL /exec y el token; no crear otra app web.
+- Prueba: completar un briefing ficticio, adjuntar un PNG pequeño, finalizar, comprobar la columna K y el archivo en Drive. Si aparece error, revisar Ejecuciones de Apps Script y repetir con otro briefing.
+- Limitaciones: no se verifica el contenido real más allá del MIME y extensión declarados; no admite SVG, archivos grandes ni videos. Antes de recibir datos de clientes reales, se necesitan mejoras de seguridad, validación, borrado/retención y pruebas de carga.
