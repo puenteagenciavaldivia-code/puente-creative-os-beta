@@ -82,7 +82,7 @@ def validate_suggestions(result,answers):
                 raise ValueError("La propuesta no está suficientemente justificada.")
     return result
 
-def propose_with_ai(answers,api_key,model="gpt-4.1-mini",timeout=80):
+def propose_with_ai(answers,api_key,model="gpt-5-mini",timeout=80):
     if not api_key or not api_key.strip():
         raise RuntimeError("No hay API configurada. La biblioteca sigue disponible sin IA.")
     if not isinstance(answers,dict):
@@ -131,5 +131,16 @@ def propose_with_ai(answers,api_key,model="gpt-4.1-mini",timeout=80):
         json=payload,timeout=timeout)
     if not response.ok:
         raise RuntimeError("La API de IA no respondió correctamente (HTTP "+str(response.status_code)+").")
-    result=json.loads(_extract(response.json()))
-    return validate_suggestions(result,source)
+    data=response.json()
+    result=json.loads(_extract(data))
+    verified=validate_suggestions(result,source)
+    usage=data.get("usage") or {}
+    n_input=int(usage.get("input_tokens") or 0)
+    n_output=int(usage.get("output_tokens") or 0)
+    rates={"gpt-5-mini":(0.25,2.00),"gpt-4.1-mini":(0.40,1.60)}.get(model)
+    verified["_usage"]={
+        "model":model,"input_tokens":n_input,"output_tokens":n_output,
+        "estimated_cost_usd":round((n_input*rates[0]+n_output*rates[1])/1000000,6) if rates else None,
+        "note":"Estimación sin descuentos por caché, impuestos ni otros cargos; confirma la factura API."
+    }
+    return verified
