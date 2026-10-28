@@ -71,3 +71,15 @@ La app Streamlit envía un JSON a un webhook de Google Apps Script SOLO cuando e
 - Las corrientes madre, arquetipos, conceptos, interpretación profunda y aprobación de producción siguen siendo **decisiones del equipo**, no del algoritmo.
 - No publicar para clientes reales hasta validar el despliegue de Streamlit, privacidad, permisos y comportamiento del inicio de sesión. El acceso con contraseña compartida es solo para beta.
 - GitHub Actions verifica sintaxis y pruebas de regresión en futuros commits (si Actions está habilitado en el repositorio).
+
+
+## Beta 0.7 — Auditoría estratégica automática sin IA externa
+- Al confirmar un briefing, Streamlit ejecuta `audit_briefing` sobre sus respuestas antes de enviarlo a Google Sheets; el resultado queda en `diagnostico_json.strategic_audit`.
+- La auditoría sugiere aclaraciones transversales sobre precios, conversión, objetivos medibles, permisos de uso de materiales y presupuesto, más comprobaciones específicas para turismo, gastronomía y profesiones con contenidos técnicos sensibles.
+- Cada pregunta mantiene un identificador, campos de origen, motivo, área y prioridad. Son hipótesis de información pendiente, no hechos demostrados.
+- En Panel interno aparece una nueva sección **Auditoría estratégica automática**, con exportación JSON independiente. Para briefings anteriores, se calcula en la consulta sin alterar los registros históricos.
+- La ficha de entrada creativa incluye la auditoría; nunca aprueba arquetipos, corrientes madre o propuestas de producción.
+- No requiere modificar Apps Script, Google Sheets ni los secretos actuales; funciona con el receptor de datos ya desplegado.
+- Es un sistema de reglas locales sin costo por llamadas a modelos externos. **No es análisis semántico con ChatGPT ni realiza vigilancia autónoma**. La auditoría ocurre cuando el cliente envía la ficha y se puede ver al actualizar el panel.
+- No mostrar la auditoría al cliente: su destinatario es el equipo interno. Pruebas previstas en `tests/test_briefing_quality.py`.
+- Pendiente de certificación: despliegue en Streamlit, acceso seguro de personal real, ejercicios de regresión y revisión manual de falsos positivos.
