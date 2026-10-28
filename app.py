@@ -1,4 +1,6 @@
 import json
+import uuid
+import requests
 from datetime import datetime, timezone
 import streamlit as st
 
@@ -80,7 +82,13 @@ if "finished" not in st.session_state:st.session_state.finished=False
 st.caption("AGENCIA PUENTE · CREATIVE OS · BETA PRIVADA")
 st.title("Descubramos tu marca.")
 st.write("Este cuestionario busca conocer tu negocio para probar nuestro sistema creativo. Responde con tus palabras, sin necesidad de conocimientos de diseño.")
-st.warning("Prueba experimental. No ingreses datos sensibles ni confidenciales. Tus respuestas no se guardan ni se envían automáticamente: al finalizar podrás descargarlas y compartirlas con quien te invitó.")
+SHEETS_URL=st.secrets.get("SHEETS_WEBHOOK_URL","")
+SHEETS_TOKEN=st.secrets.get("SHEETS_WEBHOOK_TOKEN","")
+storage_enabled=bool(SHEETS_URL and SHEETS_TOKEN)
+if storage_enabled:
+    st.info("Prueba beta: si aceptas participar y finalizas, tus respuestas se enviarán a una hoja privada de Agencia Puente para evaluar el formulario. Evita datos personales sensibles o información confidencial.")
+else:
+    st.warning("Prueba experimental: todavía no hay recepción automática. Al finalizar tendrás que descargar el archivo y compartirlo manualmente. No ingreses información confidencial.")
 if not st.session_state.finished:
     p=st.session_state.step
     st.progress((p+1)/5)
@@ -125,15 +133,33 @@ if not st.session_state.finished:
                     answer[key]="" if v=="Selecciona una opción" else v
             answer["autorizacion"]=st.session_state.answers_store.get("autorizacion","")
             answer["accion"]=st.session_state.answers_store.get("accion","")
-            record={"submitted_at":datetime.now(timezone.utc).isoformat(),"answers":answer,"diagnostic":diagnose(answer)}
+            record={"submission_id":str(uuid.uuid4()),"submitted_at":datetime.now(timezone.utc).isoformat(),"answers":answer,"diagnostic":diagnose(answer)}
+            st.session_state["saved"]=False
+            st.session_state["save_error"]=""
             st.session_state["export"]=record
             st.session_state.finished=True;st.rerun()
 else:
     st.success("¡Gracias por participar!")
-    st.write("Descarga el archivo y envíaselo por WhatsApp o correo a quien te invitó. Esta beta no recibe respuestas automáticamente.")
+    if storage_enabled and not st.session_state.get("saved"):
+        try:
+            response=requests.post(SHEETS_URL,json={"token":SHEETS_TOKEN,"record":st.session_state["export"]},timeout=15)
+            if response.status_code != 200 or response.text.strip() != "OK":
+                raise RuntimeError("No se pudo confirmar el guardado.")
+            st.session_state.saved=True
+            st.session_state.save_error=""
+        except Exception:
+            st.session_state.save_error="No pudimos confirmar que se guardó el briefing. Conserva tu archivo JSON y compártelo con Puente."
+    if st.session_state.get("saved"):
+        st.info("Tu briefing fue recibido para revisión. El diagnóstico no constituye una aprobación creativa.")
+    elif storage_enabled:
+        st.error(st.session_state.get("save_error","Error al guardar."))
+        if st.button("Reintentar envío"):
+            st.rerun()
+    else:
+        st.write("Descarga el archivo y envíaselo por WhatsApp o correo a quien te invitó.")
     st.download_button("Descargar mis respuestas (JSON)",json.dumps(st.session_state["export"],ensure_ascii=False,indent=2),file_name="briefing-puente.json",mime="application/json",type="primary")
     if st.button("Comenzar otro briefing"):
         for _,fs in SECTIONS:
             for key,_,_ in fs:st.session_state.pop(key,None)
-        for k in ["autorizacion","accion","consent","export"]:st.session_state.pop(k,None)
+        for k in ["autorizacion","accion","consent","export","saved","save_error"]:st.session_state.pop(k,None)
         st.session_state.answers_store={};st.session_state.step=0;st.session_state.finished=False;st.rerun()
