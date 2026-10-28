@@ -5,7 +5,7 @@ import requests
 from datetime import datetime, timezone
 import streamlit as st
 
-st.set_page_config(page_title="PUENTE Creative OS | Beta 0.7", page_icon="🌉", layout="centered")
+st.set_page_config(page_title="PUENTE Creative OS | Beta 0.9", page_icon="🌉", layout="centered")
 st.markdown("""<style>.block-container{max-width:780px;padding-top:2rem}h1{letter-spacing:-.04em}</style>""",unsafe_allow_html=True)
 SECTIONS=[
 ("Identidad",[
@@ -60,10 +60,6 @@ if "step" not in st.session_state:st.session_state.step=0
 if "finished" not in st.session_state:st.session_state.finished=False
 if "attachments_store" not in st.session_state: st.session_state.attachments_store=[]
 st.caption("AGENCIA PUENTE · CREATIVE OS · BETA PRIVADA")
-try:
-    st.page_link("pages/01_Panel_interno.py", label="Acceder al panel interno de Puente", icon="🔒")
-except Exception:
-    st.caption("El panel interno aún no está disponible en esta implementación. El briefing sigue funcionando.")
 st.title("Descubramos tu marca.")
 st.write("Queremos conocer tu negocio. Responde como si se lo contaras a alguien en una conversación. No necesitas saber de diseño ni publicidad.")
 try:
