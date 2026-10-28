@@ -1,5 +1,5 @@
 /**
- * PUENTE Creative OS Beta 0.3 — receptor de briefings y adjuntos.
+ * PUENTE Creative OS Beta 1.0 — briefings, adjuntos, aclaraciones y revisiones.
  * Proyecto independiente de Apps Script. Mantener WEBHOOK_TOKEN privado.
  * Tras pegar: Guardar > Implementar > Administrar implementaciones > Editar > Nueva versión.
  * Los adjuntos se guardan en Drive privado del propietario; enlaces en la hoja Respuestas.
