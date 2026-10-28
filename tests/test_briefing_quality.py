@@ -83,6 +83,23 @@ class StrategicAuditTests(unittest.TestCase):
         self.assertIn("indicador",ids)
         self.assertTrue(result["apto_para_producir"] is False)
 
+    def test_bosque_adentro_vague_mentions_still_need_details(self):
+        a={
+            "negocio":"Somos una empresa de turismo de naturaleza. Organizamos caminatas guiadas.",
+            "productos":"Ofrecemos caminatas guiadas de medio día, para grupos pequeños y excursiones.",
+            "diferencia":"Los clientes valoran la tranquilidad y los grupos pequeños.",
+            "publico":"Parejas y familias que visitan Valdivia.",
+            "objetivo":"Conseguir consultas",
+            "accion":"Reservar",
+            "materiales":"Tenemos fotos y testimonios de las excursiones.",
+            "condiciones":"Queremos explicar cómo reservar y qué hacer cuando llueve."
+        }
+        ids={q["id"] for q in audit_briefing(a)["preguntas_priorizadas"]}
+        self.assertIn("conversion",ids)
+        self.assertIn("clima",ids)
+        self.assertIn("cupos",ids)
+        self.assertNotIn("duracion",ids)
+
     def test_avoid_duplicate_questions_when_info_explicit(self):
         a={"negocio":"Cafetería de barrio", "productos":"Tenemos una carta disponible con precios actualizados",
            "condiciones":"Atendemos de lunes a viernes, presupuesto mensual para pauta y pedidos por WhatsApp",
