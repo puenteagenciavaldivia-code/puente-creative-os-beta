@@ -81,15 +81,25 @@ if not st.session_state.finished:
     if p==4:
         st.selectbox("¿Qué acción quieres que haga alguien después de ver una publicación?",["Selecciona una opción","Consultar","Comprar","Reservar","Visitar el local","Seguir la marca","No lo sé"],key="accion")
         st.checkbox("Acepto participar voluntariamente en esta prueba.",key="consent")
+    required_by_step=[
+        ["nombre","negocio"],
+        ["productos","diferencia"],
+        ["publico"],
+        ["identidad_visual"],
+        ["objetivo","canales"]
+    ]
+    missing=[k for k in required_by_step[p] if not st.session_state.get(k) or st.session_state.get(k)=="Selecciona una opción"]
+    if missing:
+        st.caption("Completa las preguntas esenciales para avanzar; las demás son opcionales.")
     left,right=st.columns(2)
     with left:
         if st.button("← Volver",disabled=p==0,use_container_width=True):
             st.session_state.step-=1;st.rerun()
     with right:
         if p<4:
-            if st.button("Continuar →",type="primary",use_container_width=True):
+            if st.button("Continuar →",type="primary",disabled=bool(missing),use_container_width=True):
                 st.session_state.step+=1;st.rerun()
-        elif st.button("Terminar",type="primary",disabled=not st.session_state.get("consent",False),use_container_width=True):
+        elif st.button("Terminar",type="primary",disabled=(bool(missing) or not st.session_state.get("consent",False)),use_container_width=True):
             answer={}
             for _,fs in SECTIONS:
                 for key,_,_ in fs:
