@@ -87,7 +87,7 @@ def propose_with_ai(answers,api_key,model="gpt-4.1-mini",timeout=80):
         raise RuntimeError("No hay API configurada. La biblioteca sigue disponible sin IA.")
     if not isinstance(answers,dict):
         raise ValueError("Briefing no válido.")
-    catalog=[{"id":x["id"],"nombre":x["nombre"],"rasgos":x["rasgos"],
+    catalog=[{"id":x["id"],"nombre":x["nombre"],"categoria":x["categoria"],"rasgos":x["rasgos"],
               "usos":x["aplicaciones"],"riesgos":x["riesgos"]}
              for x in read_catalog() if x["categoria"] in ("histórica","enfoque")]
     # No incluir adjuntos, documentos, notas del panel ni claves.
@@ -124,7 +124,7 @@ def propose_with_ai(answers,api_key,model="gpt-4.1-mini",timeout=80):
         "store":False,
         "text":{"format":{"type":"json_schema","name":"creative_directions",
                           "strict":True,"schema":SCHEMA}},
-        "max_output_tokens":3500
+        "max_output_tokens":5200
     }
     response=requests.post("https://api.openai.com/v1/responses",
         headers={"Authorization":"Bearer "+api_key.strip(),"Content-Type":"application/json"},
