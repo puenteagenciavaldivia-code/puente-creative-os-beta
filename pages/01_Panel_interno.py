@@ -2,6 +2,7 @@ import hmac
 import json
 import requests
 import streamlit as st
+from creative_handoff import build_handoff
 
 st.set_page_config(page_title="Panel interno | PUENTE Creative OS", page_icon="🌉", layout="wide")
 st.title("PUENTE · Panel interno")
@@ -118,4 +119,21 @@ with st.expander("Ver diagnóstico técnico"):
     st.json(diag)
 
 record={"submission_id":chosen.get("submission_id"),"submitted_at":chosen.get("submitted_at"),"answers":answers,"diagnostic":diag,"attachments":links}
+handoff=build_handoff(record)
+st.markdown("### Ficha de entrada a Creative OS")
+st.caption("Ordena las declaraciones del cliente. No selecciona corrientes madre ni sustituye la revisión del equipo.")
+for group, content in handoff["bloques"].items():
+    with st.expander(group.replace("_"," ").capitalize()):
+        for key,value in content["declaraciones_del_cliente"].items():
+            st.write("**"+key.replace("_"," ").capitalize()+":**",value)
+        if content["por_consultar"]:
+            st.caption("Por consultar: "+", ".join(content["por_consultar"]))
+st.markdown("### Preparación para el trabajo creativo")
+for task, details in handoff["preparacion"].items():
+    st.write("**"+task.replace("_"," ").capitalize()+"** · "+
+             ("Información por complementar: "+", ".join(details["informacion_pendiente"])
+              if details["informacion_pendiente"] else "Información declarada disponible. Requiere revisión humana."))
+st.download_button("Exportar ficha para Creative OS (JSON)",
+    data=json.dumps(handoff,ensure_ascii=False,indent=2),
+    file_name="puente-ficha-creative-os.json",mime="application/json")
 st.download_button("Exportar este briefing (JSON)",data=json.dumps(record,ensure_ascii=False,indent=2),file_name="briefing-interno.json",mime="application/json")
