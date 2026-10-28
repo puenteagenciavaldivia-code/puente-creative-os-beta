@@ -140,6 +140,12 @@ st.info("Esta revisión identifica preguntas posibles mediante reglas. No interp
 st.write("**Estado:** Pendiente de revisión humana")
 questions=audit.get("preguntas_priorizadas",[])
 if questions:
+    high=sum(x.get("prioridad")=="alta" for x in questions)
+    medium=sum(x.get("prioridad")!="alta" for x in questions)
+    a,b=st.columns(2)
+    a.metric("Preguntas prioritarias",high)
+    b.metric("Aclaraciones secundarias",medium)
+if questions:
     st.markdown("#### Preguntas para aclarar antes de crear")
     for i,item in enumerate(questions,1):
         st.markdown("**"+str(i)+". "+item.get("pregunta","")+"**")
