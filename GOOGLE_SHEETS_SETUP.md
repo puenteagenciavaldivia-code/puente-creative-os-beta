@@ -95,3 +95,12 @@ La app Streamlit envía un JSON a un webhook de Google Apps Script SOLO cuando e
 - Los datos de revisión se mantienen únicamente en la sesión hasta exportarlos; **NO hay persistencia automática**. No cerrar el navegador sin descargar el JSON.
 - Solo realizar pruebas internas con datos ficticios: siguen pendientes autentificación por usuario, permisos granulares, registro auditable de cambios, almacenamiento persistente y control de acceso de producción.
 - Pruebas nuevas en `tests/test_briefing_quality.py` comprueban controles de aprobación, comparación de dos enfoques y prevención de cargar revisiones de otro briefing.
+
+
+## Biblioteca visual inicial — 41 referencias clasificadas
+- `design_catalog.json` aporta 41 entradas curadas: 18 corrientes históricas, 8 enfoques, 4 tendencias, 4 técnicas, 4 lenguajes fotográficos y 3 recursos gráficos.
+- `design_catalog.py` permite búsquedas por categoría, nombre, características y aplicaciones; la biblioteca está disponible desde **Panel interno → Revisión estratégica → Explorar biblioteca visual**.
+- Las referencias son vocabulario de investigación, no instrucciones para copiar obras. El uso de nombres históricos no implica que todos los términos sean movimientos académicos equivalentes.
+- Entre fuentes históricas para ampliar y auditar las fichas: Cooper Hewitt sobre estilo suizo (https://www.cooperhewitt.org/2018/08/05/aharmonyofcontrasts/), Departamento Federal de Asuntos Exteriores de Suiza sobre Swiss Style (https://www.aboutswitzerland.eda.admin.ch/en/swiss-style-forever-the-story-of-a-graphic-design-tradition), AIGA Eye on Design sobre New Wave (https://eyeondesign.aiga.org/why-new-wave-graphics-are-the-most-influential-designs-youve-probably-ignored/) y archivos de AIGA (https://aigadesignarchives.com/).
+- El sistema todavía **no realiza recomendaciones semánticas generativas automáticas**. Para lograr esa función es necesaria una integración con un modelo de IA autorizado, controles de privacidad y evaluación contra casos reales. Mientras tanto, un diseñador puede revisar alternativas en el panel y trabajar con ChatGPT usando los briefings a los que ya tiene acceso.
+- No guardar claves de APIs externas en GitHub. Nunca afirmar que una propuesta fue investigada o aprobada automáticamente cuando solo se seleccionó en la biblioteca.
