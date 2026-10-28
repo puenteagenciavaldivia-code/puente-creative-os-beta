@@ -145,6 +145,7 @@ with st.expander("Ver diagnóstico técnico"):
 
 record={"submission_id":chosen.get("submission_id"),"submitted_at":chosen.get("submitted_at"),"answers":answers,"diagnostic":diag,"attachments":links}
 handoff=build_handoff(record)
+handoff["auditoria_estrategica"]=audit
 st.markdown("### Ficha de entrada a Creative OS")
 st.caption("Ordena las declaraciones del cliente. No selecciona corrientes madre ni sustituye la revisión del equipo.")
 for group, content in handoff["bloques"].items():
