@@ -2,6 +2,7 @@ import unittest
 from briefing_quality import diagnose, field_quality
 from creative_handoff import build_handoff
 from strategic_audit import audit_briefing
+from review_workflow import new_review, validate_review, prepare_reviewed_package
 
 class BriefingQualityTests(unittest.TestCase):
     def test_gibberish_is_flagged(self):
@@ -109,6 +110,55 @@ class StrategicAuditTests(unittest.TestCase):
         self.assertNotIn("carta",ids)
         self.assertNotIn("permisos",ids)
         self.assertNotIn("conversion",ids)
+
+class HumanReviewWorkflowTests(unittest.TestCase):
+    def setUp(self):
+        self.record={"submission_id":"id-123","answers":{"nombre":"Bosque Adentro","objetivo":"Conseguir consultas"}}
+        self.audit={"preguntas_priorizadas":[
+            {"id":"precios","pregunta":"¿Qué precios tienen?"},
+            {"id":"reservas","pregunta":"¿Cómo se reserva?"}
+        ]}
+        self.review=new_review(self.record,self.audit)
+
+    def test_default_cannot_approve_or_produce(self):
+        self.assertTrue(validate_review(self.review,self.record,self.audit))
+        handoff=build_handoff(self.record)
+        package=prepare_reviewed_package(handoff,self.review,self.audit)
+        self.assertFalse(package["aprobado_para_produccion"])
+
+    def test_requires_two_distinct_evidenced_directions(self):
+        self.review["responsable"]="Equipo Puente"
+        self.review["revision"]={
+            "precios":{"estado":"confirmado","nota":"Precios validados por el cliente"},
+            "reservas":{"estado":"descartado","nota":"Se excluye porque la campaña es informativa"}
+        }
+        self.review["corrientes"]=[{
+            "nombre":"Naturalismo editorial",
+            "fundamento":"El cliente declaró que busca fotografías reales del bosque.",
+            "diferenciacion":"Se fundamenta en ilustración botánica y narrativa pausada.",
+            "riesgos":"Puede generar problemas de legibilidad y poca diferenciación."
+        }]
+        self.review["direccion_seleccionada"]="Naturalismo editorial"
+        self.review["observaciones"]="La propuesta se alinea con referencias del cliente."
+        self.assertTrue(any("dos o tres" in e for e in validate_review(self.review,self.record,self.audit)))
+        self.review["corrientes"].append({
+            "nombre":"Documental fotográfico",
+            "fundamento":"El cliente tiene fotografías originales de sus excursiones.",
+            "diferenciacion":"Prioriza escenas reales y retratos en contexto.",
+            "riesgos":"Las fotos podrían no tener una calidad consistente."
+        })
+        self.assertEqual(validate_review(self.review,self.record,self.audit),[])
+        handoff=build_handoff(self.record)
+        package=prepare_reviewed_package(handoff,self.review,self.audit)
+        self.assertFalse(package["aprobado_para_produccion"])
+        self.review["autorizacion_produccion"]=True
+        package=prepare_reviewed_package(handoff,self.review,self.audit)
+        self.assertTrue(package["aprobado_para_produccion"])
+        self.assertEqual(package["decisiones_creativas"]["corriente_madre"],"Naturalismo editorial")
+
+    def test_rejects_cross_brand_review(self):
+        self.review["submission_id"]="different-id"
+        self.assertTrue(any("no corresponde" in e for e in validate_review(self.review,self.record,self.audit)))
 
 if __name__=="__main__":
     unittest.main()
