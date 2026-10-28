@@ -56,3 +56,11 @@ Este archivo mantiene las decisiones pendientes dentro del repositorio. No progr
 - **Fundamento bibliográfico**: `METODO_DIRECCION_ARTE.md` distingue fuentes editoriales consultadas y el límite de no haber leído los libros íntegros. `design_methodology.py` incluye criterios operativos auditables.
 - **No completado**: persistencia segura de aclaraciones y revisiones, envío automático a clientes, autenticación por usuario, integración API real con clave válida y prueba de extremo a extremo en Streamlit, auditoría histórica individual de cada corriente, PDF modular por plan.
 - Los documentos por contrato permanecen en el roadmap. No confundir el alcance de beta con entrega de producción o validación de seguridad.
+
+
+## Actualización 2026-10-28 — Beta 1.0: interfaz y enlaces
+- Programado: escritorio en cinco pestañas, enlace privado de siete días y un único uso, correos de invitación mediante MailApp con confirmación, botón de WhatsApp, recepción automática en hoja `Aclaraciones`, sin validación automática de la información recibida.
+- Programado: integración opcional de IA con saldo/clave externa y costos estimados por tokens; el equipo sigue siendo director de arte.
+- **Pendiente de activar:** copiar el script del repositorio al proyecto Apps Script, redeploy, configurar secretos y probar los endpoints en vivo.
+- **Pendiente de implementar:** control de usuario por rol, registro histórico de aprobaciones, PDF por plan, límites mensuales reales de gasto, mensajes automáticos de WhatsApp.
+- Referencia de instalación: `INSTALACION_BETA_1_0.md`.
