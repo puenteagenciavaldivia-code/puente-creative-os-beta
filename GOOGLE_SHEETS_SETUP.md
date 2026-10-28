@@ -104,3 +104,32 @@ La app Streamlit envía un JSON a un webhook de Google Apps Script SOLO cuando e
 - Entre fuentes históricas para ampliar y auditar las fichas: Cooper Hewitt sobre estilo suizo (https://www.cooperhewitt.org/2018/08/05/aharmonyofcontrasts/), Departamento Federal de Asuntos Exteriores de Suiza sobre Swiss Style (https://www.aboutswitzerland.eda.admin.ch/en/swiss-style-forever-the-story-of-a-graphic-design-tradition), AIGA Eye on Design sobre New Wave (https://eyeondesign.aiga.org/why-new-wave-graphics-are-the-most-influential-designs-youve-probably-ignored/) y archivos de AIGA (https://aigadesignarchives.com/).
 - El sistema todavía **no realiza recomendaciones semánticas generativas automáticas**. Para lograr esa función es necesaria una integración con un modelo de IA autorizado, controles de privacidad y evaluación contra casos reales. Mientras tanto, un diseñador puede revisar alternativas en el panel y trabajar con ChatGPT usando los briefings a los que ya tiene acceso.
 - No guardar claves de APIs externas en GitHub. Nunca afirmar que una propuesta fue investigada o aprobada automáticamente cuando solo se seleccionó en la biblioteca.
+
+
+## Beta 0.9 — Clarificaciones complementarias + propuestas de dirección de arte
+
+### Mini ficha de aclaraciones
+1. Desde **Panel interno → Revisión estratégica del equipo**, selecciona las preguntas que realmente faltan; descarga `puente-preguntas-<id>.json`.
+2. Comparte esa ficha con el cliente por un canal acordado. Debe abrir **Aclaraciones** en la navegación de Creative OS y subir el archivo JSON.
+3. La página pública complementaria solicita solo esas preguntas y consentimiento; permite descargar `puente-aclaraciones-<id>.json`. NO guarda respuestas ni envía datos a Sheets en esta beta.
+4. El cliente comparte la respuesta con Puente por un canal acordado; el administrador importa el JSON desde el panel, que valida el mismo `submission_id` y los IDs de pregunta.
+5. Las respuestas importadas quedan **recibidas sin verificar**; deben validarse antes de marcar preguntas como resueltas. En esta beta hay que descargar también la revisión interna para conservarlas entre sesiones.
+6. Esta vía manual evita crear enlaces públicos con datos del cliente, pero aún NO es adecuada para datos privados o sensibles hasta incorporar autenticación y persistencia protegida.
+
+### Dirección creativa
+- En **Panel interno → Investigación y sugerencias de IA**, si existe `OPENAI_API_KEY` en los Secrets de Streamlit, un administrador puede autorizar y activar bajo demanda la generación de **3 propuestas** de movimientos históricos o enfoques de diseño del catálogo, nunca automáticamente ni desde la ficha pública.
+- Secrets nuevos OPCIONALES (NO incluir valores en GitHub):
+  ```toml
+  OPENAI_API_KEY = "<configurar una clave privada válida>"
+  OPENAI_MODEL = "gpt-4.1-mini"
+  ```
+- El motor usa la Responses API y salida JSON estructurada. Valida que los IDs pertenezcan al catálogo, que las propuestas sean distintas, que las citas literales existan dentro de las respuestas del briefing y que los fundamentos no estén vacíos. La comparación debe ser aprobada por el director de arte.
+- La llamada usa `store: false`, pero **envía el texto del briefing al proveedor de IA**. No pulsar el botón sin consentimiento, autorización de uso de datos y comprensión de políticas de tratamiento. No envía archivos adjuntos. El uso de API tiene costos separados a ChatGPT.
+- Si NO se configura API, se puede pulsar **Preparar tres hipótesis iniciales (reglas, sin IA)**. Es una preselección léxica de baja fiabilidad, etiquetada con su método; nunca afirmar que es investigación semántica o bibliográfica.
+- Las propuestas se precargan de manera editable en la comparación de corrientes. La decisión final, los riesgos y la autorización de producción siguen bajo responsabilidad de Puente.
+- El briefing público deja de mostrar un enlace directo al panel interno, pero la navegación multipágina de Streamlit puede seguir ofreciendo el nombre de la página; su contenido está protegido por la contraseña temporal de Beta.
+
+### Bibliografía y criterio
+- Revisar `METODO_DIRECCION_ARTE.md` y `design_methodology.py`. Se verificaron descripciones e índices de editores, **no textos completos** de los libros.
+- Para recomendaciones profesionales confiables falta auditar individualmente las 41 fichas, aumentar referencias históricas verificadas, incorporar notas de investigación propias con licencia y evaluar resultados con dirección de arte.
+- Pruebas adicionales para validación de citas, tratamiento de respuestas, aclaraciones por ID y preselección sin API.
