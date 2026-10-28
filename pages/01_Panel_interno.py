@@ -25,7 +25,7 @@ div[data-testid="stMetric"]{background:rgba(128,128,128,.055);padding:14px;borde
 try:
     cfg={k:st.secrets.get(k,"") for k in (
         "ADMIN_PANEL_PASSWORD","ADMIN_READ_TOKEN","SHEETS_WEBHOOK_URL",
-        "CLARIFICATIONS_ADMIN_TOKEN","APP_PUBLIC_URL","OPENAI_API_KEY","OPENAI_MODEL")}
+        "CLARIFICATIONS_ADMIN_TOKEN","APP_PUBLIC_URL")}
 except (KeyError,FileNotFoundError):
     cfg={}
 password=cfg.get("ADMIN_PANEL_PASSWORD","")
@@ -264,7 +264,7 @@ with tabs[1]:
 
 with tabs[2]:
     st.markdown("#### Dirección de arte · Tres alternativas")
-    st.caption("La IA investiga y propone; el director de arte modifica, compara y decide. Nunca mostramos estas hipótesis al cliente.")
+    st.caption("La investigación se prepara para ChatGPT y la decisión creativa la toma Puente. Las hipótesis nunca aparecen en el formulario del cliente.")
     with st.expander("Biblioteca de referencias y fuentes"):
         cat=st.selectbox("Categoría",category_names())
         term=st.text_input("Buscar corriente o concepto")
@@ -277,58 +277,37 @@ with tabs[2]:
         st.markdown("**Fuentes de metodología**")
         for source in BIBLIOGRAPHY:
             st.markdown("["+source["titulo"]+"]("+source["url"]+") · "+source["alcance"])
-    ai_key=cfg.get("OPENAI_API_KEY","")
-    model=cfg.get("OPENAI_MODEL") or "gpt-5-mini"
-    if ai_key:
-        st.caption("API habilitada: "+model+" · facturación externa a ChatGPT")
-        permitted=st.checkbox("Confirmo autorización para enviar las respuestas de este briefing a la API de OpenAI.",
-                              key="ai_consent_"+rid)
-        if st.button("Generar tres propuestas con IA",disabled=(not permitted or st.session_state.get("ai_calls_session",0)>=3),type="primary",key="ai_btn_"+rid):
-            try:
-                st.session_state["ai_calls_session"]=st.session_state.get("ai_calls_session",0)+1
-                with st.spinner("Analizando la marca y sus alternativas..."):
-                    out=propose_with_ai(answers,ai_key,model=model)
-                st.session_state["ai_result_"+rid]=out
-                review["corrientes"]=[{
-                    "nombre":p["nombre"],"fundamento":p["argumento"]+" Evidencia: "+
-                        "; ".join(e["campo"]+": "+e["cita_respuesta"] for e in p["evidencias"]),
-                    "diferenciacion":p["contraste"],"riesgos":p["riesgos"]}
-                    for p in out["propuestas"]]
-                review["direccion_seleccionada"]=None
-                review["autorizacion_produccion"]=False
-                for key in list(st.session_state):
-                    if key.startswith("direction_"+rid):del st.session_state[key]
-                st.rerun()
-            except (RuntimeError,ValueError,requests.RequestException) as exc:
-                st.error("No fue posible completar el análisis: "+str(exc))
-    else:
-        st.warning("La IA no está habilitada: debes configurar OPENAI_API_KEY en Secrets. No compartas la clave en el chat.")
-    if st.button("Generar borradores con reglas (sin IA)",key="rule_btn_"+rid):
-        options=preselect(answers)
-        if options:
-            review["corrientes"]=[{k:x[k] for k in ("nombre","fundamento","diferenciacion","riesgos")} for x in options]
-            review["direccion_seleccionada"]=None
-            review["autorizacion_produccion"]=False
-            for key in list(st.session_state):
-                if key.startswith("direction_"+rid):del st.session_state[key]
-            st.rerun()
-        else:st.warning("No hay información suficiente.")
-    latest=st.session_state.get("ai_result_"+rid)
-    if latest:
-        st.info("Tres propuestas generadas, aún sin aprobación.")
-        st.write(latest.get("diagnostico",""))
-        usage=latest.get("_usage") or {}
-        if usage:
-            st.caption("Costo estimado en USD: "+str(usage.get("estimated_cost_usd","no disponible"))+" · Tokens: "+str(usage.get("input_tokens",0))+" entrada / "+str(usage.get("output_tokens",0))+" salida.")
-        for p in latest.get("propuestas",[]):
-            with st.expander(p["nombre"]+" · Evidencias y aplicaciones"):
-                st.write(p["argumento"])
-                st.write("**Sistema visual:** "+p["sistema_visual"])
-                st.write("**Tipografía:** "+p["tipografia"])
-                st.write("**Fotografía:** "+p["tratamiento_fotografico"])
-                st.write("**Riesgos:** "+p["riesgos"])
-                for evidence in p["evidencias"]:
-                    st.caption(evidence["campo"]+": «"+evidence["cita_respuesta"]+"»")
+    st.markdown("##### Investigación con ChatGPT · Sin API")
+    st.info("Cuando el briefing y sus aclaraciones estén listos, prepara la investigación aquí. ChatGPT sugerirá corrientes; tú las compararás y aprobarás. No se ejecuta ni cobra una API desde el panel.")
+    if any(review.get("revision",{}).get(q["id"],{}).get("estado") not in ("confirmado","descartado") for q in questions):
+        st.warning("Hay aclaraciones pendientes. Puedes investigar de manera preliminar, pero no aprobar producción.")
+    prompt=build_creative_prompt(answers,audit)
+    with st.expander("Revisar el contenido antes de compartirlo"):
+        st.text_area("Texto de investigación",value=prompt,height=260,
+            key="creative_prompt_preview_"+rid,
+            help="Revisa que no haya información privada, confidencial o sin autorización.")
+    st.download_button("Descargar encargo de investigación para ChatGPT (.txt)",
+        data=prompt.encode("utf-8"),
+        file_name="puente-investigacion-"+str(record["submission_id"])[:8]+".txt",
+        mime="text/plain",key="creative_prompt_download_"+rid)
+    st.caption("Abre ChatGPT, pega el texto revisado y solicita el análisis. Cuando apruebes las alternativas, puedes registrarlas aquí o importar el JSON.")
+    with st.expander("Importar tres alternativas estructuradas de ChatGPT"):
+        raw=st.text_area("Pega solamente el JSON de propuestas",height=180,key="creative_json_"+rid)
+        if st.button("Validar e importar propuestas",key="import_directions_"+rid):
+            if len(raw)>100_000:
+                st.error("El texto es demasiado grande.")
+            else:
+                try:
+                    proposals=import_creative_json(raw,answers)
+                    review["corrientes"]=proposals
+                    review["direccion_seleccionada"]=None
+                    review["autorizacion_produccion"]=False
+                    for key in list(st.session_state):
+                        if str(key).startswith("direction_"+rid):
+                            del st.session_state[key]
+                    st.rerun()
+                except (ValueError,TypeError,KeyError) as exc:
+                    st.error("No fue posible importar: "+str(exc))
     old_currents=review.get("corrientes") or []
     number=st.selectbox("Alternativas a comparar",[2,3],index=1 if len(old_currents)==3 else 0,
                         key="direction_"+rid+"_count")
