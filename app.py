@@ -1,6 +1,5 @@
 import json
 import base64
-import re
 import uuid
 import requests
 from datetime import datetime, timezone
@@ -73,7 +72,7 @@ def save_visible_page():
         if key in st.session_state:
             value=st.session_state[key]
             st.session_state.answers_store[key]="" if value=="Selecciona una opción" else value
-    for key in ("autorizacion","accion"):
+    for key in ("autorizacion","accion","files_consent"):
         if key in st.session_state:
             st.session_state.answers_store[key]=st.session_state[key]
 def restore_widget(key):
@@ -114,12 +113,13 @@ if not st.session_state.finished:
         st.caption("PNG, JPG, WEBP o PDF. Máximo 3 MB por archivo y 5 archivos. No incluyas datos personales sensibles.")
         uploaded=st.file_uploader("Adjunta logotipos, fotografías o referencias",type=["png","jpg","jpeg","webp","pdf"],accept_multiple_files=True,key="brand_uploads")
         if uploaded:
-            if len(uploaded)>5 or any(x.size>3*1024*1024 for x in uploaded):
+            if len(uploaded)>5 or any(x.size>3*1024*1024 for x in uploaded) or any((x.type not in ("image/png","image/jpeg","image/webp","application/pdf")) for x in uploaded):
                 st.error("Se permiten hasta 5 archivos de máximo 3 MB cada uno. Ajusta los adjuntos antes de continuar.")
             else:
                 st.session_state.attachments_store=[{"name":x.name,"mime":x.type,"data":base64.b64encode(x.getvalue()).decode("ascii")} for x in uploaded]
         if st.session_state.attachments_store:
             st.caption(f"{len(st.session_state.attachments_store)} archivo(s) preparados para enviar al finalizar.")
+        restore_widget("files_consent")
         st.checkbox("Confirmo que tengo permiso para compartir estos archivos con Agencia Puente para evaluar este briefing.",key="files_consent")
     if p==4:
         restore_widget("accion")
@@ -170,9 +170,9 @@ else:
             st.session_state.save_error=""
         except Exception:
             st.session_state.save_error="No pudimos confirmar que se guardó el briefing. Conserva tu archivo JSON y compártelo con Puente."
-    if st.session_state.get("saved") and st.session_state.attachments_store and not st.session_state.get("files_saved"):
+    if storage_enabled and st.session_state.get("saved") and st.session_state.attachments_store and not st.session_state.get("files_saved"):
         try:
-            if not st.session_state.get("files_consent"):
+            if not st.session_state.answers_store.get("files_consent"):
                 raise RuntimeError("Falta autorización para compartir los archivos.")
             payload={"token":SHEETS_TOKEN,"submission_id":st.session_state["export"]["submission_id"],"brand":st.session_state["export"]["answers"].get("nombre","Marca"),"files":st.session_state.attachments_store}
             for item in payload["files"]:
