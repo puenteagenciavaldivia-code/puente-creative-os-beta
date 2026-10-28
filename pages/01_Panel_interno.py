@@ -3,6 +3,7 @@ import json
 import requests
 import streamlit as st
 from creative_handoff import build_handoff
+from strategic_audit import audit_briefing
 
 st.set_page_config(page_title="Panel interno | PUENTE Creative OS", page_icon="🌉", layout="wide")
 st.title("PUENTE · Panel interno")
@@ -115,6 +116,30 @@ if diag.get("flags"):
     with st.expander("Alertas de calidad detectadas"):
         for item in diag["flags"]:
             st.write(str(item.get("field",""))+": "+str(item.get("issue","")))
+st.markdown("### Auditoría estratégica automática")
+audit=diag.get("strategic_audit")
+if not isinstance(audit,dict):
+    audit=audit_briefing(answers,diag)
+    st.caption("Auditoría calculada ahora para un registro anterior; no modifica el diagnóstico guardado.")
+else:
+    st.caption("Auditoría generada automáticamente al enviar el briefing.")
+st.info("Esta revisión identifica preguntas posibles mediante reglas. No interpreta profundamente ni aprueba la campaña.")
+st.write("**Estado:** Pendiente de revisión humana")
+questions=audit.get("preguntas_priorizadas",[])
+if questions:
+    st.markdown("#### Preguntas para aclarar antes de crear")
+    for i,item in enumerate(questions,1):
+        st.markdown("**"+str(i)+". "+item.get("pregunta","")+"**")
+        st.caption(item.get("area","")+" · Prioridad "+item.get("prioridad","media")+" · "+item.get("motivo",""))
+else:
+    st.caption("Sin alertas adicionales detectadas por reglas. Esto no significa que no existan vacíos.")
+with st.expander("Información aprovechable para Puente"):
+    for item in audit.get("informacion_aprovechable",[]):
+        st.write("**"+item.get("area","")+":** "+item.get("observacion",""))
+st.download_button("Descargar auditoría estratégica (JSON)",
+    data=json.dumps(audit,ensure_ascii=False,indent=2),
+    file_name="puente-auditoria-estrategica.json",mime="application/json")
+
 with st.expander("Ver diagnóstico técnico"):
     st.json(diag)
 
