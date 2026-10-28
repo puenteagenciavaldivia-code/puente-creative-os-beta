@@ -79,3 +79,17 @@ function saveAttachments(payload,sheet) {
   if (!old.includes(link)) sheet.getRange(row,11).setValue(old ? old+'\n'+link : link);
   return reply('OK');
 }
+
+/**
+ * Ejecutar manualmente una sola vez desde el editor de Apps Script.
+ * Solicita los permisos necesarios y verifica Sheets + Drive.
+ * No publica enlaces ni altera briefings anteriores.
+ */
+function verificarAccesoDrive() {
+  const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('Respuestas');
+  if (!sheet) throw new Error('No se encontró la pestaña Respuestas.');
+  const folders = DriveApp.getFoldersByName(ROOT_FOLDER_NAME);
+  const folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(ROOT_FOLDER_NAME);
+  console.log('Acceso a Google Sheets y Drive confirmado. Carpeta ID: ' + folder.getId());
+  return 'OK';
+}
