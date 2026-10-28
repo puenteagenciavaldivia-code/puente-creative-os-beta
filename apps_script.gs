@@ -13,6 +13,7 @@ function doPost(e) {
   const lock = LockService.getScriptLock();
   try {
     const payload = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    if (payload.action === 'admin_list') return adminList(payload);
     const token = PropertiesService.getScriptProperties().getProperty('WEBHOOK_TOKEN');
     if (!token || !payload.token || payload.token !== token) return reply('DENIED');
     lock.waitLock(20000);
@@ -92,4 +93,36 @@ function verificarAccesoDrive() {
   const folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(ROOT_FOLDER_NAME);
   console.log('Acceso a Google Sheets y Drive confirmado. Carpeta ID: ' + folder.getId());
   return 'OK';
+}
+
+/**
+ * Lectura exclusiva para el panel interno.
+ * Usar ADMIN_READ_TOKEN distinto de WEBHOOK_TOKEN.
+ */
+function adminList(payload) {
+  const expected=PropertiesService.getScriptProperties().getProperty('ADMIN_READ_TOKEN');
+  if (!expected || !payload.admin_token || payload.admin_token !== expected) return reply('DENIED');
+  const book=SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet=book.getSheetByName('Respuestas');
+  if (!sheet || sheet.getLastRow()<2) return reply(JSON.stringify({items:[]}));
+  const last=sheet.getLastRow();
+  const start=Math.max(2,last-99);
+  const data=sheet.getRange(start,1,last-start+1,11).getDisplayValues();
+  const items=data.reverse().map(row=>{
+    let answers={},diagnostic={};
+    try { answers=JSON.parse(row[8]||'{}'); } catch(e) {}
+    try { diagnostic=JSON.parse(row[9]||'{}'); } catch(e) {}
+    return {
+      submitted_at:row[0].replace(/^'/,''),
+      submission_id:row[1].replace(/^'/,''),
+      brand:row[2].replace(/^'/,''),
+      business:row[3].replace(/^'/,''),
+      status:row[4].replace(/^'/,''),
+      score:Number(row[5])||0,
+      answers:answers,
+      diagnostic:diagnostic,
+      attachments:(row[10]||'').split(/\n/).filter(x=>x.startsWith('https://drive.google.com/'))
+    };
+  });
+  return reply(JSON.stringify({items:items}));
 }
