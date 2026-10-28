@@ -173,15 +173,28 @@ else:
     if storage_enabled and st.session_state.get("saved") and st.session_state.attachments_store and not st.session_state.get("files_saved"):
         try:
             if not st.session_state.answers_store.get("files_consent"):
-                raise RuntimeError("Falta autorización para compartir los archivos.")
-            payload={"token":SHEETS_TOKEN,"submission_id":st.session_state["export"]["submission_id"],"brand":st.session_state["export"]["answers"].get("nombre","Marca"),"files":st.session_state.attachments_store}
+                raise RuntimeError("Falta la autorización para compartir los archivos.")
+            payload={"submission_id":st.session_state["export"]["submission_id"],"brand":st.session_state["export"]["answers"].get("nombre","Marca"),"files":st.session_state.attachments_store}
             for item in payload["files"]:
-                r=requests.post(SHEETS_URL,json={"action":"attachments","token":SHEETS_TOKEN,"submission_id":payload["submission_id"],"brand":payload["brand"],"files":[item]},timeout=75)
-                if r.status_code!=200 or r.text.strip()!="OK":
-                    raise RuntimeError("No se confirmó el almacenamiento de los archivos.")
+                try:
+                    r=requests.post(SHEETS_URL,json={"action":"attachments","token":SHEETS_TOKEN,"submission_id":payload["submission_id"],"brand":payload["brand"],"files":[item]},timeout=75)
+                except requests.exceptions.Timeout:
+                    raise RuntimeError("Tiempo de espera agotado al enviar el adjunto.")
+                except requests.exceptions.RequestException:
+                    raise RuntimeError("Error de comunicación HTTPS con el receptor de Google.")
+                response_code=r.text.strip()
+                if r.status_code!=200:
+                    raise RuntimeError(f"Respuesta HTTP {r.status_code} del receptor.")
+                if response_code!="OK":
+                    allowed_errors={"DENIED":"El receptor rechazó la autorización.","INVALID":"El receptor rechazó los datos o el tipo de archivo.","ERROR":"Error interno de Google Apps Script al procesar el adjunto."}
+                    raise RuntimeError(allowed_errors.get(response_code,"El receptor devolvió una respuesta inesperada (no OK)."))
             st.session_state.files_saved=True
-        except Exception:
-            st.warning("El briefing se guardó, pero no se confirmó la recepción de los adjuntos. Puedes reintentar sin volver a completar el formulario.")
+            st.session_state.pop("files_error",None)
+        except Exception as exc:
+            st.session_state.files_error=str(exc)
+        if not st.session_state.get("files_saved"):
+            st.warning("El briefing se guardó, pero no se confirmó la recepción de los adjuntos.")
+            st.error("Diagnóstico del envío: "+st.session_state.get("files_error","Error no identificado."))
             if st.button("Reintentar adjuntos"): st.rerun()
     if st.session_state.get("saved"):
         st.info("Tu briefing fue recibido para revisión. El diagnóstico no constituye una aprobación creativa.")
