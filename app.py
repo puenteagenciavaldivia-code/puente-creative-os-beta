@@ -171,7 +171,7 @@ if not st.session_state.finished:
             if st.button("← Volver",disabled=p==0,use_container_width=True):
                 save_visible_page();st.session_state.step-=1;st.rerun()
         with right:
-            files_ok=not st.session_state.attachments_store or st.session_state.get("files_consent",False)
+            files_ok=not st.session_state.attachments_store or (st.session_state.get("files_consent",False) or st.session_state.answers_store.get("files_consent",False))
             if p<4:
                 if st.button("Continuar →",type="primary",disabled=(bool(missing) or (p==3 and not files_ok)),use_container_width=True):
                     save_visible_page();st.session_state.step+=1;st.rerun()
