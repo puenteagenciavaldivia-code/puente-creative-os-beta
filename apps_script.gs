@@ -14,7 +14,7 @@ function doPost(e) {
   try {
     const payload = JSON.parse((e && e.postData && e.postData.contents) || '{}');
     if (payload.action === 'admin_list') return adminList(payload);
-    if (['clarify_create','clarify_list','clarify_fetch','clarify_submit','clarify_send_email'].includes(payload.action)) {
+    if (['clarify_create','clarify_list','clarify_fetch','clarify_submit','clarify_send_email','review_get','review_save'].includes(payload.action)) {
       return clarificationRoute(payload);
     }
     const token = PropertiesService.getScriptProperties().getProperty('WEBHOOK_TOKEN');
@@ -164,12 +164,13 @@ function rowForClarification(sheet,token) {
 }
 function clarificationRoute(p) {
   const action=p.action;
-  const isAdmin=['clarify_create','clarify_list','clarify_send_email'].includes(action);
+  const isAdmin=['clarify_create','clarify_list','clarify_send_email','review_get','review_save'].includes(action);
   if (isAdmin && !adminClarifyAllowed(p)) return reply('DENIED');
   if (!isAdmin && (typeof p.access_token!=='string' || !/^[a-f0-9]{64}$/.test(p.access_token)))return reply('DENIED');
   const lock=LockService.getScriptLock();
   try {
     lock.waitLock(15000);
+    if(action==='review_get'||action==='review_save')return reviewRoute(p,action);
     const sheet=clarifySheet();
     if(action==='clarify_create') {
       const id=String(p.submission_id||'');
@@ -254,4 +255,48 @@ function clarificationRoute(p) {
     return reply('INVALID');
   }catch(err){console.error(err);return reply('ERROR');}
   finally{if(lock.hasLock())lock.releaseLock();}
+}
+
+/** Versioned human decision history. Briefing originals remain unchanged. */
+const REVIEW_TAB='Revisiones';
+function getReviewSheet() {
+  const book=SpreadsheetApp.openById(SPREADSHEET_ID);
+  let sheet=book.getSheetByName(REVIEW_TAB);
+  if(!sheet)sheet=book.insertSheet(REVIEW_TAB);
+  if(sheet.getLastRow()===0) {
+    sheet.appendRow(['created_at_utc','submission_id','responsable','schema_version','review_json']);
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+function reviewRoute(p,action) {
+  const id=String(p.submission_id||'');
+  if(!/^[a-f0-9-]{36}$/i.test(id))return reply('INVALID');
+  const book=SpreadsheetApp.openById(SPREADSHEET_ID);
+  const briefing=book.getSheetByName('Respuestas');
+  if(!briefing||!findSubmission(briefing,id))return reply('INVALID');
+  const sheet=getReviewSheet();
+  if(action==='review_save') {
+    const data=p.review;
+    if(!data||typeof data!=='object'||Array.isArray(data)
+       ||data.submission_id!==id||data.schema_version!=='puente_review_0_8')return reply('INVALID');
+    const serialized=JSON.stringify(data);
+    if(serialized.length>30000)return reply('INVALID');
+    const reviewer=String(data.responsable||'').trim();
+    if(!reviewer||reviewer.length>150)return reply('INVALID');
+    const now=new Date().toISOString();
+    sheet.appendRow([now,safe(id),safe(reviewer),'puente_review_0_8',serialized]);
+    return jsonReply({ok:true,saved_at_utc:now});
+  }
+  const last=sheet.getLastRow();
+  if(last<2)return jsonReply({ok:true,found:false});
+  const ids=sheet.getRange(2,2,last-1,1).getDisplayValues();
+  for(let i=ids.length-1;i>=0;i--){
+    if(String(ids[i][0]).replace(/^'/,'')===id){
+      const row=sheet.getRange(i+2,1,1,5).getDisplayValues()[0];
+      try {return jsonReply({ok:true,found:true,saved_at_utc:row[0],review:JSON.parse(row[4])});}
+      catch(err){return reply('ERROR');}
+    }
+  }
+  return jsonReply({ok:true,found:false});
 }
