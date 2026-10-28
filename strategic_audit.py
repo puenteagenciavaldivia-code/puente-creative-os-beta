@@ -79,6 +79,7 @@ def audit_briefing(answers,diagnostic=None):
             "¿Quién revisará las afirmaciones técnicas y las autorizaciones antes de publicar?",
             "Es importante incluir revisión profesional y evitar afirmaciones no verificadas.",
             "alta",["negocio","productos"])
+    questions.sort(key=lambda item: (0 if item["prioridad"]=="alta" else 1, item["area"], item["id"]))
     strengths=[]
     if answers.get("diferencia"):
         strengths.append({"area":"Diferenciación","fuente":"diferencia",
