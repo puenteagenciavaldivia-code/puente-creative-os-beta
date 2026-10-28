@@ -39,6 +39,7 @@ LABELS = {
 # Los desplegables tienen menos exigencia de extensión.
 SELECT_FIELDS = {"tono", "identidad_visual", "objetivo", "canales"}
 CRITICAL = ("negocio", "productos", "diferencia", "publico", "objetivo")
+REQUIRED = {"nombre","negocio","productos","diferencia","publico","identidad_visual","objetivo","canales"}
 FOLLOWUPS = {
     "negocio": "¿Qué hace exactamente la marca y en qué contexto ofrece su servicio?",
     "productos": "¿Cuáles son los servicios o productos principales y cómo se entregan?",
@@ -118,14 +119,15 @@ def diagnose(answers):
     for field in LABELS:
         q, reason = field_quality(field, answers.get(field))
         fields[field] = q
-        if q < 0.75:
+        if q < 0.75 and (field in REQUIRED or bool(answers.get(field))):
             flags.append({"field": field, "issue": reason,
                           "severity": "alta" if field in CRITICAL else "media"})
             followups.append({"field": field, "question": FOLLOWUPS[field]})
     dim_scores = {}
     total = 0.0
     for dim, keys in DIMENSIONS.items():
-        value = round(5 * sum(fields[k] for k in keys) / len(keys), 2)
+        assessed = [k for k in keys if k in REQUIRED or bool(answers.get(k))]
+        value = round(5 * sum(fields[k] for k in assessed) / len(assessed), 2) if assessed else 0.0
         dim_scores[dim] = value
         total += value * WEIGHTS[dim] / 5
     # Un briefing no puede aparecer listo cuando falla el núcleo de negocio.
@@ -141,16 +143,20 @@ def diagnose(answers):
         status = "requiere_aclaracion"
     else:
         status = "apto_para_revision"
+    optional_fields = set(LABELS) - REQUIRED
+    optional_answered = sum(bool(answers.get(k)) for k in optional_fields)
     # Nunca aprobar automáticamente: corresponde a criterio editorial humano.
     return {
         "score": score,
         "dimension_scores": dim_scores,
         "field_quality": fields,
+        "optional_answered": optional_answered,
+        "optional_total": len(optional_fields),
         "flags": flags,
         "follow_up_questions": followups[:8],
         "status": status,
         "human_review_required": True,
         "approved": False,
         "engine": "heuristic_beta_0_5",
-        "limitations": "Análisis heurístico de completitud y especificidad superficial; no verifica veracidad, coherencia semántica ni estrategia.",
+        "limitations": "Puntaje orientativo de campos informados; omite campos opcionales vacíos de la media. No verifica veracidad, coherencia semántica ni estrategia.",
     }
