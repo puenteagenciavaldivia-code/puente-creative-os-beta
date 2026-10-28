@@ -82,6 +82,7 @@ if "step" not in st.session_state:st.session_state.step=0
 if "finished" not in st.session_state:st.session_state.finished=False
 if "attachments_store" not in st.session_state: st.session_state.attachments_store=[]
 st.caption("AGENCIA PUENTE · CREATIVE OS · BETA PRIVADA")
+st.page_link("pages/01_Panel_interno.py", label="Acceder al panel interno de Puente", icon="🔒")
 st.title("Descubramos tu marca.")
 st.write("Este cuestionario busca conocer tu negocio para probar nuestro sistema creativo. Responde con tus palabras, sin necesidad de conocimientos de diseño.")
 try:
