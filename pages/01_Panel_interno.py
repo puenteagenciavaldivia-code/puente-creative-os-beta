@@ -4,6 +4,7 @@ import requests
 import streamlit as st
 from creative_handoff import build_handoff
 from strategic_audit import audit_briefing
+from review_workflow import new_review, validate_review, prepare_reviewed_package
 
 st.set_page_config(page_title="Panel interno | PUENTE Creative OS", page_icon="🌉", layout="wide")
 st.title("PUENTE · Panel interno")
@@ -178,6 +179,84 @@ for task, details in handoff["preparacion"].items():
     st.write("**"+task.replace("_"," ").capitalize()+"** · "+
              ("Información por complementar: "+", ".join(details["informacion_pendiente"])
               if details["informacion_pendiente"] else "Información declarada disponible. Requiere revisión humana."))
+st.divider()
+st.markdown("### Revisión estratégica del equipo · Beta 0.8")
+st.caption("Las respuestas originales no se modifican. Esta revisión permanece en la sesión hasta que descargues el archivo. No se guarda en Sheets ni Drive.")
+review_key="puente_review_"+str(record.get("submission_id"))
+if review_key not in st.session_state:
+    st.session_state[review_key]=new_review(record,audit)
+
+with st.expander("Recuperar una revisión guardada"):
+    imported=st.file_uploader("Archivo JSON exportado anteriormente",type=["json"],key="import_"+review_key)
+    if imported is not None and st.button("Cargar revisión",key="load_"+review_key):
+        if imported.size>200_000:
+            st.error("El archivo supera el límite de 200 KB.")
+        else:
+            try:
+                candidate=json.loads(imported.getvalue().decode("utf-8"))
+                if not isinstance(candidate,dict) or candidate.get("schema_version")!="puente_review_0_8" or candidate.get("submission_id")!=record.get("submission_id"):
+                    st.error("El archivo no corresponde a este briefing o versión.")
+                else:
+                    st.session_state[review_key]=candidate
+                    # Clear widgets so imported values are applied on next render.
+                    for key in list(st.session_state.keys()):
+                        if str(key).startswith("rev_widget_"+review_key):
+                            del st.session_state[key]
+                    st.rerun()
+            except (UnicodeDecodeError,ValueError,TypeError):
+                st.error("No se pudo leer el archivo JSON.")
+
+review=st.session_state[review_key]
+review["responsable"]=st.text_input("Responsable de la revisión",value=review.get("responsable",""),key="rev_widget_"+review_key+"_responsable")
+st.markdown("#### 1. Aclaraciones del cliente")
+st.caption("Confirma solo información realmente comprobada. Puedes descartar falsas alarmas con una explicación.")
+for question in questions:
+    qid=str(question.get("id",""))
+    item=review.get("revision",{}).get(qid,{})
+    with st.expander(question.get("area","")+" · "+question.get("pregunta","")):
+        current=item.get("estado","pendiente")
+        choices=["pendiente","confirmado","aclarar","descartado"]
+        state=st.selectbox("Estado",choices,index=choices.index(current) if current in choices else 0,key="rev_widget_"+review_key+"_"+qid+"_state")
+        note=st.text_area("Evidencia o motivo de la decisión",value=item.get("nota",""),key="rev_widget_"+review_key+"_"+qid+"_note",height=80)
+        review.setdefault("revision",{})[qid]={"estado":state,"nota":note}
+
+st.markdown("#### 2. Comparación de corrientes madre")
+st.caption("No deben salir de una lista fija. Registra dos o tres enfoques basados en las características reales de la marca, con diferencias y riesgos.")
+previous=review.get("corrientes") or []
+number=st.selectbox("Alternativas a comparar",[2,3],index=1 if len(previous)==3 else 0,key="rev_widget_"+review_key+"_count")
+currents=[]
+for index in range(number):
+    old=previous[index] if index<len(previous) and isinstance(previous[index],dict) else {}
+    with st.expander("Corriente madre "+str(index+1),expanded=index==0):
+        name=st.text_input("Nombre de la corriente",value=old.get("nombre",""),key="rev_widget_"+review_key+"_name_"+str(index))
+        basis=st.text_area("¿Qué datos del briefing justifican investigarla?",value=old.get("fundamento",""),height=90,key="rev_widget_"+review_key+"_basis_"+str(index))
+        contrast=st.text_area("¿En qué se diferencia de las otras alternativas?",value=old.get("diferenciacion",""),height=80,key="rev_widget_"+review_key+"_contrast_"+str(index))
+        risks=st.text_area("¿Qué riesgos o limitaciones tiene para esta marca?",value=old.get("riesgos",""),height=80,key="rev_widget_"+review_key+"_risks_"+str(index))
+        currents.append({"nombre":name,"fundamento":basis,"diferenciacion":contrast,"riesgos":risks})
+review["corrientes"]=currents
+names=[entry["nombre"].strip() for entry in currents if entry["nombre"].strip()]
+selected=review.get("direccion_seleccionada")
+options=["Sin seleccionar"]+names
+chosen_index=options.index(selected) if selected in options else 0
+chosen_direction=st.selectbox("Corriente madre propuesta",options,index=chosen_index,key="rev_widget_"+review_key+"_chosen")
+review["direccion_seleccionada"]=None if chosen_direction=="Sin seleccionar" else chosen_direction
+review["observaciones"]=st.text_area("Justificación de la dirección propuesta",value=review.get("observaciones",""),height=110,key="rev_widget_"+review_key+"_notes")
+review["autorizacion_produccion"]=st.checkbox("Confirmo como responsable que se han resuelto las dudas y autorizo preparar producción.",value=bool(review.get("autorizacion_produccion")),key="rev_widget_"+review_key+"_production")
+errors=validate_review(review,record,audit)
+package=prepare_reviewed_package(handoff,review,audit)
+if errors:
+    st.warning("Revisión incompleta: "+str(len(errors))+" asuntos por resolver.")
+    with st.expander("Ver condiciones pendientes"):
+        for err in errors:
+            st.write("• "+err)
+else:
+    st.success("Revisión editorial completa. "+("Producción autorizada por el responsable." if review["autorizacion_produccion"] else "Producción todavía sin autorización."))
+st.download_button("Guardar revisión (JSON)",data=json.dumps(review,ensure_ascii=False,indent=2),
+    file_name="puente-revision-"+str(record.get("submission_id",""))[:8]+".json",mime="application/json")
+st.download_button("Exportar paquete creativo revisado (JSON)",data=json.dumps(package,ensure_ascii=False,indent=2),
+    file_name="puente-paquete-creativo-"+str(record.get("submission_id",""))[:8]+".json",mime="application/json")
+st.caption("Para continuar en otra sesión, descarga tu revisión y vuelve a cargar el archivo al regresar. La exportación no registra cambios en la base de datos.")
+
 st.download_button("Exportar ficha para Creative OS (JSON)",
     data=json.dumps(handoff,ensure_ascii=False,indent=2),
     file_name="puente-ficha-creative-os.json",mime="application/json")
