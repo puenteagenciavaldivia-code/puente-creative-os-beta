@@ -8,6 +8,7 @@ from review_workflow import new_review, validate_review, prepare_reviewed_packag
 from design_catalog import search_catalog, category_names
 from design_methodology import BIBLIOGRAPHY, CRITERIA
 from ai_art_direction import propose_with_ai
+from creative_preselection import preselect
 from clarifications import build_request, validate_reply, attach_reply
 
 st.set_page_config(page_title="Panel interno | PUENTE Creative OS", page_icon="🌉", layout="wide")
@@ -333,6 +334,22 @@ if isinstance(result_ai,dict):
             st.markdown("**Evidencia literal del cliente**")
             for evidence in proposal["evidencias"]:
                 st.caption(evidence["campo"]+": «"+evidence["cita_respuesta"]+"»")
+st.markdown("#### Preselección de exploración sin API")
+st.caption("Alternativa provisional basada solo en coincidencias de palabras, no en IA. Sirve para proponer puntos de partida editables y no debe confundirse con recomendaciones estratégicas.")
+if st.button("Preparar tres hipótesis iniciales (reglas, sin IA)",key="preselect_"+review_key):
+    drafted=preselect(answers)
+    if len(drafted)!=3:
+        st.warning("No hay información suficiente para preseleccionar alternativas.")
+    else:
+        review["corrientes"]=[{key:item[key] for key in ("nombre","fundamento","diferenciacion","riesgos")} for item in drafted]
+        review["direccion_seleccionada"]=None
+        review["autorizacion_produccion"]=False
+        st.session_state.pop("ai_proposals_"+review_key,None)
+        for widget_key in list(st.session_state):
+            if str(widget_key).startswith("rev_widget_"+review_key+"_"):
+                del st.session_state[widget_key]
+        st.rerun()
+
 st.markdown("#### 2. Comparación de corrientes madre")
 st.caption("Las alternativas pueden llegar sugeridas por IA y son editables. Tú decides cuáles investigar y aprobar.")
 
