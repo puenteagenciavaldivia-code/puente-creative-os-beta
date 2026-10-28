@@ -47,3 +47,12 @@ Fecha: 2026-10-28. Documento de planificación, **no funcionalidad desplegada**.
 - La prueba de control de alcance asegura que un plan no filtre apartados de otro.
 
 Este archivo mantiene las decisiones pendientes dentro del repositorio. No programa un aviso futuro ni implementa estas funciones por sí solo.
+
+
+## Actualización 2026-10-28 — Beta 0.9 (implementación de prueba)
+
+- **Mini ficha ya programada**: el administrador descarga solo preguntas pendientes y la página pública `pages/02_Aclaraciones.py` permite responderlas y exportar respuestas. El intercambio es manual por JSON para no crear URLs sin autenticación ni almacenar datos no protegidos. Existe importación interna con correspondencia de identificadores, siempre sin verificación automática.
+- **Propuestas de corrientes con IA**: `ai_art_direction.py` y panel interno permiten investigar tres alternativas con la API solo si se configura `OPENAI_API_KEY` en Secrets y el administrador confirma autorización. Sin clave hay `creative_preselection.py`, un borrador por reglas etiquetado expresamente como NO IA. El cliente no ve las decisiones.
+- **Fundamento bibliográfico**: `METODO_DIRECCION_ARTE.md` distingue fuentes editoriales consultadas y el límite de no haber leído los libros íntegros. `design_methodology.py` incluye criterios operativos auditables.
+- **No completado**: persistencia segura de aclaraciones y revisiones, envío automático a clientes, autenticación por usuario, integración API real con clave válida y prueba de extremo a extremo en Streamlit, auditoría histórica individual de cada corriente, PDF modular por plan.
+- Los documentos por contrato permanecen en el roadmap. No confundir el alcance de beta con entrega de producción o validación de seguridad.
