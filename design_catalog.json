@@ -1,0 +1,789 @@
+{
+  "version": "0.1",
+  "uso": "Biblioteca curada inicial, no modelo de IA ni taxonomía académica exhaustiva.",
+  "categorias": [
+    "histórica",
+    "enfoque",
+    "tendencia",
+    "técnica",
+    "lenguaje fotográfico",
+    "recurso"
+  ],
+  "corrientes": [
+    {
+      "id": "cv01",
+      "nombre": "Arts & Crafts",
+      "categoria": "histórica",
+      "rasgos": [
+        "ornamento artesanal",
+        "materialidad natural",
+        "ilustración de oficio"
+      ],
+      "aplicaciones": [
+        "patrimonio",
+        "producto artesanal",
+        "cercanía"
+      ],
+      "riesgos": [
+        "corporativo de alta precisión"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv02",
+      "nombre": "Art Nouveau",
+      "categoria": "histórica",
+      "rasgos": [
+        "línea orgánica",
+        "ornamento botánico",
+        "composición decorativa"
+      ],
+      "aplicaciones": [
+        "botánica",
+        "cultura",
+        "patrimonio"
+      ],
+      "riesgos": [
+        "lectura funcional muy densa"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv03",
+      "nombre": "Art Déco",
+      "categoria": "histórica",
+      "rasgos": [
+        "geometría ornamental",
+        "simetría",
+        "contraste elegante"
+      ],
+      "aplicaciones": [
+        "hospitalidad",
+        "lujo",
+        "gastronomía de autor"
+      ],
+      "riesgos": [
+        "naturalidad informal"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv04",
+      "nombre": "Constructivismo",
+      "categoria": "histórica",
+      "rasgos": [
+        "diagonales",
+        "formas geométricas",
+        "tipografía de impacto"
+      ],
+      "aplicaciones": [
+        "campaña cultural",
+        "energía",
+        "activación"
+      ],
+      "riesgos": [
+        "comunicación serena"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv05",
+      "nombre": "De Stijl",
+      "categoria": "histórica",
+      "rasgos": [
+        "retícula",
+        "abstracción",
+        "planos de color"
+      ],
+      "aplicaciones": [
+        "institucional",
+        "cultura",
+        "arquitectura"
+      ],
+      "riesgos": [
+        "expresión orgánica"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv06",
+      "nombre": "Bauhaus",
+      "categoria": "histórica",
+      "rasgos": [
+        "geometría funcional",
+        "tipografía moderna",
+        "experimentación"
+      ],
+      "aplicaciones": [
+        "educación",
+        "cultura",
+        "sistemas visuales"
+      ],
+      "riesgos": [
+        "ornamento nostálgico"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv07",
+      "nombre": "Nueva Tipografía",
+      "categoria": "histórica",
+      "rasgos": [
+        "asimetría",
+        "jerarquía",
+        "sans serif"
+      ],
+      "aplicaciones": [
+        "educación",
+        "comunicación clara",
+        "editorial"
+      ],
+      "riesgos": [
+        "ornamentación recargada"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv08",
+      "nombre": "Estilo Tipográfico Internacional",
+      "categoria": "histórica",
+      "rasgos": [
+        "retícula asimétrica",
+        "sans serif",
+        "fotografía informativa"
+      ],
+      "aplicaciones": [
+        "servicios",
+        "educación",
+        "salud",
+        "información"
+      ],
+      "riesgos": [
+        "identidad artesanal espontánea"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv09",
+      "nombre": "Escuela de Ulm",
+      "categoria": "histórica",
+      "rasgos": [
+        "sistema modular",
+        "pictogramas",
+        "racionalidad"
+      ],
+      "aplicaciones": [
+        "señalética",
+        "servicios técnicos",
+        "productos"
+      ],
+      "riesgos": [
+        "expresividad ornamental"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv10",
+      "nombre": "Mid-century modern",
+      "categoria": "histórica",
+      "rasgos": [
+        "formas simplificadas",
+        "ilustración plana",
+        "optimismo"
+      ],
+      "aplicaciones": [
+        "hospitalidad",
+        "comercio",
+        "cultura"
+      ],
+      "riesgos": [
+        "sobriedad extrema"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv11",
+      "nombre": "Pop Art",
+      "categoria": "histórica",
+      "rasgos": [
+        "color saturado",
+        "escala",
+        "apropiación gráfica"
+      ],
+      "aplicaciones": [
+        "entretenimiento",
+        "campañas promocionales"
+      ],
+      "riesgos": [
+        "formalidad clínica"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv12",
+      "nombre": "Op Art",
+      "categoria": "histórica",
+      "rasgos": [
+        "ilusión óptica",
+        "patrones repetitivos",
+        "contraste"
+      ],
+      "aplicaciones": [
+        "eventos",
+        "arte",
+        "activaciones"
+      ],
+      "riesgos": [
+        "información extensa"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv13",
+      "nombre": "Psicodelia gráfica",
+      "categoria": "histórica",
+      "rasgos": [
+        "curvas envolventes",
+        "tipografía expresiva",
+        "color vibrante"
+      ],
+      "aplicaciones": [
+        "música",
+        "cultura nocturna"
+      ],
+      "riesgos": [
+        "comunicación jurídica"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv14",
+      "nombre": "Punk DIY",
+      "categoria": "histórica",
+      "rasgos": [
+        "fotocopia",
+        "collage",
+        "letra recortada",
+        "antipulido"
+      ],
+      "aplicaciones": [
+        "música",
+        "subculturas",
+        "activismo"
+      ],
+      "riesgos": [
+        "servicios que requieren calma"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv15",
+      "nombre": "New Wave tipográfica",
+      "categoria": "histórica",
+      "rasgos": [
+        "tipografía experimental",
+        "ruptura de retícula",
+        "capas"
+      ],
+      "aplicaciones": [
+        "cultura",
+        "moda",
+        "eventos"
+      ],
+      "riesgos": [
+        "señalética urgente"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv16",
+      "nombre": "Posmodernismo Memphis",
+      "categoria": "histórica",
+      "rasgos": [
+        "formas irónicas",
+        "patrones",
+        "color lúdico"
+      ],
+      "aplicaciones": [
+        "comercio juvenil",
+        "diseño de objetos"
+      ],
+      "riesgos": [
+        "comunicación sobria"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv17",
+      "nombre": "Deconstructivismo tipográfico",
+      "categoria": "histórica",
+      "rasgos": [
+        "superposición",
+        "fragmentación",
+        "lecturas múltiples"
+      ],
+      "aplicaciones": [
+        "arte",
+        "editorial experimental"
+      ],
+      "riesgos": [
+        "accesibilidad informativa"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv18",
+      "nombre": "Grunge editorial",
+      "categoria": "histórica",
+      "rasgos": [
+        "texturas",
+        "desgaste",
+        "tipografía irregular"
+      ],
+      "aplicaciones": [
+        "música",
+        "moda underground"
+      ],
+      "riesgos": [
+        "servicio de alta legibilidad"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv19",
+      "nombre": "Minimalismo editorial",
+      "categoria": "enfoque",
+      "rasgos": [
+        "espacio negativo",
+        "jerarquía contenida",
+        "precisión"
+      ],
+      "aplicaciones": [
+        "lujo discreto",
+        "educación",
+        "producto"
+      ],
+      "riesgos": [
+        "contenido abundante sin estructura"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv20",
+      "nombre": "Maximalismo editorial",
+      "categoria": "enfoque",
+      "rasgos": [
+        "capas",
+        "ornamento denso",
+        "impacto expresivo"
+      ],
+      "aplicaciones": [
+        "moda",
+        "cultura",
+        "entretenimiento"
+      ],
+      "riesgos": [
+        "información delicada"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv21",
+      "nombre": "Diseño editorial contemporáneo",
+      "categoria": "enfoque",
+      "rasgos": [
+        "retícula flexible",
+        "tipografía jerárquica",
+        "fotografía"
+      ],
+      "aplicaciones": [
+        "cultura",
+        "servicios",
+        "contenidos educativos"
+      ],
+      "riesgos": [
+        "campañas de impacto inmediato sin contexto"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv22",
+      "nombre": "Diseño vernáculo",
+      "categoria": "enfoque",
+      "rasgos": [
+        "rótulos populares",
+        "referencias locales",
+        "gestualidad"
+      ],
+      "aplicaciones": [
+        "comercio de barrio",
+        "patrimonio",
+        "cultura local"
+      ],
+      "riesgos": [
+        "copiar identidades culturales ajenas"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv23",
+      "nombre": "Diseño participativo y comunitario",
+      "categoria": "enfoque",
+      "rasgos": [
+        "coautoría",
+        "voz local",
+        "señales de comunidad"
+      ],
+      "aplicaciones": [
+        "territorio",
+        "cooperativas",
+        "organizaciones"
+      ],
+      "riesgos": [
+        "uso superficial de símbolos comunitarios"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv24",
+      "nombre": "Diseño de información",
+      "categoria": "enfoque",
+      "rasgos": [
+        "sistemas de datos",
+        "gráficos",
+        "jerarquía accesible"
+      ],
+      "aplicaciones": [
+        "salud",
+        "educación",
+        "servicios legales"
+      ],
+      "riesgos": [
+        "expresión artística sin información"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv25",
+      "nombre": "Diseño biofílico aplicado",
+      "categoria": "enfoque",
+      "rasgos": [
+        "formas naturales",
+        "materialidad",
+        "ritmos orgánicos"
+      ],
+      "aplicaciones": [
+        "bienestar",
+        "espacios",
+        "productos naturales"
+      ],
+      "riesgos": [
+        "ornamento verde sin sustento"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv26",
+      "nombre": "Diseño brutalista digital",
+      "categoria": "tendencia",
+      "rasgos": [
+        "contraste crudo",
+        "tipografía visible",
+        "composición rígida"
+      ],
+      "aplicaciones": [
+        "arte",
+        "moda",
+        "experimentación"
+      ],
+      "riesgos": [
+        "servicios con barreras de lectura"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv27",
+      "nombre": "Neo-swiss",
+      "categoria": "tendencia",
+      "rasgos": [
+        "retícula contemporánea",
+        "tipografía neutra",
+        "fotografía medida"
+      ],
+      "aplicaciones": [
+        "editorial",
+        "servicios",
+        "cultura"
+      ],
+      "riesgos": [
+        "marcas que exigen gran ornamentación"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv28",
+      "nombre": "Retro-futurismo",
+      "categoria": "tendencia",
+      "rasgos": [
+        "nostalgia tecnológica",
+        "ciencia ficción",
+        "geometría"
+      ],
+      "aplicaciones": [
+        "tecnología",
+        "cultura",
+        "entretenimiento"
+      ],
+      "riesgos": [
+        "promesas técnicas engañosas"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv29",
+      "nombre": "Y2K gráfico",
+      "categoria": "tendencia",
+      "rasgos": [
+        "brillos digitales",
+        "cromados",
+        "tipo tecnológica"
+      ],
+      "aplicaciones": [
+        "moda",
+        "entretenimiento juvenil"
+      ],
+      "riesgos": [
+        "comunicación institucional"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv30",
+      "nombre": "Collage editorial",
+      "categoria": "técnica",
+      "rasgos": [
+        "recorte visual",
+        "superposición",
+        "contrastes de escala"
+      ],
+      "aplicaciones": [
+        "cultura",
+        "educación",
+        "cuentos visuales"
+      ],
+      "riesgos": [
+        "rigidez sistemática"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv31",
+      "nombre": "Grabado botánico",
+      "categoria": "técnica",
+      "rasgos": [
+        "línea minuciosa",
+        "trama",
+        "referencia naturalista"
+      ],
+      "aplicaciones": [
+        "patrimonio",
+        "naturaleza",
+        "productos botánicos"
+      ],
+      "riesgos": [
+        "fingir precisión científica"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv32",
+      "nombre": "Ilustración científica naturalista",
+      "categoria": "técnica",
+      "rasgos": [
+        "observación",
+        "detalle morfológico",
+        "anotaciones"
+      ],
+      "aplicaciones": [
+        "educación ambiental",
+        "patrimonio",
+        "turismo"
+      ],
+      "riesgos": [
+        "afirmaciones biológicas sin revisión"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv33",
+      "nombre": "Fotografía documental",
+      "categoria": "lenguaje fotográfico",
+      "rasgos": [
+        "situación real",
+        "gestos auténticos",
+        "luz disponible"
+      ],
+      "aplicaciones": [
+        "turismo",
+        "comunidad",
+        "oficios"
+      ],
+      "riesgos": [
+        "imágenes simuladas presentadas como reales"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv34",
+      "nombre": "Fotografía gastronómica editorial",
+      "categoria": "lenguaje fotográfico",
+      "rasgos": [
+        "textura",
+        "alimento real",
+        "luz controlada"
+      ],
+      "aplicaciones": [
+        "gastronomía",
+        "producto"
+      ],
+      "riesgos": [
+        "retoque que cambia el producto"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv35",
+      "nombre": "Fotografía analógica",
+      "categoria": "lenguaje fotográfico",
+      "rasgos": [
+        "grano",
+        "color película",
+        "atmósfera"
+      ],
+      "aplicaciones": [
+        "cultura",
+        "moda",
+        "territorio"
+      ],
+      "riesgos": [
+        "falsa autenticidad histórica"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv36",
+      "nombre": "Fotografía arquitectónica",
+      "categoria": "lenguaje fotográfico",
+      "rasgos": [
+        "geometría",
+        "escala",
+        "perspectiva"
+      ],
+      "aplicaciones": [
+        "inmobiliario",
+        "interiorismo",
+        "hotelería"
+      ],
+      "riesgos": [
+        "distorsión espacial engañosa"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv37",
+      "nombre": "Tipografía expresiva",
+      "categoria": "recurso",
+      "rasgos": [
+        "letra protagonista",
+        "ritmo",
+        "contraste formal"
+      ],
+      "aplicaciones": [
+        "música",
+        "moda",
+        "campañas"
+      ],
+      "riesgos": [
+        "legibilidad crítica"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv38",
+      "nombre": "Ilustración risográfica",
+      "categoria": "técnica",
+      "rasgos": [
+        "sobreimpresión",
+        "trama",
+        "color limitado",
+        "textura"
+      ],
+      "aplicaciones": [
+        "editorial",
+        "arte",
+        "educación"
+      ],
+      "riesgos": [
+        "necesidad de precisión fotográfica"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv39",
+      "nombre": "Sistema de pictogramas",
+      "categoria": "recurso",
+      "rasgos": [
+        "iconografía consistente",
+        "semántica clara",
+        "modularidad"
+      ],
+      "aplicaciones": [
+        "servicios",
+        "señalética",
+        "educación"
+      ],
+      "riesgos": [
+        "reducción de ideas complejas a clichés"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv40",
+      "nombre": "Cartografía editorial",
+      "categoria": "recurso",
+      "rasgos": [
+        "mapas narrativos",
+        "rutas",
+        "simbología"
+      ],
+      "aplicaciones": [
+        "turismo",
+        "patrimonio",
+        "divulgación"
+      ],
+      "riesgos": [
+        "mapas sin validación geográfica"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    },
+    {
+      "id": "cv41",
+      "nombre": "Diseño editorial ecológico",
+      "categoria": "enfoque",
+      "rasgos": [
+        "sobriedad material",
+        "transparencia de impacto",
+        "ecodiseño"
+      ],
+      "aplicaciones": [
+        "sostenibilidad",
+        "organizaciones",
+        "producto"
+      ],
+      "riesgos": [
+        "greenwashing y afirmaciones ambientales sin evidencia"
+      ],
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+    }
+  ]
+}
