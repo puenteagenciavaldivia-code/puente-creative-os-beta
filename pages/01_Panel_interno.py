@@ -6,6 +6,9 @@ from creative_handoff import build_handoff
 from strategic_audit import audit_briefing
 from review_workflow import new_review, validate_review, prepare_reviewed_package
 from design_catalog import search_catalog, category_names
+from design_methodology import BIBLIOGRAPHY, CRITERIA
+from ai_art_direction import propose_with_ai
+from clarifications import build_request, validate_reply, attach_reply
 
 st.set_page_config(page_title="Panel interno | PUENTE Creative OS", page_icon="🌉", layout="wide")
 st.title("PUENTE · Panel interno")
@@ -210,6 +213,42 @@ with st.expander("Recuperar una revisión guardada"):
 review=st.session_state[review_key]
 review["responsable"]=st.text_input("Responsable de la revisión",value=review.get("responsable",""),key="rev_widget_"+review_key+"_responsable")
 st.markdown("#### 1. Aclaraciones del cliente")
+st.caption("Puedes preparar una mini ficha para el cliente con solo las preguntas seleccionadas.")
+ids_default=[q.get("id") for q in questions if q.get("prioridad")=="alta"]
+selected_ids=st.multiselect(
+    "Preguntas que enviaremos al cliente",
+    options=[q.get("id") for q in questions],
+    default=ids_default,
+    format_func=lambda qid:next((q.get("pregunta",qid) for q in questions if q.get("id")==qid),qid),
+    key="questions_to_send_"+review_key
+)
+if selected_ids:
+    packet=build_request(record,audit,selected_ids)
+    st.download_button("Descargar mini ficha para el cliente (JSON)",
+        data=json.dumps(packet,ensure_ascii=False,indent=2),
+        file_name="puente-preguntas-"+str(record.get("submission_id",""))[:8]+".json",
+        mime="application/json",key="download_questions_"+review_key)
+    st.caption("El cliente abre «Aclaraciones» en Creative OS, carga el archivo y descarga sus respuestas. En beta el envío no es automático.")
+with st.expander("Importar respuestas complementarias"):
+    upload_reply=st.file_uploader("Archivo JSON que envió el cliente",type=["json"],key="reply_"+review_key)
+    if upload_reply is not None and st.button("Validar e importar respuestas",key="import_reply_"+review_key):
+        if upload_reply.size>200_000:
+            st.error("Archivo demasiado grande.")
+        else:
+            try:
+                reply=json.loads(upload_reply.getvalue().decode("utf-8"))
+                validate_reply(reply,record,audit)
+                st.session_state[review_key]=attach_reply(st.session_state[review_key],reply,record,audit)
+                st.rerun()
+            except (ValueError,TypeError,UnicodeDecodeError) as exc:
+                st.error("No se pudo importar: "+str(exc))
+    supplement=review.get("aclaraciones_cliente",{}).get("respuestas",[])
+    if supplement:
+        st.info("Hay respuestas recibidas. Puente debe verificarlas antes de marcar preguntas como confirmadas.")
+        for extra in supplement:
+            st.markdown("**"+extra.get("pregunta","")+"**")
+            st.write(extra.get("respuesta",""))
+
 st.caption("Confirma solo información realmente comprobada. Puedes descartar falsas alarmas con una explicación.")
 for question in questions:
     qid=str(question.get("id",""))
@@ -235,7 +274,68 @@ with st.expander("Explorar biblioteca visual",expanded=False):
     if len(catalog_results)>25:
         st.caption("Refina la búsqueda para consultar el resto de resultados.")
 
+st.markdown("#### Investigación y sugerencias de IA")
+st.caption("Las propuestas son hipótesis para la dirección de arte. No se muestran al cliente y nunca se aprueban automáticamente.")
+with st.expander("Método y referencias bibliográficas"):
+    for item in BIBLIOGRAPHY:
+        st.markdown("**"+item["autor"]+" — "+item["titulo"]+"**")
+        st.caption(item["edicion"]+" · "+item["uso"]+" "+item["alcance"])
+        st.link_button("Ver fuente editorial",item["url"])
+    st.markdown("**Criterios de evaluación utilizados**")
+    for name,question in CRITERIA.items():
+        st.write("• "+name.replace("_"," ").capitalize()+": "+question)
+try:
+    ai_key=st.secrets.get("OPENAI_API_KEY","")
+    ai_model=st.secrets.get("OPENAI_MODEL","gpt-4.1-mini")
+except (KeyError,FileNotFoundError):
+    ai_key=""
+    ai_model="gpt-4.1-mini"
+if not ai_key:
+    st.warning("IA generativa todavía no conectada. Falta OPENAI_API_KEY en los Secrets privados del servidor. La biblioteca y el análisis por reglas siguen disponibles.")
+else:
+    st.caption("Motor generativo disponible. Modelo configurado: "+ai_model+". La API tiene costo separado de ChatGPT.")
+    consent_ai=st.checkbox("Confirmo que este briefing es de prueba o tengo autorización para enviar sus respuestas al servicio de IA.",
+        key="ai_consent_"+review_key)
+    if st.button("Investigar tres corrientes madre con IA",type="primary",
+                 disabled=not consent_ai,key="research_ai_"+review_key):
+        try:
+            with st.spinner("Analizando hipótesis de dirección creativa..."):
+                proposals=propose_with_ai(answers,ai_key,model=ai_model)
+            st.session_state["ai_proposals_"+review_key]=proposals
+            review["corrientes"]=[
+                {"nombre":p["nombre"],"fundamento":p["argumento"]+
+                     " Evidencia: "+", ".join(e["campo"]+": "+e["cita_respuesta"] for e in p["evidencias"]),
+                 "diferenciacion":p["contraste"],"riesgos":p["riesgos"]}
+                for p in proposals["propuestas"]
+            ]
+            review["direccion_seleccionada"]=None
+            review["autorizacion_produccion"]=False
+            for widget_key in list(st.session_state):
+                if str(widget_key).startswith("rev_widget_"+review_key+"_"):
+                    del st.session_state[widget_key]
+            st.rerun()
+        except (ValueError,RuntimeError,requests.RequestException) as exc:
+            st.error("La investigación no pudo completarse: "+str(exc))
+result_ai=st.session_state.get("ai_proposals_"+review_key)
+if isinstance(result_ai,dict):
+    st.info("Se generaron tres propuestas para evaluar, no para aprobar automáticamente.")
+    st.write("**Lectura del briefing:** "+result_ai.get("diagnostico",""))
+    for i,proposal in enumerate(result_ai.get("propuestas",[]),1):
+        with st.expander(str(i)+". "+proposal["nombre"]+" · Hipótesis IA"):
+            st.write("**Fundamento:** "+proposal["argumento"])
+            st.write("**Composición e imagen:** "+proposal["sistema_visual"])
+            st.write("**Tipografía:** "+proposal["tipografia"])
+            st.write("**Fotografía:** "+proposal["tratamiento_fotografico"])
+            st.write("**Aplicaciones:** "+proposal["aplicaciones"])
+            st.write("**Diferenciación:** "+proposal["contraste"])
+            st.write("**Riesgos:** "+proposal["riesgos"])
+            st.write("**Validar:** "+proposal["criterios_verificar"])
+            st.markdown("**Evidencia literal del cliente**")
+            for evidence in proposal["evidencias"]:
+                st.caption(evidence["campo"]+": «"+evidence["cita_respuesta"]+"»")
 st.markdown("#### 2. Comparación de corrientes madre")
+st.caption("Las alternativas pueden llegar sugeridas por IA y son editables. Tú decides cuáles investigar y aprobar.")
+
 st.caption("No deben salir de una lista fija. Registra dos o tres enfoques basados en las características reales de la marca, con diferencias y riesgos.")
 previous=review.get("corrientes") or []
 number=st.selectbox("Alternativas a comparar",[2,3],index=1 if len(previous)==3 else 0,key="rev_widget_"+review_key+"_count")
