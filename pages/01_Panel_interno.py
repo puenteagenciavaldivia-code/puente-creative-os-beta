@@ -272,6 +272,9 @@ with st.expander("Explorar biblioteca visual",expanded=False):
         st.markdown("**"+item["nombre"]+"** · "+item["categoria"])
         st.caption("Rasgos: "+", ".join(item["rasgos"])+" | Usos posibles: "+", ".join(item["aplicaciones"]))
         st.caption("Precauciones: "+", ".join(item["riesgos"]))
+        st.caption("Estado documental: "+item.get("validacion_historica","por verificar"))
+        for ref in item.get("referencias_editoriales",[]):
+            st.markdown("[Fuente bibliográfica verificada]("+ref["url"]+") · "+ref["capitulo"])
     if len(catalog_results)>25:
         st.caption("Refina la búsqueda para consultar el resto de resultados.")
 
