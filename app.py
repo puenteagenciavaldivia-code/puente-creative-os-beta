@@ -61,6 +61,20 @@ def diagnose(a):
         flags.append({"field":"identidad_visual","issue":"Identidad visual por definir"})
     status="apto_para_revision" if total>=80 and not flags else ("insuficiente" if total<60 else "requiere_aclaracion")
     return {"score":round(total,1),"dimension_scores":scores,"flags":flags,"status":status,"human_review_required":True,"approved":False,"engine":"deterministic_beta_0_1"}
+# Streamlit removes widget state when the widget is absent from a rerun.
+# Keep form data separately so navigating between steps does not erase prior answers.
+if "answers_store" not in st.session_state: st.session_state.answers_store={}
+def save_visible_page():
+    for key,_,_ in SECTIONS[st.session_state.step][1]:
+        if key in st.session_state:
+            value=st.session_state[key]
+            st.session_state.answers_store[key]="" if value=="Selecciona una opción" else value
+    for key in ("autorizacion","accion"):
+        if key in st.session_state:
+            st.session_state.answers_store[key]=st.session_state[key]
+def restore_widget(key):
+    if key not in st.session_state and key in st.session_state.answers_store:
+        st.session_state[key]=st.session_state.answers_store[key]
 if "step" not in st.session_state:st.session_state.step=0
 if "finished" not in st.session_state:st.session_state.finished=False
 st.caption("AGENCIA PUENTE · CREATIVE OS · BETA PRIVADA")
@@ -72,13 +86,16 @@ if not st.session_state.finished:
     st.progress((p+1)/5)
     st.subheader(f"{p+1}/5 · {SECTIONS[p][0]}")
     for key,label,kind in SECTIONS[p][1]:
+        restore_widget(key)
         if kind=="text": st.text_input(label,key=key)
         elif kind=="area":st.text_area(label,key=key,height=90)
         elif kind=="channels":st.multiselect(label,OPTIONS[kind],key=key)
         else:st.selectbox(label,["Selecciona una opción"]+OPTIONS[kind],key=key)
     if p==3 and st.session_state.get("identidad_visual") in OPTIONS["visual"][:2]:
+        restore_widget("autorizacion")
         st.selectbox("¿Puedes compartir archivos gráficos autorizados?",["Selecciona una opción","Sí","Debo confirmar","No"],key="autorizacion")
     if p==4:
+        restore_widget("accion")
         st.selectbox("¿Qué acción quieres que haga alguien después de ver una publicación?",["Selecciona una opción","Consultar","Comprar","Reservar","Visitar el local","Seguir la marca","No lo sé"],key="accion")
         st.checkbox("Acepto participar voluntariamente en esta prueba.",key="consent")
     required_by_step=[
@@ -94,19 +111,20 @@ if not st.session_state.finished:
     left,right=st.columns(2)
     with left:
         if st.button("← Volver",disabled=p==0,use_container_width=True):
-            st.session_state.step-=1;st.rerun()
+            save_visible_page();st.session_state.step-=1;st.rerun()
     with right:
         if p<4:
             if st.button("Continuar →",type="primary",disabled=bool(missing),use_container_width=True):
-                st.session_state.step+=1;st.rerun()
+                save_visible_page();st.session_state.step+=1;st.rerun()
         elif st.button("Terminar",type="primary",disabled=(bool(missing) or not st.session_state.get("consent",False)),use_container_width=True):
+            save_visible_page()
             answer={}
             for _,fs in SECTIONS:
                 for key,_,_ in fs:
-                    v=st.session_state.get(key,"")
+                    v=st.session_state.answers_store.get(key,"")
                     answer[key]="" if v=="Selecciona una opción" else v
-            answer["autorizacion"]=st.session_state.get("autorizacion","")
-            answer["accion"]=st.session_state.get("accion","")
+            answer["autorizacion"]=st.session_state.answers_store.get("autorizacion","")
+            answer["accion"]=st.session_state.answers_store.get("accion","")
             record={"submitted_at":datetime.now(timezone.utc).isoformat(),"answers":answer,"diagnostic":diagnose(answer)}
             st.session_state["export"]=record
             st.session_state.finished=True;st.rerun()
@@ -118,4 +136,4 @@ else:
         for _,fs in SECTIONS:
             for key,_,_ in fs:st.session_state.pop(key,None)
         for k in ["autorizacion","accion","consent","export"]:st.session_state.pop(k,None)
-        st.session_state.step=0;st.session_state.finished=False;st.rerun()
+        st.session_state.answers_store={};st.session_state.step=0;st.session_state.finished=False;st.rerun()
