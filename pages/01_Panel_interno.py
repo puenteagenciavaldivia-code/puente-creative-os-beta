@@ -83,7 +83,10 @@ st.subheader(chosen.get("brand") or "Sin nombre")
 left,right=st.columns(2)
 left.write("**Estado:** "+str(chosen.get("status") or "Sin estado"))
 right.write("**Suficiencia:** "+str(chosen.get("score",0))+"/100")
-st.caption("Diagnóstico preliminar por completitud de respuestas. Requiere revisión estratégica humana.")
+if (chosen.get("diagnostic") or {}).get("engine")=="heuristic_beta_0_5":
+    st.caption("Evaluación Beta 0.5: reglas heurísticas de claridad. No es comprensión semántica ni aprobación creativa.")
+else:
+    st.caption("Registro anterior a la Beta 0.5: puntuación basada en completitud. No equivale a calidad estratégica.")
 
 answers=chosen.get("answers") or {}
 if isinstance(answers,dict):
@@ -103,6 +106,14 @@ else:
     st.caption("Este briefing no tiene enlaces a archivos adjuntos registrados.")
 
 diag=chosen.get("diagnostic") or {}
+if diag.get("follow_up_questions"):
+    st.markdown("### Preguntas de seguimiento sugeridas")
+    for item in diag["follow_up_questions"]:
+        st.write("• "+str(item.get("question","")))
+if diag.get("flags"):
+    with st.expander("Alertas de calidad detectadas"):
+        for item in diag["flags"]:
+            st.write(str(item.get("field",""))+": "+str(item.get("issue","")))
 with st.expander("Ver diagnóstico técnico"):
     st.json(diag)
 
