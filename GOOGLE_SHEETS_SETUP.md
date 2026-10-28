@@ -133,3 +133,11 @@ La app Streamlit envía un JSON a un webhook de Google Apps Script SOLO cuando e
 - Revisar `METODO_DIRECCION_ARTE.md` y `design_methodology.py`. Se verificaron descripciones e índices de editores, **no textos completos** de los libros.
 - Para recomendaciones profesionales confiables falta auditar individualmente las 41 fichas, aumentar referencias históricas verificadas, incorporar notas de investigación propias con licencia y evaluar resultados con dirección de arte.
 - Pruebas adicionales para validación de citas, tratamiento de respuestas, aclaraciones por ID y preselección sin API.
+
+
+## Beta 1.0 (código preparado, requiere desplegar Apps Script)
+- La documentación operativa completa está en [INSTALACION_BETA_1_0.md](INSTALACION_BETA_1_0.md).
+- Panel con cinco pestañas, enlaces privados de aclaraciones, compartir por WhatsApp y enviar por correo con MailApp, lectura de respuestas y controles de IA.
+- Debes agregar la propiedad de script `CLARIFICATIONS_ADMIN_TOKEN` y los Secrets `CLARIFICATIONS_ADMIN_TOKEN` y `APP_PUBLIC_URL`. Se requiere implementar **nueva versión** de Apps Script. La versión desplegada anterior no tiene los endpoints.
+- No incluir claves de OpenAI en el repositorio. Uso de API optativo y con costo por tokens; límite de tres intentos por sesión (no sustituto del presupuesto en la plataforma).
+- Se necesitan pruebas de integración reales antes de informar a clientes o considerar que el backend está activado.
