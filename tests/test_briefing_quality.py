@@ -9,6 +9,7 @@ from ai_art_direction import validate_suggestions
 from clarifications import build_request,validate_request,build_reply,validate_reply,attach_reply
 from creative_preselection import preselect
 from dashboard_helpers import public_clarification_url,invitation_copy,whatsapp_share_url,mailto_url
+from creative_exchange import build_creative_prompt,import_creative_json,sanitize_briefing
 
 class BriefingQualityTests(unittest.TestCase):
     def test_gibberish_is_flagged(self):
@@ -265,6 +266,25 @@ class InvitationLinkTests(unittest.TestCase):
         self.assertIn(link,msg)
         self.assertIn("https://wa.me/?text=",whatsapp_share_url(msg))
         self.assertIn("mailto:cliente@example.com",mailto_url("cliente@example.com","Bosque Adentro",msg))
+
+class ChatGPTHandoffTests(unittest.TestCase):
+    def test_prompt_preserves_evidence_but_not_private_unknown_fields(self):
+        answers={"nombre":"Bosque Adentro","negocio":"Somos guías de bosque",
+                 "referentes":"Nos interesan los libros botánicos antiguos",
+                 "private_email":"secret@example.com","auth_key":"do-not-expose"}
+        audit={"preguntas_priorizadas":[{"id":"precios","pregunta":"¿Cuál es el precio?",
+                                        "prioridad":"alta"}]}
+        prompt=build_creative_prompt(answers,audit)
+        self.assertIn("Somos guías de bosque",prompt)
+        self.assertIn("¿Cuál es el precio?",prompt)
+        self.assertIn("tres corrientes",prompt.casefold())
+        self.assertNotIn("secret@example.com",prompt)
+        self.assertNotIn("do-not-expose",prompt)
+        self.assertNotIn("private_email",sanitize_briefing(answers))
+
+    def test_bad_ai_import_cannot_approve(self):
+        with self.assertRaises((ValueError,TypeError)):
+            import_creative_json('{"propuestas":[]}',{"nombre":"Prueba"})
 
 if __name__=="__main__":
     unittest.main()
