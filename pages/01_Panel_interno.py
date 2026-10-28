@@ -5,6 +5,7 @@ import streamlit as st
 from creative_handoff import build_handoff
 from strategic_audit import audit_briefing
 from review_workflow import new_review, validate_review, prepare_reviewed_package
+from design_catalog import search_catalog, category_names
 
 st.set_page_config(page_title="Panel interno | PUENTE Creative OS", page_icon="🌉", layout="wide")
 st.title("PUENTE · Panel interno")
@@ -219,6 +220,20 @@ for question in questions:
         state=st.selectbox("Estado",choices,index=choices.index(current) if current in choices else 0,key="rev_widget_"+review_key+"_"+qid+"_state")
         note=st.text_area("Evidencia o motivo de la decisión",value=item.get("nota",""),key="rev_widget_"+review_key+"_"+qid+"_note",height=80)
         review.setdefault("revision",{})[qid]={"estado":state,"nota":note}
+
+st.markdown("#### Biblioteca de corrientes y lenguajes visuales")
+st.caption("Una corriente histórica, una técnica, un recurso y un tratamiento fotográfico no son equivalentes. La biblioteca ayuda a investigar; no recomienda automáticamente.")
+with st.expander("Explorar biblioteca visual",expanded=False):
+    cat=st.selectbox("Tipo de referencia",category_names(),key="catalog_cat")
+    query=st.text_input("Buscar por nombre, rasgo o uso",key="catalog_query")
+    catalog_results=search_catalog(query,cat)
+    st.caption(str(len(catalog_results))+" referencias disponibles para esta búsqueda")
+    for item in catalog_results[:25]:
+        st.markdown("**"+item["nombre"]+"** · "+item["categoria"])
+        st.caption("Rasgos: "+", ".join(item["rasgos"])+" | Usos posibles: "+", ".join(item["aplicaciones"]))
+        st.caption("Precauciones: "+", ".join(item["riesgos"]))
+    if len(catalog_results)>25:
+        st.caption("Refina la búsqueda para consultar el resto de resultados.")
 
 st.markdown("#### 2. Comparación de corrientes madre")
 st.caption("No deben salir de una lista fija. Registra dos o tres enfoques basados en las características reales de la marca, con diferencias y riesgos.")
