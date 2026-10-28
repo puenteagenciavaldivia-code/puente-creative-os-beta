@@ -134,7 +134,7 @@ def diagnose(answers):
     weak_critical = [x for x in CRITICAL if fields[x] < 0.75]
     if weak_critical:
         total = min(total, 59.0)
-    elif sum(1 for q in fields.values() if q < 0.75) >= 5:
+    elif sum(1 for k in REQUIRED if fields[k] < 0.75) >= 5:
         total = min(total, 69.0)
     score = round(total, 1)
     if weak_critical or score < 60:
