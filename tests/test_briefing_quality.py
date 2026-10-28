@@ -4,6 +4,9 @@ from creative_handoff import build_handoff
 from strategic_audit import audit_briefing
 from review_workflow import new_review, validate_review, prepare_reviewed_package
 from design_catalog import read_catalog, search_catalog
+from design_methodology import CRITERIA, BIBLIOGRAPHY
+from ai_art_direction import validate_suggestions
+from clarifications import build_request,validate_request,build_reply,validate_reply,attach_reply
 
 class BriefingQualityTests(unittest.TestCase):
     def test_gibberish_is_flagged(self):
@@ -174,6 +177,57 @@ class DesignCatalogTests(unittest.TestCase):
         self.assertTrue(any("Swiss" in x["nombre"] or "Tipográfico Internacional" in x["nombre"]
                  for x in search_catalog("tipográfico")))
         self.assertTrue(any(x["nombre"]=="Fotografía documental" for x in search_catalog("documental")))
+
+class MethodologyTests(unittest.TestCase):
+    def test_references_have_verifiable_sources(self):
+        self.assertGreaterEqual(len(BIBLIOGRAPHY),4)
+        self.assertTrue(all(x["url"].startswith("https://") for x in BIBLIOGRAPHY))
+        self.assertIn("audiencia",CRITERIA)
+        self.assertIn("accesibilidad",CRITERIA)
+
+    def test_ai_output_requires_exact_source_evidence(self):
+        answers={"referentes":"Nos gustan los libros antiguos de exploración.","negocio":"Somos guías de naturaleza."}
+        names=[x for x in read_catalog() if x["categoria"] in ("histórica","enfoque")][:3]
+        def proposal(x):
+            return {"nombre":x["nombre"],"movimiento_catalogo_id":x["id"],
+                    "categoria":x["categoria"],"argumento":"Una investigación razonada para la propuesta editorial.",
+                    "evidencias":[{"campo":"referentes","cita_respuesta":"libros antiguos de exploración"}],
+                    "sistema_visual":"Un sistema visual coherente y de composición editorial.",
+                    "tipografia":"Jerarquía tipográfica legible y con fuerte contraste.",
+                    "tratamiento_fotografico":"Fotografía real y documental.",
+                    "aplicaciones":"Aplicaciones en piezas de redes sociales y documentos.",
+                    "contraste":"Alternativa diferenciable mediante su estructura y ritmo.",
+                    "riesgos":"Puede resultar genérica si no se incorpora contexto local.",
+                    "criterios_verificar":"Validación editorial del director de arte."}
+        result={"diagnostico":"Prueba","preguntas_criticas":[],"propuestas":[proposal(x) for x in names]}
+        self.assertEqual(len(validate_suggestions(result,answers)["propuestas"]),3)
+        result["propuestas"][1]["evidencias"][0]["cita_respuesta"]="cita inventada"
+        with self.assertRaises(ValueError):
+            validate_suggestions(result,answers)
+
+class ClarificationsTests(unittest.TestCase):
+    def setUp(self):
+        self.record={"submission_id":"brief-001","answers":{"nombre":"Bosque Adentro"}}
+        self.audit={"preguntas_priorizadas":[
+            {"id":"precios","pregunta":"¿Cuáles son los precios?","prioridad":"alta"},
+            {"id":"clima","pregunta":"¿Qué ocurre si llueve?","prioridad":"alta"}]}
+
+    def test_targeted_questions_roundtrip(self):
+        req=build_request(self.record,self.audit,["precios"])
+        validate_request(req)
+        self.assertEqual(len(req["preguntas"]),1)
+        reply=build_reply(req,{"precios":"Las tarifas se confirman cada temporada."})
+        validate_reply(reply,self.record,self.audit)
+        review={"revision":{}}
+        updated=attach_reply(review,reply,self.record,self.audit)
+        self.assertEqual(updated["aclaraciones_cliente"]["estado"],"recibido_sin_verificar")
+        self.assertNotIn("precios",updated["revision"])
+
+    def test_cannot_import_to_another_brand(self):
+        req=build_request(self.record,self.audit,["clima"])
+        reply=build_reply(req,{"clima":"Necesito ayuda"})
+        with self.assertRaises(ValueError):
+            validate_reply(reply,{"submission_id":"another-brief"},self.audit)
 
 if __name__=="__main__":
     unittest.main()
