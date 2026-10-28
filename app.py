@@ -5,40 +5,41 @@ import requests
 from datetime import datetime, timezone
 import streamlit as st
 
-st.set_page_config(page_title="PUENTE Creative OS | Beta 0.5", page_icon="🌉", layout="centered")
+st.set_page_config(page_title="PUENTE Creative OS | Beta 0.6", page_icon="🌉", layout="centered")
 st.markdown("""<style>.block-container{max-width:780px;padding-top:2rem}h1{letter-spacing:-.04em}</style>""",unsafe_allow_html=True)
 SECTIONS=[
 ("Identidad",[
 ("nombre","¿Cómo se llama tu marca?","text"),
 ("negocio","¿Qué hace tu negocio?","area"),
-("personalidad","¿Qué características describen a tu marca?","area"),
-("recuerdo","¿Cómo te gustaría que la recordaran?","area")]),
+("personalidad","Si tu negocio fuera una persona, ¿cómo sería?","area"),
+("recuerdo","Cuando alguien recomiende tu negocio, ¿qué te gustaría que dijera?","area")]),
 ("Negocio",[
 ("productos","¿Cuáles son tus productos o servicios?","area"),
-("diferencia","¿Por qué te eligen frente a otras alternativas?","area"),
-("destacar","¿Qué aspecto de tu negocio quieres destacar?","area"),
-("competencia","¿Qué marcas son referentes o competidores?","area")]),
+("diferencia","¿Qué valoran tus clientes de lo que haces?","area"),
+("destacar","¿Qué te gustaría mostrar primero de tu negocio?","area"),
+("competencia","¿Qué otros negocios se parecen al tuyo o te sirven de ejemplo?","area")]),
 ("Público",[
-("publico","¿Quiénes te compran actualmente?","area"),
-("publico_nuevo","¿A quiénes quisieras llegar?","area"),
-("dudas","¿Qué dudas tienen las personas antes de elegirte?","area"),
+("publico","¿Cómo son las personas que te compran hoy?","area"),
+("publico_nuevo","¿Qué otras personas te gustaría que conocieran tu negocio?","area"),
+("dudas","¿Qué te suelen preguntar antes de comprar?","area"),
 ("tono","¿Cómo te gustaría hablar con tus clientes?","tone")]),
 ("Universo visual",[
-("identidad_visual","¿Ya cuentas con una identidad visual?","visual"),
-("elementos","¿Qué elementos visuales deben mantenerse?","area"),
-("referentes","¿Qué marcas o diseños te gustan y por qué?","area"),
-("evitar","¿Qué estilos o elementos quisieras evitar?","area")]),
+("identidad_visual","¿Tienes un logotipo o colores que uses siempre?","visual"),
+("elementos","¿Qué colores, fotos o elementos de tu marca quieres conservar?","area"),
+("referentes","¿Qué publicaciones, locales o marcas te gustan visualmente? ¿Por qué?","area"),
+("evitar","¿Qué colores, fotos o estilos definitivamente no te gustan?","area")]),
 ("Objetivos y producción",[
-("objetivo","¿Qué te gustaría conseguir con la comunicación?","goal"),
-("canales","¿Qué canales utilizas?","channels"),
-("materiales","¿Qué fotografías, videos o archivos tienes?","area"),
-("condiciones","¿Hay fechas o condiciones importantes?","area")])]
+("objetivo","¿Qué te gustaría conseguir con tus publicaciones?","goal"),
+("canales","¿En qué redes o medios estás presente?","channels"),
+("materiales","¿Qué fotos, videos o archivos de tu negocio tienes disponibles?","area"),
+("condiciones","¿Hay fechas o detalles que debamos tener en cuenta?","area")])]
 OPTIONS={
 "tone":["Cercano","Profesional","Didáctico","Divertido","Sereno","Aún no lo sé"],
 "visual":["Sí, tenemos manual de marca","Tenemos logo, pero no manual","No tenemos identidad visual"],
 "goal":["Aumentar ventas","Conseguir consultas","Dar a conocer mi marca","Fidelizar clientes","Educar al público","Aún no lo sé"],
 "channels":["Instagram","Facebook","WhatsApp","TikTok","Web","Google","Otros"]}
 from briefing_quality import diagnose
+from creative_handoff import build_handoff
 from briefing_guidance import SECTION_INTROS, HELP, EXAMPLES
 # Streamlit removes widget state when the widget is absent from a rerun.
 # Keep form data separately so navigating between steps does not erase prior answers.
@@ -121,7 +122,7 @@ if not st.session_state.finished:
     ]
     missing=[k for k in required_by_step[p] if not st.session_state.get(k) or st.session_state.get(k)=="Selecciona una opción"]
     if missing:
-        st.caption("Completa las preguntas esenciales para avanzar; las demás son opcionales.")
+        st.caption("Para avanzar, responde las preguntas principales de esta etapa. Las demás son opcionales.")
     left,right=st.columns(2)
     with left:
         if st.button("← Volver",disabled=p==0,use_container_width=True):
