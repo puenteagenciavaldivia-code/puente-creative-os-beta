@@ -5,7 +5,7 @@ import requests
 from datetime import datetime, timezone
 import streamlit as st
 
-st.set_page_config(page_title="PUENTE Creative OS | Beta 0.1", page_icon="🌉", layout="centered")
+st.set_page_config(page_title="PUENTE Creative OS | Beta 0.5", page_icon="🌉", layout="centered")
 st.markdown("""<style>.block-container{max-width:780px;padding-top:2rem}h1{letter-spacing:-.04em}</style>""",unsafe_allow_html=True)
 SECTIONS=[
 ("Identidad",[
@@ -38,32 +38,7 @@ OPTIONS={
 "visual":["Sí, tenemos manual de marca","Tenemos logo, pero no manual","No tenemos identidad visual"],
 "goal":["Aumentar ventas","Conseguir consultas","Dar a conocer mi marca","Fidelizar clientes","Educar al público","Aún no lo sé"],
 "channels":["Instagram","Facebook","WhatsApp","TikTok","Web","Google","Otros"]}
-WEIGHTS={"identidad":15,"propuesta_de_valor":20,"audiencia":15,"objetivos":20,"visual":15,"diferenciacion":10,"operacion":5}
-DIMENSIONS={
-"identidad":["nombre","negocio","personalidad","recuerdo"],
-"propuesta_de_valor":["productos","diferencia","destacar"],
-"audiencia":["publico","publico_nuevo","dudas","tono"],
-"objetivos":["objetivo","canales"],
-"visual":["identidad_visual","elementos","referentes"],
-"diferenciacion":["competencia","evitar"],
-"operacion":["materiales","condiciones"]}
-def diagnose(a):
-    scores={}
-    total=0
-    for dim,fields in DIMENSIONS.items():
-        filled=sum(bool(a.get(k)) for k in fields)
-        score=round(5*filled/len(fields),2)
-        scores[dim]=score
-        total+=score*WEIGHTS[dim]/5
-    flags=[]
-    for field in ["diferencia","publico","objetivo"]:
-        val=str(a.get(field,"")).strip().lower()
-        if val in ["buena calidad","somos los mejores","todo el mundo","somos diferentes","crecer"]:
-            flags.append({"field":field,"issue":"Respuesta demasiado general","quote":a[field]})
-    if a.get("identidad_visual")=="No tenemos identidad visual":
-        flags.append({"field":"identidad_visual","issue":"Identidad visual por definir"})
-    status="apto_para_revision" if total>=80 and not flags else ("insuficiente" if total<60 else "requiere_aclaracion")
-    return {"score":round(total,1),"dimension_scores":scores,"flags":flags,"status":status,"human_review_required":True,"approved":False,"engine":"deterministic_beta_0_1"}
+from briefing_quality import diagnose
 # Streamlit removes widget state when the widget is absent from a rerun.
 # Keep form data separately so navigating between steps does not erase prior answers.
 if "answers_store" not in st.session_state: st.session_state.answers_store={}
@@ -165,6 +140,14 @@ if not st.session_state.finished:
             st.session_state.finished=True;st.rerun()
 else:
     st.success("¡Gracias por participar!")
+    diagnostic=st.session_state["export"]["diagnostic"]
+    st.markdown("### Evaluación preliminar del briefing")
+    st.metric("Suficiencia orientativa",f'{diagnostic["score"]}/100')
+    st.caption("Esta puntuación se basa en reglas heurísticas: no significa que la estrategia sea correcta ni que el diseño esté aprobado.")
+    if diagnostic.get("follow_up_questions"):
+        with st.expander("Preguntas que ayudarían a completar el briefing"):
+            for item in diagnostic["follow_up_questions"]:
+                st.write("• "+item["question"])
     if storage_enabled and not st.session_state.get("saved"):
         try:
             response=requests.post(SHEETS_URL,json={"token":SHEETS_TOKEN,"record":st.session_state["export"]},timeout=15)
