@@ -27,7 +27,15 @@
       "riesgos": [
         "corporativo de alta precisión"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "índice editorial verificado",
+      "referencias_editoriales": [
+        {
+          "fuente": "Meggs' History of Graphic Design, 6.ª edición",
+          "capitulo": "Capítulo 10 · The Arts and Crafts Movement and Its Heritage",
+          "url": "https://www.wiley.com/en-us/meggs%27-history-of-graphic-design-6th-edition-p-9781119136231"
+        }
+      ]
     },
     {
       "id": "cv02",
@@ -46,7 +54,15 @@
       "riesgos": [
         "lectura funcional muy densa"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "índice editorial verificado",
+      "referencias_editoriales": [
+        {
+          "fuente": "Meggs' History of Graphic Design, 6.ª edición",
+          "capitulo": "Capítulo 11 · Art Nouveau",
+          "url": "https://www.wiley.com/en-us/meggs%27-history-of-graphic-design-6th-edition-p-9781119136231"
+        }
+      ]
     },
     {
       "id": "cv03",
@@ -65,7 +81,9 @@
       "riesgos": [
         "naturalidad informal"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv04",
@@ -84,7 +102,9 @@
       "riesgos": [
         "comunicación serena"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv05",
@@ -103,7 +123,9 @@
       "riesgos": [
         "expresión orgánica"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv06",
@@ -122,7 +144,15 @@
       "riesgos": [
         "ornamento nostálgico"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "índice editorial verificado",
+      "referencias_editoriales": [
+        {
+          "fuente": "Meggs' History of Graphic Design, 6.ª edición",
+          "capitulo": "Capítulo 16 · The Bauhaus and the New Typography",
+          "url": "https://www.wiley.com/en-us/meggs%27-history-of-graphic-design-6th-edition-p-9781119136231"
+        }
+      ]
     },
     {
       "id": "cv07",
@@ -141,7 +171,9 @@
       "riesgos": [
         "ornamentación recargada"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv08",
@@ -161,7 +193,15 @@
       "riesgos": [
         "identidad artesanal espontánea"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "índice editorial verificado",
+      "referencias_editoriales": [
+        {
+          "fuente": "Meggs' History of Graphic Design, 6.ª edición",
+          "capitulo": "Capítulo 18 · The International Typographic Style",
+          "url": "https://www.wiley.com/en-us/meggs%27-history-of-graphic-design-6th-edition-p-9781119136231"
+        }
+      ]
     },
     {
       "id": "cv09",
@@ -180,7 +220,9 @@
       "riesgos": [
         "expresividad ornamental"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv10",
@@ -199,7 +241,9 @@
       "riesgos": [
         "sobriedad extrema"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv11",
@@ -217,7 +261,9 @@
       "riesgos": [
         "formalidad clínica"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv12",
@@ -236,7 +282,9 @@
       "riesgos": [
         "información extensa"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv13",
@@ -254,7 +302,9 @@
       "riesgos": [
         "comunicación jurídica"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv14",
@@ -274,7 +324,9 @@
       "riesgos": [
         "servicios que requieren calma"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv15",
@@ -293,7 +345,9 @@
       "riesgos": [
         "señalética urgente"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv16",
@@ -311,7 +365,9 @@
       "riesgos": [
         "comunicación sobria"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv17",
@@ -329,7 +385,9 @@
       "riesgos": [
         "accesibilidad informativa"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv18",
@@ -347,7 +405,9 @@
       "riesgos": [
         "servicio de alta legibilidad"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv19",
@@ -366,7 +426,9 @@
       "riesgos": [
         "contenido abundante sin estructura"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv20",
@@ -385,7 +447,9 @@
       "riesgos": [
         "información delicada"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv21",
@@ -404,7 +468,9 @@
       "riesgos": [
         "campañas de impacto inmediato sin contexto"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv22",
@@ -423,7 +489,9 @@
       "riesgos": [
         "copiar identidades culturales ajenas"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv23",
@@ -442,7 +510,9 @@
       "riesgos": [
         "uso superficial de símbolos comunitarios"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv24",
@@ -461,7 +531,9 @@
       "riesgos": [
         "expresión artística sin información"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv25",
@@ -480,7 +552,9 @@
       "riesgos": [
         "ornamento verde sin sustento"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv26",
@@ -499,7 +573,9 @@
       "riesgos": [
         "servicios con barreras de lectura"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv27",
@@ -518,7 +594,9 @@
       "riesgos": [
         "marcas que exigen gran ornamentación"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv28",
@@ -537,7 +615,9 @@
       "riesgos": [
         "promesas técnicas engañosas"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv29",
@@ -555,7 +635,9 @@
       "riesgos": [
         "comunicación institucional"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv30",
@@ -574,7 +656,9 @@
       "riesgos": [
         "rigidez sistemática"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv31",
@@ -593,7 +677,9 @@
       "riesgos": [
         "fingir precisión científica"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv32",
@@ -612,7 +698,9 @@
       "riesgos": [
         "afirmaciones biológicas sin revisión"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv33",
@@ -631,7 +719,9 @@
       "riesgos": [
         "imágenes simuladas presentadas como reales"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv34",
@@ -649,7 +739,9 @@
       "riesgos": [
         "retoque que cambia el producto"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv35",
@@ -668,7 +760,9 @@
       "riesgos": [
         "falsa autenticidad histórica"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv36",
@@ -687,7 +781,9 @@
       "riesgos": [
         "distorsión espacial engañosa"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv37",
@@ -706,7 +802,9 @@
       "riesgos": [
         "legibilidad crítica"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv38",
@@ -726,7 +824,9 @@
       "riesgos": [
         "necesidad de precisión fotográfica"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv39",
@@ -745,7 +845,9 @@
       "riesgos": [
         "reducción de ideas complejas a clichés"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv40",
@@ -764,7 +866,9 @@
       "riesgos": [
         "mapas sin validación geográfica"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     },
     {
       "id": "cv41",
@@ -783,7 +887,10 @@
       "riesgos": [
         "greenwashing y afirmaciones ambientales sin evidencia"
       ],
-      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente."
+      "validacion": "Requiere investigación contextual y revisión de referentes; no se adopta automáticamente.",
+      "validacion_historica": "pendiente de investigación bibliográfica individual",
+      "referencias_editoriales": []
     }
-  ]
+  ],
+  "nota_fuentes": "Solo se asocian capítulos donde el índice editorial confirma directamente la referencia; las otras entradas requieren investigación bibliográfica individual."
 }
