@@ -35,9 +35,9 @@ def audit_briefing(answers,diagnostic=None):
         add("precios","Oferta","¿Cuáles son los precios, rangos de tarifa o condiciones comerciales principales?",
             "Los precios y condiciones de venta no se solicitan expresamente en el formulario.",
             "alta",["productos"])
-    if not _has(constraints+" "+product,[r"reserv",r"pedido",r"compra",r"cotiz",r"whatsapp",r"agend",r"web"]):
+    if not _has(constraints+" "+product,[r"por (?:whatsapp|la web|instagram|telefono|correo)",r"\benlace\b",r"\bformulario\b",r"\bnumero de contacto\b",r"\bpago (?:online|previo)\b"]):
         add("conversion","Conversión","¿Cómo realiza una persona la consulta, reserva o compra, paso a paso?",
-            "El recorrido desde la publicación hasta la conversión requiere confirmación.",
+            "Mencionar «reservar» no explica por qué medio ni mediante qué pasos se confirma.",
             "alta",["objetivo","accion","condiciones"])
     if not _has(constraints,[r"meta",r"objetiv[oa] numer",r"\b\d+\s*(?:reserv|consulta|venta|cliente)",r"indicador",r"conversion"]):
         add("indicador","Resultados","¿Qué resultado medible definiría el éxito de la campaña?",
@@ -61,12 +61,12 @@ def audit_briefing(answers,diagnostic=None):
         if not _has(product+constraints,[r"seguridad",r"protocolo",r"seguro",r"certific",r"emergencia"]):
             add("seguridad","Oferta turística","¿Qué medidas de seguridad y requisitos se informan antes de la excursión?",
                 "La información de seguridad no aparece documentada.", "alta",["productos","condiciones"])
-        if not _has(product+constraints,[r"lluvia",r"clim",r"cancel",r"reprogram",r"mal tiempo"]):
+        if not _has(product+constraints,[r"se (?:suspende|cancela|reprograma)",r"devolucion",r"reembolso",r"se mantiene (?:la salida|la actividad)",r"cambio de fecha",r"plan alternativo"]):
             add("clima","Oferta turística","¿Qué pasa con la actividad si llueve o hay mal tiempo?",
-                "Las políticas climáticas no están confirmadas.", "alta",["condiciones"])
-        if not _has(product+constraints,[r"grupo",r"cupos?",r"capacidad",r"m[aá]ximo",r"personas por"]):
+                "Mencionar la lluvia no establece una política de cancelación o reprogramación.", "alta",["condiciones"])
+        if not _has(product+constraints,[r"\b(?:maximo|hasta|cupo de|capacidad de|grupos de)\s*\d+\s*(?:personas|pasajeros|participantes|cupos)",r"\b\d+\s*(?:personas|pasajeros|participantes)\s*por\s*(?:grupo|salida)"]):
             add("cupos","Oferta turística","¿Cuántas personas admite cada salida y qué fechas están disponibles?",
-                "La capacidad y disponibilidad requieren confirmación.", "media",["productos","condiciones"])
+                "Una mención como «grupos pequeños» no determina el máximo de personas ni la disponibilidad.", "media",["productos","condiciones"])
     if _has(text,[r"restaur",r"cafeter",r"almuerzo",r"comida",r"pasteler",r"cocin",r"buffet"]):
         if not _has(product+constraints,[r"horari",r"lunes",r"martes",r"domingo",r"\b\d{1,2}:\d\d"]):
             add("horarios","Gastronomía","¿Cuáles son los días y horarios reales de atención?",
