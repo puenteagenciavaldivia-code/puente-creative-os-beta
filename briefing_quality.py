@@ -92,7 +92,7 @@ def field_quality(field, value):
     words = cleaned.split()
     letters = re.sub(r"[^a-zñ]", "", cleaned)
     if (raw in GENERIC or raw in PLACEHOLDERS
-            or re.fullmatch(r"(?:[a-z]{1,5}|[0-9])\1{2,}", letters or "") 
+            or re.fullmatch(r"([a-z]{1,5}|[0-9])\1{2,}", letters or "") 
             or re.search(r"(asdf|qwer|sdfg|dfgh|fghj|hjkl)", letters)):
         return 0.0, "Texto de prueba o demasiado genérico"
     if field == "nombre":
