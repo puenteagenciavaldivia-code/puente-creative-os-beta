@@ -39,6 +39,7 @@ OPTIONS={
 "goal":["Aumentar ventas","Conseguir consultas","Dar a conocer mi marca","Fidelizar clientes","Educar al público","Aún no lo sé"],
 "channels":["Instagram","Facebook","WhatsApp","TikTok","Web","Google","Otros"]}
 from briefing_quality import diagnose
+from briefing_guidance import SECTION_INTROS, HELP, EXAMPLES
 # Streamlit removes widget state when the widget is absent from a rerun.
 # Keep form data separately so navigating between steps does not erase prior answers.
 if "answers_store" not in st.session_state: st.session_state.answers_store={}
@@ -62,7 +63,7 @@ try:
 except Exception:
     st.caption("El panel interno aún no está disponible en esta implementación. El briefing sigue funcionando.")
 st.title("Descubramos tu marca.")
-st.write("Este cuestionario busca conocer tu negocio para probar nuestro sistema creativo. Responde con tus palabras, sin necesidad de conocimientos de diseño.")
+st.write("Queremos conocer tu negocio. Responde como si se lo contaras a alguien en una conversación. No necesitas saber de diseño ni publicidad.")
 try:
     SHEETS_URL=st.secrets.get("SHEETS_WEBHOOK_URL","")
     SHEETS_TOKEN=st.secrets.get("SHEETS_WEBHOOK_TOKEN","")
@@ -78,12 +79,19 @@ if not st.session_state.finished:
     p=st.session_state.step
     st.progress((p+1)/5)
     st.subheader(f"{p+1}/5 · {SECTIONS[p][0]}")
+    intro, example=SECTION_INTROS[SECTIONS[p][0]]
+    st.write(intro)
+    st.caption(example)
     for key,label,kind in SECTIONS[p][1]:
         restore_widget(key)
-        if kind=="text": st.text_input(label,key=key)
-        elif kind=="area":st.text_area(label,key=key,height=90)
-        elif kind=="channels":st.multiselect(label,OPTIONS[kind],key=key)
-        else:st.selectbox(label,["Selecciona una opción"]+OPTIONS[kind],key=key)
+        if kind=="text":
+            st.text_input(label,key=key,placeholder=EXAMPLES.get(key,""),help=HELP.get(key,""))
+        elif kind=="area":
+            st.text_area(label,key=key,height=110,placeholder=EXAMPLES.get(key,""),help=HELP.get(key,""))
+        elif kind=="channels":
+            st.multiselect(label,OPTIONS[kind],key=key,help=HELP.get(key,""))
+        else:
+            st.selectbox(label,["Selecciona una opción"]+OPTIONS[kind],key=key,help=HELP.get(key,""))
     if p==3 and st.session_state.get("identidad_visual") in OPTIONS["visual"][:2]:
         restore_widget("autorizacion")
         st.selectbox("¿Puedes compartir archivos gráficos autorizados?",["Selecciona una opción","Sí","Debo confirmar","No"],key="autorizacion")
