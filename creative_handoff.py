@@ -48,6 +48,7 @@ def build_handoff(record):
         "bloques": blocks,
         "preparacion": readiness,
         "alertas": diagnostic.get("flags", []),
+        "auditoria_estrategica": diagnostic.get("strategic_audit"),
         "preguntas_pendientes": diagnostic.get("follow_up_questions", []),
         "adjuntos": record.get("attachments", []),
         "hipotesis_por_explorar": [],
