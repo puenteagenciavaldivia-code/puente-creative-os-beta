@@ -5,7 +5,7 @@ import requests
 from datetime import datetime, timezone
 import streamlit as st
 
-st.set_page_config(page_title="PUENTE Creative OS | Beta 0.9", page_icon="🌉", layout="centered")
+st.set_page_config(page_title="PUENTE Creative OS | Beta 1.0", page_icon="🌉", layout="centered")
 st.markdown("""<style>.block-container{max-width:780px;padding-top:2rem}h1{letter-spacing:-.04em}</style>""",unsafe_allow_html=True)
 SECTIONS=[
 ("Identidad",[
