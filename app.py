@@ -38,7 +38,7 @@ OPTIONS={
 "visual":["Sí, tenemos manual de marca","Tenemos logo, pero no manual","No tenemos identidad visual"],
 "goal":["Aumentar ventas","Conseguir consultas","Dar a conocer mi marca","Fidelizar clientes","Educar al público","Aún no lo sé"],
 "channels":["Instagram","Facebook","WhatsApp","TikTok","Web","Google","Otros"]}
-from briefing_quality import diagnose
+from briefing_quality import diagnose, field_quality
 from creative_handoff import build_handoff
 from briefing_guidance import SECTION_INTROS, HELP, EXAMPLES
 # Streamlit removes widget state when the widget is absent from a rerun.
@@ -131,6 +131,11 @@ if not st.session_state.finished:
                 st.multiselect(label,OPTIONS[kind],key=key,help=HELP.get(key,""))
             else:
                 st.selectbox(label,["Selecciona una opción"]+OPTIONS[kind],key=key,help=HELP.get(key,""))
+        # Orientación amable durante el llenado, sin bloquear el formulario.
+        if kind=="area" and st.session_state.get(key):
+            quality,_=field_quality(key,st.session_state.get(key))
+            if quality < 0.75:
+                st.caption("Sugerencia: agrega un ejemplo de tu experiencia. Una o dos frases concretas nos ayudan a entenderte mejor.")
         if p==3 and st.session_state.get("identidad_visual") in OPTIONS["visual"][:2]:
             restore_widget("autorizacion")
             st.selectbox("¿Puedes compartir archivos gráficos autorizados?",["Selecciona una opción","Sí","Debo confirmar","No"],key="autorizacion")
@@ -176,14 +181,7 @@ if not st.session_state.finished:
                 st.rerun()
 else:
     st.success("¡Gracias por participar!")
-    diagnostic=st.session_state["export"]["diagnostic"]
-    st.markdown("### Evaluación preliminar del briefing")
-    st.metric("Suficiencia orientativa",f'{diagnostic["score"]}/100')
-    st.caption("Esta puntuación se basa en reglas heurísticas: no significa que la estrategia sea correcta ni que el diseño esté aprobado.")
-    if diagnostic.get("follow_up_questions"):
-        with st.expander("Preguntas que ayudarían a completar el briefing"):
-            for item in diagnostic["follow_up_questions"]:
-                st.write("• "+item["question"])
+    st.write("El equipo de Puente revisará la información. Si necesitamos aclarar algo, te lo consultaremos.")
     if storage_enabled and not st.session_state.get("saved"):
         try:
             response=requests.post(SHEETS_URL,json={"token":SHEETS_TOKEN,"record":st.session_state["export"]},timeout=15)
