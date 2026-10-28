@@ -1,398 +1,414 @@
-import hmac
+"""PUENTE Creative OS — escritorio de gestión interna (Beta 1.0)."""
+import io
 import json
+import secrets
+import unittest
 import requests
+import hmac
 import streamlit as st
 from creative_handoff import build_handoff
 from strategic_audit import audit_briefing
-from review_workflow import new_review, validate_review, prepare_reviewed_package
-from design_catalog import search_catalog, category_names
-from design_methodology import BIBLIOGRAPHY, CRITERIA
-from ai_art_direction import propose_with_ai
+from review_workflow import new_review,validate_review,prepare_reviewed_package
+from clarifications import build_request,validate_reply,attach_reply
 from creative_preselection import preselect
-from clarifications import build_request, validate_reply, attach_reply
+from ai_art_direction import propose_with_ai
+from design_catalog import search_catalog,category_names
+from design_methodology import BIBLIOGRAPHY,CRITERIA
+from dashboard_helpers import public_clarification_url,invitation_copy,whatsapp_share_url,mailto_url
 
-st.set_page_config(page_title="Panel interno | PUENTE Creative OS", page_icon="🌉", layout="wide")
-st.title("PUENTE · Panel interno")
-st.caption("Briefings recibidos · Acceso exclusivo para el equipo de Agencia Puente")
-
+st.set_page_config(page_title="Escritorio creativo | PUENTE",page_icon="🌉",layout="wide")
+st.markdown("""<style>
+.block-container{max-width:1260px;padding-top:1.4rem}
+h1,h2,h3{letter-spacing:-.035em}
+div[data-testid="stMetric"]{background:rgba(128,128,128,.055);padding:14px;border-radius:13px}
+</style>""",unsafe_allow_html=True)
 try:
-    panel_password=st.secrets.get("ADMIN_PANEL_PASSWORD","")
-    read_token=st.secrets.get("ADMIN_READ_TOKEN","")
-    url=st.secrets.get("SHEETS_WEBHOOK_URL","")
-except (FileNotFoundError,KeyError):
-    panel_password=read_token=url=""
-
-if not panel_password or not read_token or not url:
-    st.error("Panel no configurado. Faltan ADMIN_PANEL_PASSWORD, ADMIN_READ_TOKEN o SHEETS_WEBHOOK_URL en Secrets.")
+    cfg={k:st.secrets.get(k,"") for k in (
+        "ADMIN_PANEL_PASSWORD","ADMIN_READ_TOKEN","SHEETS_WEBHOOK_URL",
+        "CLARIFICATIONS_ADMIN_TOKEN","APP_PUBLIC_URL","OPENAI_API_KEY","OPENAI_MODEL")}
+except (KeyError,FileNotFoundError):
+    cfg={}
+password=cfg.get("ADMIN_PANEL_PASSWORD","")
+read_token=cfg.get("ADMIN_READ_TOKEN","")
+endpoint=cfg.get("SHEETS_WEBHOOK_URL","")
+if not (password and read_token and endpoint):
+    st.error("Configuración incompleta: faltan credenciales del panel o del receptor.")
     st.stop()
-
-if not st.session_state.get("puente_admin_ok",False):
-    with st.form("admin_login"):
-        entered=st.text_input("Contraseña del panel",type="password")
-        submitted=st.form_submit_button("Entrar",type="primary")
-    if submitted:
-        if hmac.compare_digest(entered,panel_password):
+if not st.session_state.get("puente_admin_ok"):
+    st.title("Acceso interno · Puente")
+    st.caption("Creative OS · Este espacio es exclusivo del equipo.")
+    with st.form("login"):
+        typed=st.text_input("Contraseña",type="password")
+        login=st.form_submit_button("Entrar",type="primary")
+    if login:
+        if hmac.compare_digest(typed,password):
             st.session_state.puente_admin_ok=True
             st.rerun()
         else:
             st.error("Contraseña incorrecta.")
     st.stop()
 
+def call_backend(action,payload,timeout=30):
+    r=requests.post(endpoint,json={"action":action,**payload},timeout=timeout)
+    r.raise_for_status()
+    if r.text.strip() in ("DENIED","ERROR","INVALID","EXPIRED","CLOSED","QUOTA","ALREADY_SENT"):
+        raise RuntimeError("El receptor respondió: "+r.text.strip())
+    data=r.json()
+    if not isinstance(data,dict) or not data.get("ok",True):
+        raise RuntimeError("Respuesta no reconocida del receptor.")
+    return data
+
+def load_items():
+    try:
+        r=requests.post(endpoint,json={"action":"admin_list","admin_token":read_token},timeout=35)
+        r.raise_for_status()
+        if r.text.strip() in ("DENIED","ERROR"):
+            raise RuntimeError("No se pudo validar el permiso de lectura.")
+        data=r.json()
+        if not isinstance(data.get("items"),list):
+            raise ValueError("Formato inesperado.")
+        st.session_state["admin_items"]=data["items"]
+    except (ValueError,requests.RequestException,RuntimeError) as exc:
+        st.error("No fue posible cargar los briefings: "+str(exc))
+
 with st.sidebar:
-    st.success("Acceso interno")
-    if st.button("Cerrar sesión"):
+    st.markdown("### 🌉 PUENTE")
+    st.caption("Creative OS · Escritorio creativo")
+    if st.button("Actualizar briefings",use_container_width=True):
+        load_items()
+    with st.expander("Verificación técnica"):
+        if st.button("Ejecutar pruebas internas"):
+            output=io.StringIO()
+            tests=unittest.TestLoader().discover("tests","test_*.py")
+            result=unittest.TextTestRunner(stream=output,verbosity=2).run(tests)
+            if result.wasSuccessful() and result.testsRun>0:
+                st.success(str(result.testsRun)+" pruebas satisfactorias.")
+            else:
+                st.error("Se encontraron errores en las pruebas.")
+            st.code(output.getvalue())
+    if st.button("Cerrar sesión",use_container_width=True):
         st.session_state.puente_admin_ok=False
         st.session_state.pop("admin_items",None)
         st.rerun()
-    st.caption("Beta: usa solo información de prueba hasta completar la revisión de seguridad.")
-    with st.expander("Verificación técnica"):
-        st.caption("Ejecuta pruebas locales del análisis y el traspaso creativo. No modifica briefings ni archivos.")
-        if st.button("Ejecutar pruebas internas"):
-            import unittest
-            import io
-            output=io.StringIO()
-            suite=unittest.TestLoader().discover(start_dir="tests",pattern="test_*.py")
-            results=unittest.TextTestRunner(stream=output,verbosity=2).run(suite)
-            if results.wasSuccessful() and results.testsRun>0:
-                st.success(str(results.testsRun)+" pruebas satisfactorias.")
-            else:
-                st.error("Las pruebas detectaron errores o no se ejecutaron.")
-            st.code(output.getvalue(),language="text")
+    st.caption("Beta: utilizar datos ficticios hasta cerrar la evaluación de seguridad.")
 
-def get_data():
-    try:
-        response=requests.post(url,json={"action":"admin_list","admin_token":read_token},timeout=30)
-        response.raise_for_status()
-        if response.text.strip()=="DENIED":
-            raise RuntimeError("El receptor rechazó el token de lectura.")
-        if response.text.strip()=="ERROR":
-            raise RuntimeError("Google Apps Script devolvió un error.")
-        data=response.json()
-        if not isinstance(data.get("items"),list):
-            raise ValueError("Respuesta de datos inesperada.")
-        return data["items"]
-    except (requests.RequestException,ValueError,RuntimeError) as exc:
-        st.error(f"No fue posible consultar los briefings: {str(exc)}")
-        return None
-
-if st.button("Actualizar registros",type="primary") or "admin_items" not in st.session_state:
-    result=get_data()
-    if result is not None:
-        st.session_state.admin_items=result
-
+if "admin_items" not in st.session_state:
+    load_items()
 items=st.session_state.get("admin_items",[])
+st.title("Escritorio creativo")
+st.caption("Del briefing a las decisiones de dirección de arte · Acceso exclusivo del equipo")
 if not items:
-    st.info("Aún no hay registros disponibles o no se cargaron. Puedes pulsar «Actualizar registros».")
+    st.info("Todavía no hay briefings visibles o no se pudieron cargar.")
     st.stop()
-
-with st.container():
-    c1,c2,c3=st.columns(3)
-    c1.metric("Briefings visibles",len(items))
-    c2.metric("Marcados para revisión",sum(x.get("status")=="apto_para_revision" for x in items))
-    c3.metric("Con adjuntos",sum(bool(x.get("attachments")) for x in items))
-
-query=st.text_input("Buscar marca",placeholder="Nombre de la marca")
-filtered=[x for x in items if query.lower().strip() in str(x.get("brand","")).lower()]
-if not filtered:
-    st.info("No se encontraron marcas que coincidan.")
+c1,c2,c3=st.columns(3)
+c1.metric("Briefings recibidos",len(items))
+c2.metric("Listos para revisión",sum(x.get("status")=="apto_para_revision" for x in items))
+c3.metric("Con material adjunto",sum(bool(x.get("attachments")) for x in items))
+search=st.text_input("Buscar un cliente",placeholder="Escribe el nombre de la marca")
+visible=[x for x in items if search.casefold().strip() in str(x.get("brand","")).casefold()]
+if not visible:
+    st.info("No encontramos esa marca.")
     st.stop()
-
-names=[f"{x.get('brand','Sin nombre')} · {x.get('submitted_at','')[:16]} · {x.get('submission_id','')[:8]}" for x in filtered]
-chosen=filtered[st.selectbox("Seleccionar briefing",range(len(filtered)),format_func=lambda i:names[i])]
-st.divider()
-st.subheader(chosen.get("brand") or "Sin nombre")
-left,right=st.columns(2)
-left.write("**Estado:** "+str(chosen.get("status") or "Sin estado"))
-right.write("**Completitud orientativa:** "+str(chosen.get("score",0))+"/100")
-if (chosen.get("diagnostic") or {}).get("engine")=="heuristic_beta_0_5":
-    st.caption("Evaluación Beta 0.5: reglas heurísticas de claridad. No es comprensión semántica ni aprobación creativa.")
-else:
-    st.caption("Registro anterior a la Beta 0.5: puntuación basada en completitud. No equivale a calidad estratégica.")
-
-answers=chosen.get("answers") or {}
-if isinstance(answers,dict):
-    st.markdown("### Respuestas del cliente")
-    for key,value in answers.items():
-        if value not in (None,"",[]):
-            st.markdown("**"+str(key).replace("_"," ").capitalize()+"**")
-            st.write(", ".join(map(str,value)) if isinstance(value,list) else str(value))
-
-links=chosen.get("attachments") or []
-st.markdown("### Archivos adjuntos")
-if links:
-    for index,link in enumerate(links,1):
-        if link.startswith("https://drive.google.com/"):
-            st.link_button(f"Abrir adjunto {index} en Drive",link)
-else:
-    st.caption("Este briefing no tiene enlaces a archivos adjuntos registrados.")
-
-diag=chosen.get("diagnostic") or {}
-if diag.get("follow_up_questions"):
-    st.markdown("### Preguntas de seguimiento sugeridas")
-    for item in diag["follow_up_questions"]:
-        st.write("• "+str(item.get("question","")))
-if diag.get("flags"):
-    with st.expander("Alertas de calidad detectadas"):
-        for item in diag["flags"]:
-            st.write(str(item.get("field",""))+": "+str(item.get("issue","")))
-st.markdown("### Auditoría estratégica automática")
+choice=st.selectbox("Proyecto",range(len(visible)),
+    format_func=lambda i:str(visible[i].get("brand") or "Sin nombre")+" · "+
+        str(visible[i].get("submitted_at") or "")[:10]+" · "+
+        str(visible[i].get("submission_id") or "")[:8])
+selected=visible[choice]
+answers=selected.get("answers") or {}
+diag=selected.get("diagnostic") or {}
 audit=diag.get("strategic_audit")
-if not isinstance(audit,dict):
-    audit=audit_briefing(answers,diag)
-    st.caption("Auditoría calculada ahora para un registro anterior; no modifica el diagnóstico guardado.")
-else:
-    st.caption("Auditoría generada automáticamente al enviar el briefing.")
-st.info("Esta revisión identifica preguntas posibles mediante reglas. No interpreta profundamente ni aprueba la campaña.")
-st.write("**Estado:** Pendiente de revisión humana")
+if not isinstance(audit,dict):audit=audit_briefing(answers,diag)
 questions=audit.get("preguntas_priorizadas",[])
-if questions:
-    high=sum(x.get("prioridad")=="alta" for x in questions)
-    medium=sum(x.get("prioridad")!="alta" for x in questions)
-    a,b=st.columns(2)
-    a.metric("Preguntas prioritarias",high)
-    b.metric("Aclaraciones secundarias",medium)
-if questions:
-    st.markdown("#### Preguntas para aclarar antes de crear")
-    for i,item in enumerate(questions,1):
-        st.markdown("**"+str(i)+". "+item.get("pregunta","")+"**")
-        st.caption(item.get("area","")+" · Prioridad "+item.get("prioridad","media")+" · "+item.get("motivo",""))
-else:
-    st.caption("Sin alertas adicionales detectadas por reglas. Esto no significa que no existan vacíos.")
-with st.expander("Información aprovechable para Puente"):
-    for item in audit.get("informacion_aprovechable",[]):
-        st.write("**"+item.get("area","")+":** "+item.get("observacion",""))
-st.download_button("Descargar auditoría estratégica (JSON)",
-    data=json.dumps(audit,ensure_ascii=False,indent=2),
-    file_name="puente-auditoria-estrategica.json",mime="application/json")
-
-with st.expander("Ver diagnóstico técnico"):
-    st.json(diag)
-
-record={"submission_id":chosen.get("submission_id"),"submitted_at":chosen.get("submitted_at"),"answers":answers,"diagnostic":diag,"attachments":links}
+record={"submission_id":selected.get("submission_id"),
+        "submitted_at":selected.get("submitted_at"),
+        "answers":answers,"diagnostic":diag,
+        "attachments":selected.get("attachments") or []}
 handoff=build_handoff(record)
 handoff["auditoria_estrategica"]=audit
-st.markdown("### Ficha de entrada a Creative OS")
-st.caption("Ordena las declaraciones del cliente. No selecciona corrientes madre ni sustituye la revisión del equipo.")
-for group, content in handoff["bloques"].items():
-    with st.expander(group.replace("_"," ").capitalize()):
-        for key,value in content["declaraciones_del_cliente"].items():
-            st.write("**"+key.replace("_"," ").capitalize()+":**",value)
-        if content["por_consultar"]:
-            st.caption("Por consultar: "+", ".join(content["por_consultar"]))
-st.markdown("### Preparación para el trabajo creativo")
-for task, details in handoff["preparacion"].items():
-    st.write("**"+task.replace("_"," ").capitalize()+"** · "+
-             ("Información por complementar: "+", ".join(details["informacion_pendiente"])
-              if details["informacion_pendiente"] else "Información declarada disponible. Requiere revisión humana."))
+rid="puente_review_"+str(record["submission_id"])
+if rid not in st.session_state:
+    st.session_state[rid]=new_review(record,audit)
+review=st.session_state[rid]
 st.divider()
-st.markdown("### Revisión estratégica del equipo · Beta 0.8")
-st.caption("Las respuestas originales no se modifican. Esta revisión permanece en la sesión hasta que descargues el archivo. No se guarda en Sheets ni Drive.")
-review_key="puente_review_"+str(record.get("submission_id"))
-if review_key not in st.session_state:
-    st.session_state[review_key]=new_review(record,audit)
+st.subheader(str(selected.get("brand") or "Sin nombre"))
+st.caption("Completitud orientativa: "+str(selected.get("score",0))+
+           "/100 · No equivale a aprobación estratégica.")
+tabs=st.tabs(["Resumen","Aclaraciones","Dirección de arte","Producción","Documentos"])
 
-with st.expander("Recuperar una revisión guardada"):
-    imported=st.file_uploader("Archivo JSON exportado anteriormente",type=["json"],key="import_"+review_key)
-    if imported is not None and st.button("Cargar revisión",key="load_"+review_key):
-        if imported.size>200_000:
-            st.error("El archivo supera el límite de 200 KB.")
-        else:
-            try:
-                candidate=json.loads(imported.getvalue().decode("utf-8"))
-                if not isinstance(candidate,dict) or candidate.get("schema_version")!="puente_review_0_8" or candidate.get("submission_id")!=record.get("submission_id"):
-                    st.error("El archivo no corresponde a este briefing o versión.")
-                else:
-                    st.session_state[review_key]=candidate
-                    # Clear widgets so imported values are applied on next render.
-                    for key in list(st.session_state.keys()):
-                        if str(key).startswith("rev_widget_"+review_key):
-                            del st.session_state[key]
-                    st.rerun()
-            except (UnicodeDecodeError,ValueError,TypeError):
-                st.error("No se pudo leer el archivo JSON.")
+with tabs[0]:
+    st.markdown("#### La marca en pocas palabras")
+    st.write(answers.get("negocio") or "El cliente no describió todavía el negocio.")
+    x,y=st.columns(2)
+    with x:
+        st.markdown("**Público principal**")
+        st.write(answers.get("publico") or "Sin definir")
+        st.markdown("**Diferenciación declarada**")
+        st.write(answers.get("diferencia") or "Sin definir")
+    with y:
+        st.markdown("**Objetivo**")
+        st.write(answers.get("objetivo") or "Sin definir")
+        st.markdown("**Canales**")
+        st.write(", ".join(answers.get("canales",[])) or "Sin definir")
+    with st.expander("Leer las respuestas originales del cliente"):
+        for key,value in answers.items():
+            if value not in ("",None,[]):
+                st.markdown("**"+key.replace("_"," ").capitalize()+"**")
+                st.write(", ".join(map(str,value)) if isinstance(value,list) else value)
+    with st.expander("Adjuntos originales"):
+        if record["attachments"]:
+            for i,link in enumerate(record["attachments"],1):
+                if isinstance(link,str) and link.startswith("https://drive.google.com/"):
+                    st.link_button("Abrir adjunto "+str(i),link)
+        else:st.caption("No hay adjuntos registrados.")
+    with st.expander("Diagnóstico técnico"):
+        st.json(diag)
+    st.download_button("Descargar briefing original",json.dumps(record,ensure_ascii=False,indent=2),
+        file_name="puente-briefing.json",mime="application/json")
 
-review=st.session_state[review_key]
-review["responsable"]=st.text_input("Responsable de la revisión",value=review.get("responsable",""),key="rev_widget_"+review_key+"_responsable")
-st.markdown("#### 1. Aclaraciones del cliente")
-st.caption("Puedes preparar una mini ficha para el cliente con solo las preguntas seleccionadas.")
-ids_default=[q.get("id") for q in questions if q.get("prioridad")=="alta"]
-selected_ids=st.multiselect(
-    "Preguntas que enviaremos al cliente",
-    options=[q.get("id") for q in questions],
-    default=ids_default,
-    format_func=lambda qid:next((q.get("pregunta",qid) for q in questions if q.get("id")==qid),qid),
-    key="questions_to_send_"+review_key
-)
-if selected_ids:
-    packet=build_request(record,audit,selected_ids)
-    st.download_button("Descargar mini ficha para el cliente (JSON)",
-        data=json.dumps(packet,ensure_ascii=False,indent=2),
-        file_name="puente-preguntas-"+str(record.get("submission_id",""))[:8]+".json",
-        mime="application/json",key="download_questions_"+review_key)
-    st.caption("El cliente abre «Aclaraciones» en Creative OS, carga el archivo y descarga sus respuestas. En beta el envío no es automático.")
-with st.expander("Importar respuestas complementarias"):
-    upload_reply=st.file_uploader("Archivo JSON que envió el cliente",type=["json"],key="reply_"+review_key)
-    if upload_reply is not None and st.button("Validar e importar respuestas",key="import_reply_"+review_key):
-        if upload_reply.size>200_000:
-            st.error("Archivo demasiado grande.")
-        else:
+with tabs[1]:
+    st.markdown("#### Aclaraciones del cliente")
+    st.caption("Solo las preguntas realmente necesarias. Puente puede descartar alertas antes de enviarlas.")
+    hi=sum(q.get("prioridad")=="alta" for q in questions)
+    a,b=st.columns(2)
+    a.metric("Prioridad alta",hi)
+    b.metric("Otras consultas",len(questions)-hi)
+    if not questions:
+        st.success("Las reglas no identificaron aclaraciones nuevas. Requiere igualmente revisión humana.")
+    else:
+        for q in questions:
+            with st.expander(q.get("pregunta","Pregunta")):
+                st.caption("Prioridad "+str(q.get("prioridad","media"))+
+                           " · "+str(q.get("motivo","")))
+        ids=[q.get("id") for q in questions]
+        preferred=[q["id"] for q in questions if q.get("prioridad")=="alta"]
+        selected_ids=st.multiselect("Seleccionar preguntas que recibirá el cliente",
+            ids,default=preferred,
+            format_func=lambda x:next((q["pregunta"] for q in questions if q.get("id")==x),x))
+        if selected_ids:
+            mini=build_request(record,audit,selected_ids)
+            with st.expander("Descarga de respaldo"):
+                st.download_button("Descargar ficha JSON",json.dumps(mini,ensure_ascii=False,indent=2),
+                    file_name="puente-preguntas-"+str(record["submission_id"])[:8]+".json",
+                    mime="application/json")
+            st.markdown("##### Crear enlace seguro para el cliente")
+            admin_token=cfg.get("CLARIFICATIONS_ADMIN_TOKEN","")
+            public_url=cfg.get("APP_PUBLIC_URL","")
+            if not admin_token or not public_url:
+                st.warning("Para activar enlaces faltan CLARIFICATIONS_ADMIN_TOKEN y/o APP_PUBLIC_URL en Secrets. Además debes publicar la nueva versión de Apps Script.")
+            else:
+                if st.button("Crear enlace privado por 7 días",type="primary",key="make_link_"+rid):
+                    token=secrets.token_hex(32)
+                    try:
+                        link=public_clarification_url(public_url,token)
+                        call_backend("clarify_create",{
+                            "admin_token":admin_token,"access_token":token,
+                            "submission_id":record["submission_id"],
+                            "brand":str(answers.get("nombre") or ""),
+                            "questions":mini["preguntas"]})
+                        st.session_state["active_invite_"+rid]={"token":token,"link":link}
+                        st.success("Enlace creado. Solo permite una respuesta y vence en siete días.")
+                    except (ValueError,requests.RequestException,RuntimeError) as exc:
+                        st.error("No se pudo crear el enlace: "+str(exc))
+                invite=st.session_state.get("active_invite_"+rid)
+                if invite:
+                    link=invite["link"]
+                    message=invitation_copy(answers.get("nombre",""),link)
+                    st.code(link,language="text")
+                    st.link_button("Compartir en WhatsApp",whatsapp_share_url(message))
+                    contact=st.text_input("Correo del cliente",placeholder="cliente@empresa.cl",key="mail_"+rid)
+                    if contact:
+                        try:
+                            st.link_button("Abrir mi correo con mensaje listo",
+                                mailto_url(contact,answers.get("nombre",""),message))
+                        except ValueError as exc:st.warning(str(exc))
+                        if st.button("Enviar correo automáticamente desde Puente",key="send_"+rid):
+                            try:
+                                call_backend("clarify_send_email",{
+                                    "admin_token":admin_token,"access_token":invite["token"],
+                                    "email":contact,"link":link})
+                                st.success("Google Apps Script confirmó el envío del correo.")
+                            except (RuntimeError,requests.RequestException) as exc:
+                                st.error("No pudimos confirmar el envío: "+str(exc))
+    st.markdown("##### Respuestas recibidas en el receptor")
+    admin_token=cfg.get("CLARIFICATIONS_ADMIN_TOKEN","")
+    if admin_token:
+        if st.button("Consultar respuestas y estados",key="read_answers_"+rid):
             try:
-                reply=json.loads(upload_reply.getvalue().decode("utf-8"))
-                validate_reply(reply,record,audit)
-                st.session_state[review_key]=attach_reply(st.session_state[review_key],reply,record,audit)
+                data=call_backend("clarify_list",{"admin_token":admin_token})
+                st.session_state["clarification_index"]=data.get("items",[])
+            except (RuntimeError,requests.RequestException) as exc:
+                st.error("No fue posible consultar las aclaraciones: "+str(exc))
+        entries=[x for x in st.session_state.get("clarification_index",[])
+                 if x.get("submission_id")==record["submission_id"]]
+        if entries:
+            for i,entry in enumerate(entries,1):
+                with st.expander("Solicitud "+str(i)+" · "+str(entry.get("status","pending"))):
+                    st.caption("Creada: "+str(entry.get("created_at_utc",""))+
+                               " · Vence: "+str(entry.get("expires_at_utc","")))
+                    for response in entry.get("answers",[]):
+                        st.markdown("**"+str(response.get("id",""))+"**")
+                        st.write(response.get("respuesta",""))
+                    st.caption("Las respuestas recibidas no se consideran verificadas automáticamente.")
+        else:st.caption("No hay respuestas consultadas de este proyecto.")
+    st.markdown("##### Validación de las preguntas por el equipo")
+    for q in questions:
+        qid=q["id"];old=review.get("revision",{}).get(qid,{})
+        with st.expander(q["pregunta"]+" · Estado interno"):
+            options=["pendiente","aclarar","confirmado","descartado"]
+            state=st.selectbox("Estado",options,index=options.index(old.get("estado")) if old.get("estado") in options else 0,
+                               key="rev_state_"+rid+"_"+qid)
+            note=st.text_area("Evidencia o motivo",value=old.get("nota",""),
+                              key="rev_note_"+rid+"_"+qid)
+            review.setdefault("revision",{})[qid]={"estado":state,"nota":note}
+    st.caption("Una respuesta no resuelve por sí sola una pregunta: debe confirmarla el responsable.")
+
+with tabs[2]:
+    st.markdown("#### Dirección de arte · Tres alternativas")
+    st.caption("La IA investiga y propone; el director de arte modifica, compara y decide. Nunca mostramos estas hipótesis al cliente.")
+    with st.expander("Biblioteca de referencias y fuentes"):
+        cat=st.selectbox("Categoría",category_names())
+        term=st.text_input("Buscar corriente o concepto")
+        found=search_catalog(term,cat)
+        st.caption(str(len(found))+" entradas")
+        for item in found[:15]:
+            st.markdown("**"+item["nombre"]+"** · "+item["categoria"])
+            st.caption("Rasgos: "+", ".join(item["rasgos"]))
+            st.caption("Investigación: "+item.get("validacion_historica","pendiente"))
+        st.markdown("**Fuentes de metodología**")
+        for source in BIBLIOGRAPHY:
+            st.markdown("["+source["titulo"]+"]("+source["url"]+") · "+source["alcance"])
+    ai_key=cfg.get("OPENAI_API_KEY","")
+    model=cfg.get("OPENAI_MODEL") or "gpt-5-mini"
+    if ai_key:
+        st.caption("API habilitada: "+model+" · facturación externa a ChatGPT")
+        permitted=st.checkbox("Confirmo autorización para enviar las respuestas de este briefing a la API de OpenAI.",
+                              key="ai_consent_"+rid)
+        if st.button("Generar tres propuestas con IA",disabled=not permitted,type="primary",key="ai_btn_"+rid):
+            try:
+                with st.spinner("Analizando la marca y sus alternativas..."):
+                    out=propose_with_ai(answers,ai_key,model=model)
+                st.session_state["ai_result_"+rid]=out
+                review["corrientes"]=[{
+                    "nombre":p["nombre"],"fundamento":p["argumento"]+" Evidencia: "+
+                        "; ".join(e["campo"]+": "+e["cita_respuesta"] for e in p["evidencias"]),
+                    "diferenciacion":p["contraste"],"riesgos":p["riesgos"]}
+                    for p in out["propuestas"]]
+                review["direccion_seleccionada"]=None
+                review["autorizacion_produccion"]=False
+                for key in list(st.session_state):
+                    if key.startswith("direction_"+rid):del st.session_state[key]
                 st.rerun()
-            except (ValueError,TypeError,UnicodeDecodeError) as exc:
-                st.error("No se pudo importar: "+str(exc))
-    supplement=review.get("aclaraciones_cliente",{}).get("respuestas",[])
-    if supplement:
-        st.info("Hay respuestas recibidas. Puente debe verificarlas antes de marcar preguntas como confirmadas.")
-        for extra in supplement:
-            st.markdown("**"+extra.get("pregunta","")+"**")
-            st.write(extra.get("respuesta",""))
-
-st.caption("Confirma solo información realmente comprobada. Puedes descartar falsas alarmas con una explicación.")
-for question in questions:
-    qid=str(question.get("id",""))
-    item=review.get("revision",{}).get(qid,{})
-    with st.expander(question.get("area","")+" · "+question.get("pregunta","")):
-        current=item.get("estado","pendiente")
-        choices=["pendiente","confirmado","aclarar","descartado"]
-        state=st.selectbox("Estado",choices,index=choices.index(current) if current in choices else 0,key="rev_widget_"+review_key+"_"+qid+"_state")
-        note=st.text_area("Evidencia o motivo de la decisión",value=item.get("nota",""),key="rev_widget_"+review_key+"_"+qid+"_note",height=80)
-        review.setdefault("revision",{})[qid]={"estado":state,"nota":note}
-
-st.markdown("#### Biblioteca de corrientes y lenguajes visuales")
-st.caption("Una corriente histórica, una técnica, un recurso y un tratamiento fotográfico no son equivalentes. La biblioteca ayuda a investigar; no recomienda automáticamente.")
-with st.expander("Explorar biblioteca visual",expanded=False):
-    cat=st.selectbox("Tipo de referencia",category_names(),key="catalog_cat")
-    query=st.text_input("Buscar por nombre, rasgo o uso",key="catalog_query")
-    catalog_results=search_catalog(query,cat)
-    st.caption(str(len(catalog_results))+" referencias disponibles para esta búsqueda")
-    for item in catalog_results[:25]:
-        st.markdown("**"+item["nombre"]+"** · "+item["categoria"])
-        st.caption("Rasgos: "+", ".join(item["rasgos"])+" | Usos posibles: "+", ".join(item["aplicaciones"]))
-        st.caption("Precauciones: "+", ".join(item["riesgos"]))
-        st.caption("Estado documental: "+item.get("validacion_historica","por verificar"))
-        for ref in item.get("referencias_editoriales",[]):
-            st.markdown("[Fuente bibliográfica verificada]("+ref["url"]+") · "+ref["capitulo"])
-    if len(catalog_results)>25:
-        st.caption("Refina la búsqueda para consultar el resto de resultados.")
-
-st.markdown("#### Investigación y sugerencias de IA")
-st.caption("Las propuestas son hipótesis para la dirección de arte. No se muestran al cliente y nunca se aprueban automáticamente.")
-with st.expander("Método y referencias bibliográficas"):
-    for item in BIBLIOGRAPHY:
-        st.markdown("**"+item["autor"]+" — "+item["titulo"]+"**")
-        st.caption(item["edicion"]+" · "+item["uso"]+" "+item["alcance"])
-        st.link_button("Ver fuente editorial",item["url"])
-    st.markdown("**Criterios de evaluación utilizados**")
-    for name,question in CRITERIA.items():
-        st.write("• "+name.replace("_"," ").capitalize()+": "+question)
-try:
-    ai_key=st.secrets.get("OPENAI_API_KEY","")
-    ai_model=st.secrets.get("OPENAI_MODEL","gpt-4.1-mini")
-except (KeyError,FileNotFoundError):
-    ai_key=""
-    ai_model="gpt-4.1-mini"
-if not ai_key:
-    st.warning("IA generativa todavía no conectada. Falta OPENAI_API_KEY en los Secrets privados del servidor. La biblioteca y el análisis por reglas siguen disponibles.")
-else:
-    st.caption("Motor generativo disponible. Modelo configurado: "+ai_model+". La API tiene costo separado de ChatGPT.")
-    consent_ai=st.checkbox("Confirmo que este briefing es de prueba o tengo autorización para enviar sus respuestas al servicio de IA.",
-        key="ai_consent_"+review_key)
-    if st.button("Investigar tres corrientes madre con IA",type="primary",
-                 disabled=not consent_ai,key="research_ai_"+review_key):
-        try:
-            with st.spinner("Analizando hipótesis de dirección creativa..."):
-                proposals=propose_with_ai(answers,ai_key,model=ai_model)
-            st.session_state["ai_proposals_"+review_key]=proposals
-            review["corrientes"]=[
-                {"nombre":p["nombre"],"fundamento":p["argumento"]+
-                     " Evidencia: "+", ".join(e["campo"]+": "+e["cita_respuesta"] for e in p["evidencias"]),
-                 "diferenciacion":p["contraste"],"riesgos":p["riesgos"]}
-                for p in proposals["propuestas"]
-            ]
+            except (RuntimeError,ValueError,requests.RequestException) as exc:
+                st.error("No fue posible completar el análisis: "+str(exc))
+    else:
+        st.warning("La IA no está habilitada: debes configurar OPENAI_API_KEY en Secrets. No compartas la clave en el chat.")
+    if st.button("Generar borradores con reglas (sin IA)",key="rule_btn_"+rid):
+        options=preselect(answers)
+        if options:
+            review["corrientes"]=[{k:x[k] for k in ("nombre","fundamento","diferenciacion","riesgos")} for x in options]
             review["direccion_seleccionada"]=None
             review["autorizacion_produccion"]=False
-            for widget_key in list(st.session_state):
-                if str(widget_key).startswith("rev_widget_"+review_key+"_"):
-                    del st.session_state[widget_key]
+            for key in list(st.session_state):
+                if key.startswith("direction_"+rid):del st.session_state[key]
             st.rerun()
-        except (ValueError,RuntimeError,requests.RequestException) as exc:
-            st.error("La investigación no pudo completarse: "+str(exc))
-result_ai=st.session_state.get("ai_proposals_"+review_key)
-if isinstance(result_ai,dict):
-    st.info("Se generaron tres propuestas para evaluar, no para aprobar automáticamente.")
-    st.write("**Lectura del briefing:** "+result_ai.get("diagnostico",""))
-    for i,proposal in enumerate(result_ai.get("propuestas",[]),1):
-        with st.expander(str(i)+". "+proposal["nombre"]+" · Hipótesis IA"):
-            st.write("**Fundamento:** "+proposal["argumento"])
-            st.write("**Composición e imagen:** "+proposal["sistema_visual"])
-            st.write("**Tipografía:** "+proposal["tipografia"])
-            st.write("**Fotografía:** "+proposal["tratamiento_fotografico"])
-            st.write("**Aplicaciones:** "+proposal["aplicaciones"])
-            st.write("**Diferenciación:** "+proposal["contraste"])
-            st.write("**Riesgos:** "+proposal["riesgos"])
-            st.write("**Validar:** "+proposal["criterios_verificar"])
-            st.markdown("**Evidencia literal del cliente**")
-            for evidence in proposal["evidencias"]:
-                st.caption(evidence["campo"]+": «"+evidence["cita_respuesta"]+"»")
-st.markdown("#### Preselección de exploración sin API")
-st.caption("Alternativa provisional basada solo en coincidencias de palabras, no en IA. Sirve para proponer puntos de partida editables y no debe confundirse con recomendaciones estratégicas.")
-if st.button("Preparar tres hipótesis iniciales (reglas, sin IA)",key="preselect_"+review_key):
-    drafted=preselect(answers)
-    if len(drafted)!=3:
-        st.warning("No hay información suficiente para preseleccionar alternativas.")
+        else:st.warning("No hay información suficiente.")
+    latest=st.session_state.get("ai_result_"+rid)
+    if latest:
+        st.info("Tres propuestas generadas, aún sin aprobación.")
+        st.write(latest.get("diagnostico",""))
+        for p in latest.get("propuestas",[]):
+            with st.expander(p["nombre"]+" · Evidencias y aplicaciones"):
+                st.write(p["argumento"])
+                st.write("**Sistema visual:** "+p["sistema_visual"])
+                st.write("**Tipografía:** "+p["tipografia"])
+                st.write("**Fotografía:** "+p["tratamiento_fotografico"])
+                st.write("**Riesgos:** "+p["riesgos"])
+                for evidence in p["evidencias"]:
+                    st.caption(evidence["campo"]+": «"+evidence["cita_respuesta"]+"»")
+    old_currents=review.get("corrientes") or []
+    number=st.selectbox("Alternativas a comparar",[2,3],index=1 if len(old_currents)==3 else 0,
+                        key="direction_"+rid+"_count")
+    new_currents=[]
+    for i in range(number):
+        previous=old_currents[i] if i<len(old_currents) and isinstance(old_currents[i],dict) else {}
+        with st.expander("Alternativa "+str(i+1),expanded=i==0):
+            name=st.text_input("Corriente madre",value=previous.get("nombre",""),key="direction_"+rid+"_name_"+str(i))
+            reason=st.text_area("Fundamento",value=previous.get("fundamento",""),
+                     key="direction_"+rid+"_reason_"+str(i))
+            contrast=st.text_area("Diferencia frente a otras alternativas",
+                     value=previous.get("diferenciacion",""),key="direction_"+rid+"_contrast_"+str(i))
+            risk=st.text_area("Riesgos",value=previous.get("riesgos",""),
+                     key="direction_"+rid+"_risk_"+str(i))
+            new_currents.append({"nombre":name,"fundamento":reason,
+                        "diferenciacion":contrast,"riesgos":risk})
+    review["corrientes"]=new_currents
+    names=[x["nombre"].strip() for x in new_currents if x["nombre"].strip()]
+    available=["Sin seleccionar"]+names
+    selected_direction=review.get("direccion_seleccionada")
+    selected_i=available.index(selected_direction) if selected_direction in available else 0
+    chosen_name=st.selectbox("Dirección elegida por Puente",available,index=selected_i,
+                      key="direction_"+rid+"_chosen")
+    review["direccion_seleccionada"]=None if chosen_name=="Sin seleccionar" else chosen_name
+    review["observaciones"]=st.text_area("Justificación editorial del director de arte",
+        value=review.get("observaciones",""),key="direction_"+rid+"_justification")
+    with st.expander("Criterios profesionales de evaluación"):
+        for key,value in CRITERIA.items():
+            st.write("**"+key.replace("_"," ").capitalize()+"** · "+value)
+
+with tabs[3]:
+    st.markdown("#### Preparación para producción")
+    review["responsable"]=st.text_input("Responsable de la aprobación",
+        value=review.get("responsable",""),key="responsible_"+rid)
+    review["autorizacion_produccion"]=st.checkbox(
+        "Confirmo que he revisado los datos y autorizo preparar producción.",
+        value=bool(review.get("autorizacion_produccion")),key="production_"+rid)
+    errors=validate_review(review,record,audit)
+    if errors:
+        st.warning(str(len(errors))+" requisitos sin resolver. No se autoriza producción.")
+        with st.expander("Ver bloqueos",expanded=True):
+            for e in errors:st.write("• "+e)
+    elif review["autorizacion_produccion"]:
+        st.success("Revisión completada y autorización registrada para esta sesión.")
     else:
-        review["corrientes"]=[{key:item[key] for key in ("nombre","fundamento","diferenciacion","riesgos")} for item in drafted]
-        review["direccion_seleccionada"]=None
-        review["autorizacion_produccion"]=False
-        st.session_state.pop("ai_proposals_"+review_key,None)
-        for widget_key in list(st.session_state):
-            if str(widget_key).startswith("rev_widget_"+review_key+"_"):
-                del st.session_state[widget_key]
-        st.rerun()
+        st.info("Revisión completa; falta autorización expresa.")
+    st.markdown("**Información para iniciar cada tarea**")
+    for name,item in handoff["preparacion"].items():
+        with st.expander(name.replace("_"," ").capitalize()):
+            st.write("Por completar: "+(", ".join(item["informacion_pendiente"]) or "Revisión humana pendiente"))
+    st.caption("La autorización de esta beta no sustituye un registro auditado de permisos ni el contrato.")
 
-st.markdown("#### 2. Comparación de corrientes madre")
-st.caption("Las alternativas pueden llegar sugeridas por IA y son editables. Tú decides cuáles investigar y aprobar.")
-
-st.caption("No deben salir de una lista fija. Registra dos o tres enfoques basados en las características reales de la marca, con diferencias y riesgos.")
-previous=review.get("corrientes") or []
-number=st.selectbox("Alternativas a comparar",[2,3],index=1 if len(previous)==3 else 0,key="rev_widget_"+review_key+"_count")
-currents=[]
-for index in range(number):
-    old=previous[index] if index<len(previous) and isinstance(previous[index],dict) else {}
-    with st.expander("Corriente madre "+str(index+1),expanded=index==0):
-        name=st.text_input("Nombre de la corriente",value=old.get("nombre",""),key="rev_widget_"+review_key+"_name_"+str(index))
-        basis=st.text_area("¿Qué datos del briefing justifican investigarla?",value=old.get("fundamento",""),height=90,key="rev_widget_"+review_key+"_basis_"+str(index))
-        contrast=st.text_area("¿En qué se diferencia de las otras alternativas?",value=old.get("diferenciacion",""),height=80,key="rev_widget_"+review_key+"_contrast_"+str(index))
-        risks=st.text_area("¿Qué riesgos o limitaciones tiene para esta marca?",value=old.get("riesgos",""),height=80,key="rev_widget_"+review_key+"_risks_"+str(index))
-        currents.append({"nombre":name,"fundamento":basis,"diferenciacion":contrast,"riesgos":risks})
-review["corrientes"]=currents
-names=[entry["nombre"].strip() for entry in currents if entry["nombre"].strip()]
-selected=review.get("direccion_seleccionada")
-options=["Sin seleccionar"]+names
-chosen_index=options.index(selected) if selected in options else 0
-chosen_direction=st.selectbox("Corriente madre propuesta",options,index=chosen_index,key="rev_widget_"+review_key+"_chosen")
-review["direccion_seleccionada"]=None if chosen_direction=="Sin seleccionar" else chosen_direction
-review["observaciones"]=st.text_area("Justificación de la dirección propuesta",value=review.get("observaciones",""),height=110,key="rev_widget_"+review_key+"_notes")
-review["autorizacion_produccion"]=st.checkbox("Confirmo como responsable que se han resuelto las dudas y autorizo preparar producción.",value=bool(review.get("autorizacion_produccion")),key="rev_widget_"+review_key+"_production")
-errors=validate_review(review,record,audit)
-package=prepare_reviewed_package(handoff,review,audit)
-if errors:
-    st.warning("Revisión incompleta: "+str(len(errors))+" asuntos por resolver.")
-    with st.expander("Ver condiciones pendientes"):
-        for err in errors:
-            st.write("• "+err)
-else:
-    st.success("Revisión editorial completa. "+("Producción autorizada por el responsable." if review["autorizacion_produccion"] else "Producción todavía sin autorización."))
-st.download_button("Guardar revisión (JSON)",data=json.dumps(review,ensure_ascii=False,indent=2),
-    file_name="puente-revision-"+str(record.get("submission_id",""))[:8]+".json",mime="application/json")
-st.download_button("Exportar paquete creativo revisado (JSON)",data=json.dumps(package,ensure_ascii=False,indent=2),
-    file_name="puente-paquete-creativo-"+str(record.get("submission_id",""))[:8]+".json",mime="application/json")
-st.caption("Para continuar en otra sesión, descarga tu revisión y vuelve a cargar el archivo al regresar. La exportación no registra cambios en la base de datos.")
-
-st.download_button("Exportar ficha para Creative OS (JSON)",
-    data=json.dumps(handoff,ensure_ascii=False,indent=2),
-    file_name="puente-ficha-creative-os.json",mime="application/json")
-st.download_button("Exportar este briefing (JSON)",data=json.dumps(record,ensure_ascii=False,indent=2),file_name="briefing-interno.json",mime="application/json")
+with tabs[4]:
+    st.markdown("#### Documentos y entregables")
+    st.info("La generación de PDF basada en planes contratados está planificada. No se crea un manual de marca si el cliente solo contrata redes sociales.")
+    st.markdown("**Exportar trabajo de esta sesión**")
+    errors=validate_review(review,record,audit)
+    package=prepare_reviewed_package(handoff,review,audit)
+    st.download_button("Guardar revisión interna (JSON)",
+        json.dumps(review,ensure_ascii=False,indent=2),
+        file_name="puente-revision-"+str(record["submission_id"])[:8]+".json",
+        mime="application/json")
+    st.download_button("Descargar paquete creativo (JSON)",
+        json.dumps(package,ensure_ascii=False,indent=2),
+        file_name="puente-paquete-"+str(record["submission_id"])[:8]+".json",
+        mime="application/json")
+    with st.expander("Restaurar revisión desde un archivo"):
+        uploaded=st.file_uploader("Archivo JSON de revisión",type=["json"],key="recover_"+rid)
+        if uploaded and st.button("Restaurar esta revisión",key="restore_"+rid):
+            if uploaded.size>200000:
+                st.error("Archivo demasiado grande.")
+            else:
+                try:
+                    candidate=json.loads(uploaded.getvalue().decode("utf-8"))
+                    if (not isinstance(candidate,dict) or
+                        candidate.get("schema_version")!="puente_review_0_8" or
+                        candidate.get("submission_id")!=record["submission_id"]):
+                        raise ValueError("No corresponde al briefing.")
+                    st.session_state[rid]=candidate
+                    for key in list(st.session_state):
+                        if key.startswith(("rev_state_"+rid,"rev_note_"+rid,
+                              "direction_"+rid,"production_"+rid,"responsible_"+rid)):
+                            del st.session_state[key]
+                    st.rerun()
+                except (ValueError,UnicodeDecodeError,TypeError) as exc:
+                    st.error("No se pudo cargar la revisión: "+str(exc))
+    st.caption("Las revisiones todavía se conservan solo en la sesión. Descarga el archivo antes de cerrar; el guardado permanente con historial está pendiente.")
