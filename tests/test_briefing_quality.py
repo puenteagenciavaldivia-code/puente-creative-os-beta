@@ -3,6 +3,7 @@ from briefing_quality import diagnose, field_quality
 from creative_handoff import build_handoff
 from strategic_audit import audit_briefing
 from review_workflow import new_review, validate_review, prepare_reviewed_package
+from design_catalog import read_catalog, search_catalog
 
 class BriefingQualityTests(unittest.TestCase):
     def test_gibberish_is_flagged(self):
@@ -159,6 +160,20 @@ class HumanReviewWorkflowTests(unittest.TestCase):
     def test_rejects_cross_brand_review(self):
         self.review["submission_id"]="different-id"
         self.assertTrue(any("no corresponde" in e for e in validate_review(self.review,self.record,self.audit)))
+
+class DesignCatalogTests(unittest.TestCase):
+    def test_catalog_has_diverse_categories_and_unique_ids(self):
+        items=read_catalog()
+        self.assertGreaterEqual(len(items),35)
+        self.assertEqual(len({x["id"] for x in items}),len(items))
+        self.assertIn("histórica",{x["categoria"] for x in items})
+        self.assertIn("lenguaje fotográfico",{x["categoria"] for x in items})
+        self.assertIn("técnica",{x["categoria"] for x in items})
+
+    def test_search_finds_both_history_and_photo(self):
+        self.assertTrue(any("Swiss" in x["nombre"] or "Tipográfico Internacional" in x["nombre"]
+                 for x in search_catalog("tipográfico")))
+        self.assertTrue(any(x["nombre"]=="Fotografía documental" for x in search_catalog("documental")))
 
 if __name__=="__main__":
     unittest.main()
