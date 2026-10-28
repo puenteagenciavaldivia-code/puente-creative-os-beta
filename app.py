@@ -82,8 +82,12 @@ if "finished" not in st.session_state:st.session_state.finished=False
 st.caption("AGENCIA PUENTE · CREATIVE OS · BETA PRIVADA")
 st.title("Descubramos tu marca.")
 st.write("Este cuestionario busca conocer tu negocio para probar nuestro sistema creativo. Responde con tus palabras, sin necesidad de conocimientos de diseño.")
-SHEETS_URL=st.secrets.get("SHEETS_WEBHOOK_URL","")
-SHEETS_TOKEN=st.secrets.get("SHEETS_WEBHOOK_TOKEN","")
+try:
+    SHEETS_URL=st.secrets.get("SHEETS_WEBHOOK_URL","")
+    SHEETS_TOKEN=st.secrets.get("SHEETS_WEBHOOK_TOKEN","")
+except (FileNotFoundError, KeyError):
+    SHEETS_URL=""
+    SHEETS_TOKEN=""
 storage_enabled=bool(SHEETS_URL and SHEETS_TOKEN)
 if storage_enabled:
     st.info("Prueba beta: si aceptas participar y finalizas, tus respuestas se enviarán a una hoja privada de Agencia Puente para evaluar el formulario. Evita datos personales sensibles o información confidencial.")
