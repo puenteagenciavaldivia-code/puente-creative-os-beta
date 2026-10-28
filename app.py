@@ -131,11 +131,11 @@ if not st.session_state.finished:
                 st.multiselect(label,OPTIONS[kind],key=key,help=HELP.get(key,""))
             else:
                 st.selectbox(label,["Selecciona una opción"]+OPTIONS[kind],key=key,help=HELP.get(key,""))
-        # Orientación amable durante el llenado, sin bloquear el formulario.
-        if kind=="area" and st.session_state.get(key):
-            quality,_=field_quality(key,st.session_state.get(key))
-            if quality < 0.75:
-                st.caption("Sugerencia: agrega un ejemplo de tu experiencia. Una o dos frases concretas nos ayudan a entenderte mejor.")
+            # Orientación amable durante el llenado, sin bloquear el formulario.
+            if kind=="area" and st.session_state.get(key):
+                quality,_=field_quality(key,st.session_state.get(key))
+                if quality < 0.75:
+                    st.caption("Sugerencia: agrega un ejemplo de tu experiencia. Una o dos frases concretas nos ayudan a entenderte mejor.")
         if p==3 and st.session_state.get("identidad_visual") in OPTIONS["visual"][:2]:
             restore_widget("autorizacion")
             st.selectbox("¿Puedes compartir archivos gráficos autorizados?",["Selecciona una opción","Sí","Debo confirmar","No"],key="autorizacion")
