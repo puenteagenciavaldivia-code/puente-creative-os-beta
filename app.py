@@ -175,9 +175,10 @@ else:
             if not st.session_state.get("files_consent"):
                 raise RuntimeError("Falta autorización para compartir los archivos.")
             payload={"token":SHEETS_TOKEN,"submission_id":st.session_state["export"]["submission_id"],"brand":st.session_state["export"]["answers"].get("nombre","Marca"),"files":st.session_state.attachments_store}
-            r=requests.post(SHEETS_URL,json={"action":"attachments",**payload},timeout=75)
-            if r.status_code!=200 or r.text.strip()!="OK":
-                raise RuntimeError("No se confirmó el almacenamiento de los archivos.")
+            for item in payload["files"]:
+                r=requests.post(SHEETS_URL,json={"action":"attachments","token":SHEETS_TOKEN,"submission_id":payload["submission_id"],"brand":payload["brand"],"files":[item]},timeout=75)
+                if r.status_code!=200 or r.text.strip()!="OK":
+                    raise RuntimeError("No se confirmó el almacenamiento de los archivos.")
             st.session_state.files_saved=True
         except Exception:
             st.warning("El briefing se guardó, pero no se confirmó la recepción de los adjuntos. Puedes reintentar sin volver a completar el formulario.")
