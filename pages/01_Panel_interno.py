@@ -363,6 +363,46 @@ with tabs[3]:
 with tabs[4]:
     st.markdown("#### Documentos y entregables")
     st.info("La generación de PDF basada en planes contratados está planificada. No se crea un manual de marca si el cliente solo contrata redes sociales.")
+    st.markdown("**Historial de revisión en Google Sheets**")
+    st.caption("Cuando habilitemos el receptor actualizado, cada guardado conservará una nueva versión con el responsable; nunca sobrescribe las respuestas originales.")
+    admin_token=cfg.get("CLARIFICATIONS_ADMIN_TOKEN","")
+    if admin_token:
+        first,second=st.columns(2)
+        with first:
+            if st.button("Guardar revisión en Sheets",key="save_review_"+rid):
+                if not str(review.get("responsable") or "").strip():
+                    st.warning("Identifica primero al responsable en la pestaña Producción.")
+                else:
+                    try:
+                        response=call_backend("review_save",{
+                            "admin_token":admin_token,
+                            "submission_id":record["submission_id"],
+                            "review":review})
+                        st.success("Revisión registrada en la hoja de historial. "+
+                                   str(response.get("saved_at_utc","")))
+                    except (RuntimeError,requests.RequestException) as exc:
+                        st.error("No se pudo guardar: "+str(exc))
+        with second:
+            if st.button("Recuperar última revisión guardada",key="restore_saved_"+rid):
+                try:
+                    response=call_backend("review_get",{
+                        "admin_token":admin_token,"submission_id":record["submission_id"]})
+                    if not response.get("found"):
+                        st.info("Todavía no hay revisiones guardadas de esta marca.")
+                    else:
+                        candidate=response.get("review") or {}
+                        if candidate.get("submission_id")!=record["submission_id"] or candidate.get("schema_version")!="puente_review_0_8":
+                            raise ValueError("La revisión guardada no corresponde al proyecto.")
+                        st.session_state[rid]=candidate
+                        for key in list(st.session_state):
+                            if str(key).startswith(("rev_state_"+rid,"rev_note_"+rid,
+                                  "direction_"+rid,"production_"+rid,"responsible_"+rid)):
+                                del st.session_state[key]
+                        st.rerun()
+                except (ValueError,RuntimeError,requests.RequestException) as exc:
+                    st.error("No se pudo recuperar: "+str(exc))
+    else:
+        st.caption("Guardado en Sheets pendiente de configuración. Puedes descargar una copia local abajo.")
     st.markdown("**Exportar trabajo de esta sesión**")
     errors=validate_review(review,record,audit)
     package=prepare_reviewed_package(handoff,review,audit)
@@ -394,4 +434,4 @@ with tabs[4]:
                     st.rerun()
                 except (ValueError,UnicodeDecodeError,TypeError) as exc:
                     st.error("No se pudo cargar la revisión: "+str(exc))
-    st.caption("Las revisiones todavía se conservan solo en la sesión. Descarga el archivo antes de cerrar; el guardado permanente con historial está pendiente.")
+    st.caption("El guardado persistente requiere desplegar la nueva versión de Apps Script. Si no está activado, descarga tu revisión para conservarla.")
