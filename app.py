@@ -77,76 +77,103 @@ if storage_enabled:
 else:
     st.warning("Prueba experimental: todavía no hay recepción automática. Al finalizar tendrás que descargar el archivo y compartirlo manualmente. No ingreses información confidencial.")
 if not st.session_state.finished:
-    p=st.session_state.step
-    st.progress((p+1)/5)
-    st.subheader(f"{p+1}/5 · {SECTIONS[p][0]}")
-    intro, example=SECTION_INTROS[SECTIONS[p][0]]
-    st.write(intro)
-    st.caption(example)
-    for key,label,kind in SECTIONS[p][1]:
-        restore_widget(key)
-        if kind=="text":
-            st.text_input(label,key=key,placeholder=EXAMPLES.get(key,""),help=HELP.get(key,""))
-        elif kind=="area":
-            st.text_area(label,key=key,height=110,placeholder=EXAMPLES.get(key,""),help=HELP.get(key,""))
-        elif kind=="channels":
-            st.multiselect(label,OPTIONS[kind],key=key,help=HELP.get(key,""))
-        else:
-            st.selectbox(label,["Selecciona una opción"]+OPTIONS[kind],key=key,help=HELP.get(key,""))
-    if p==3 and st.session_state.get("identidad_visual") in OPTIONS["visual"][:2]:
-        restore_widget("autorizacion")
-        st.selectbox("¿Puedes compartir archivos gráficos autorizados?",["Selecciona una opción","Sí","Debo confirmar","No"],key="autorizacion")
-    if p==3:
-        st.markdown("#### Archivos de tu marca (opcional)")
-        st.caption("PNG, JPG, WEBP o PDF. Máximo 3 MB por archivo y 5 archivos. No incluyas datos personales sensibles.")
-        uploaded=st.file_uploader("Adjunta logotipos, fotografías o referencias",type=["png","jpg","jpeg","webp","pdf"],accept_multiple_files=True,key="brand_uploads")
-        if uploaded:
-            if len(uploaded)>5 or any(x.size>3*1024*1024 for x in uploaded) or any((x.type not in ("image/png","image/jpeg","image/webp","application/pdf")) for x in uploaded):
-                st.error("Se permiten hasta 5 archivos de máximo 3 MB cada uno. Ajusta los adjuntos antes de continuar.")
+    if st.session_state.get("review_ready",False):
+        st.subheader("Revisa tus respuestas antes de enviarlas")
+        st.write("Revisa lo que escribiste. Puedes corregir cualquier sección. Nada se enviará hasta que confirmes.")
+        for index,(section,fields) in enumerate(SECTIONS):
+            with st.expander(section):
+                for key,label,kind in fields:
+                    value=st.session_state.answers_store.get(key,"")
+                    st.markdown("**"+label+"**")
+                    st.write(", ".join(value) if isinstance(value,list) else (str(value) if value else "Sin respuesta"))
+                if st.button("Corregir "+section,key="edit_"+str(index)):
+                    st.session_state.review_ready=False
+                    st.session_state.step=index
+                    st.rerun()
+        st.caption("Archivos preparados: "+str(len(st.session_state.attachments_store))+". Evita incluir datos personales sensibles.")
+        left,right=st.columns(2)
+        with left:
+            if st.button("← Volver a editar",use_container_width=True):
+                st.session_state.review_ready=False
+                st.session_state.step=4
+                st.rerun()
+        with right:
+            if st.button("Confirmar y enviar",type="primary",use_container_width=True):
+                answer={}
+                for _,fields in SECTIONS:
+                    for key,_,_ in fields:
+                        value=st.session_state.answers_store.get(key,"")
+                        answer[key]="" if value=="Selecciona una opción" else value
+                answer["autorizacion"]=st.session_state.answers_store.get("autorizacion","")
+                answer["accion"]=st.session_state.answers_store.get("accion","")
+                record={"submission_id":str(uuid.uuid4()),"submitted_at":datetime.now(timezone.utc).isoformat(),"answers":answer,"diagnostic":diagnose(answer)}
+                st.session_state.saved=False
+                st.session_state.files_saved=False
+                st.session_state.save_error=""
+                st.session_state.export=record
+                st.session_state.finished=True
+                st.session_state.review_ready=False
+                st.rerun()
+    else:
+        p=st.session_state.step
+        st.progress((p+1)/5)
+        st.subheader(f"{p+1}/5 · {SECTIONS[p][0]}")
+        intro, example=SECTION_INTROS[SECTIONS[p][0]]
+        st.write(intro)
+        st.caption(example)
+        for key,label,kind in SECTIONS[p][1]:
+            restore_widget(key)
+            if kind=="text":
+                st.text_input(label,key=key,placeholder=EXAMPLES.get(key,""),help=HELP.get(key,""))
+            elif kind=="area":
+                st.text_area(label,key=key,height=110,placeholder=EXAMPLES.get(key,""),help=HELP.get(key,""))
+            elif kind=="channels":
+                st.multiselect(label,OPTIONS[kind],key=key,help=HELP.get(key,""))
             else:
-                st.session_state.attachments_store=[{"name":x.name,"mime":x.type,"data":base64.b64encode(x.getvalue()).decode("ascii")} for x in uploaded]
-        if st.session_state.attachments_store:
-            st.caption(f"{len(st.session_state.attachments_store)} archivo(s) preparados para enviar al finalizar.")
-        restore_widget("files_consent")
-        st.checkbox("Confirmo que tengo permiso para compartir estos archivos con Agencia Puente para evaluar este briefing.",key="files_consent")
-    if p==4:
-        restore_widget("accion")
-        st.selectbox("¿Qué acción quieres que haga alguien después de ver una publicación?",["Selecciona una opción","Consultar","Comprar","Reservar","Visitar el local","Seguir la marca","No lo sé"],key="accion")
-        st.checkbox("Acepto participar voluntariamente en esta prueba.",key="consent")
-    required_by_step=[
-        ["nombre","negocio"],
-        ["productos","diferencia"],
-        ["publico"],
-        ["identidad_visual"],
-        ["objetivo","canales"]
-    ]
-    missing=[k for k in required_by_step[p] if not st.session_state.get(k) or st.session_state.get(k)=="Selecciona una opción"]
-    if missing:
-        st.caption("Para avanzar, responde las preguntas principales de esta etapa. Las demás son opcionales.")
-    left,right=st.columns(2)
-    with left:
-        if st.button("← Volver",disabled=p==0,use_container_width=True):
-            save_visible_page();st.session_state.step-=1;st.rerun()
-    with right:
-        files_ok=not st.session_state.attachments_store or st.session_state.get("files_consent",False)
-        if p<4:
-            if st.button("Continuar →",type="primary",disabled=(bool(missing) or (p==3 and not files_ok)),use_container_width=True):
-                save_visible_page();st.session_state.step+=1;st.rerun()
-        elif st.button("Terminar",type="primary",disabled=(bool(missing) or not st.session_state.get("consent",False)),use_container_width=True):
-            save_visible_page()
-            answer={}
-            for _,fs in SECTIONS:
-                for key,_,_ in fs:
-                    v=st.session_state.answers_store.get(key,"")
-                    answer[key]="" if v=="Selecciona una opción" else v
-            answer["autorizacion"]=st.session_state.answers_store.get("autorizacion","")
-            answer["accion"]=st.session_state.answers_store.get("accion","")
-            record={"submission_id":str(uuid.uuid4()),"submitted_at":datetime.now(timezone.utc).isoformat(),"answers":answer,"diagnostic":diagnose(answer)}
-            st.session_state["saved"]=False
-            st.session_state["files_saved"]=False
-            st.session_state["save_error"]=""
-            st.session_state["export"]=record
-            st.session_state.finished=True;st.rerun()
+                st.selectbox(label,["Selecciona una opción"]+OPTIONS[kind],key=key,help=HELP.get(key,""))
+        if p==3 and st.session_state.get("identidad_visual") in OPTIONS["visual"][:2]:
+            restore_widget("autorizacion")
+            st.selectbox("¿Puedes compartir archivos gráficos autorizados?",["Selecciona una opción","Sí","Debo confirmar","No"],key="autorizacion")
+        if p==3:
+            st.markdown("#### Archivos de tu marca (opcional)")
+            st.caption("PNG, JPG, WEBP o PDF. Máximo 3 MB por archivo y 5 archivos. No incluyas datos personales sensibles.")
+            uploaded=st.file_uploader("Adjunta logotipos, fotografías o referencias",type=["png","jpg","jpeg","webp","pdf"],accept_multiple_files=True,key="brand_uploads")
+            if uploaded:
+                if len(uploaded)>5 or any(x.size>3*1024*1024 for x in uploaded) or any((x.type not in ("image/png","image/jpeg","image/webp","application/pdf")) for x in uploaded):
+                    st.error("Se permiten hasta 5 archivos de máximo 3 MB cada uno. Ajusta los adjuntos antes de continuar.")
+                else:
+                    st.session_state.attachments_store=[{"name":x.name,"mime":x.type,"data":base64.b64encode(x.getvalue()).decode("ascii")} for x in uploaded]
+            if st.session_state.attachments_store:
+                st.caption(f"{len(st.session_state.attachments_store)} archivo(s) preparados para enviar al finalizar.")
+            restore_widget("files_consent")
+            st.checkbox("Confirmo que tengo permiso para compartir estos archivos con Agencia Puente para evaluar este briefing.",key="files_consent")
+        if p==4:
+            restore_widget("accion")
+            st.selectbox("¿Qué acción quieres que haga alguien después de ver una publicación?",["Selecciona una opción","Consultar","Comprar","Reservar","Visitar el local","Seguir la marca","No lo sé"],key="accion")
+            st.checkbox("Acepto participar voluntariamente en esta prueba.",key="consent")
+        required_by_step=[
+            ["nombre","negocio"],
+            ["productos","diferencia"],
+            ["publico"],
+            ["identidad_visual"],
+            ["objetivo","canales"]
+        ]
+        missing=[k for k in required_by_step[p] if not st.session_state.get(k) or st.session_state.get(k)=="Selecciona una opción"]
+        if missing:
+            st.caption("Para avanzar, responde las preguntas principales de esta etapa. Las demás son opcionales.")
+        left,right=st.columns(2)
+        with left:
+            if st.button("← Volver",disabled=p==0,use_container_width=True):
+                save_visible_page();st.session_state.step-=1;st.rerun()
+        with right:
+            files_ok=not st.session_state.attachments_store or st.session_state.get("files_consent",False)
+            if p<4:
+                if st.button("Continuar →",type="primary",disabled=(bool(missing) or (p==3 and not files_ok)),use_container_width=True):
+                    save_visible_page();st.session_state.step+=1;st.rerun()
+            elif st.button("Revisar respuestas →",type="primary",disabled=(bool(missing) or not st.session_state.get("consent",False) or not files_ok),use_container_width=True):
+                save_visible_page()
+                st.session_state.review_ready=True
+                st.rerun()
 else:
     st.success("¡Gracias por participar!")
     diagnostic=st.session_state["export"]["diagnostic"]
@@ -205,5 +232,5 @@ else:
     if st.button("Comenzar otro briefing"):
         for _,fs in SECTIONS:
             for key,_,_ in fs:st.session_state.pop(key,None)
-        for k in ["autorizacion","accion","consent","files_consent","brand_uploads","export","saved","files_saved","save_error"]:st.session_state.pop(k,None)
+        for k in ["autorizacion","accion","consent","files_consent","brand_uploads","export","saved","files_saved","save_error","review_ready"]:st.session_state.pop(k,None)
         st.session_state.attachments_store=[];st.session_state.answers_store={};st.session_state.step=0;st.session_state.finished=False;st.rerun()
