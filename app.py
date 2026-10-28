@@ -5,7 +5,7 @@ import requests
 from datetime import datetime, timezone
 import streamlit as st
 
-st.set_page_config(page_title="PUENTE Creative OS | Beta 0.6", page_icon="🌉", layout="centered")
+st.set_page_config(page_title="PUENTE Creative OS | Beta 0.7", page_icon="🌉", layout="centered")
 st.markdown("""<style>.block-container{max-width:780px;padding-top:2rem}h1{letter-spacing:-.04em}</style>""",unsafe_allow_html=True)
 SECTIONS=[
 ("Identidad",[
@@ -40,6 +40,7 @@ OPTIONS={
 "channels":["Instagram","Facebook","WhatsApp","TikTok","Web","Google","Otros"]}
 from briefing_quality import diagnose, field_quality
 from creative_handoff import build_handoff
+from strategic_audit import audit_briefing
 from briefing_guidance import SECTION_INTROS, HELP, EXAMPLES
 # Streamlit removes widget state when the widget is absent from a rerun.
 # Keep form data separately so navigating between steps does not erase prior answers.
@@ -106,7 +107,9 @@ if not st.session_state.finished:
                         answer[key]="" if value=="Selecciona una opción" else value
                 answer["autorizacion"]=st.session_state.answers_store.get("autorizacion","")
                 answer["accion"]=st.session_state.answers_store.get("accion","")
-                record={"submission_id":str(uuid.uuid4()),"submitted_at":datetime.now(timezone.utc).isoformat(),"answers":answer,"diagnostic":diagnose(answer)}
+                diagnostic=diagnose(answer)
+                diagnostic["strategic_audit"]=audit_briefing(answer,diagnostic)
+                record={"submission_id":str(uuid.uuid4()),"submitted_at":datetime.now(timezone.utc).isoformat(),"answers":answer,"diagnostic":diagnostic}
                 st.session_state.saved=False
                 st.session_state.files_saved=False
                 st.session_state.save_error=""
