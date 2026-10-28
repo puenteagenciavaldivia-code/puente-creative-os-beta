@@ -39,6 +39,19 @@ with st.sidebar:
         st.session_state.pop("admin_items",None)
         st.rerun()
     st.caption("Beta: usa solo información de prueba hasta completar la revisión de seguridad.")
+    with st.expander("Verificación técnica"):
+        st.caption("Ejecuta pruebas locales del análisis y el traspaso creativo. No modifica briefings ni archivos.")
+        if st.button("Ejecutar pruebas internas"):
+            import unittest
+            import io
+            output=io.StringIO()
+            suite=unittest.TestLoader().discover(start_dir="tests",pattern="test_*.py")
+            results=unittest.TextTestRunner(stream=output,verbosity=2).run(suite)
+            if results.wasSuccessful() and results.testsRun>0:
+                st.success(str(results.testsRun)+" pruebas satisfactorias.")
+            else:
+                st.error("Las pruebas detectaron errores o no se ejecutaron.")
+            st.code(output.getvalue(),language="text")
 
 def get_data():
     try:
