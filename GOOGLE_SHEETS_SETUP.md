@@ -83,3 +83,15 @@ La app Streamlit envía un JSON a un webhook de Google Apps Script SOLO cuando e
 - Es un sistema de reglas locales sin costo por llamadas a modelos externos. **No es análisis semántico con ChatGPT ni realiza vigilancia autónoma**. La auditoría ocurre cuando el cliente envía la ficha y se puede ver al actualizar el panel.
 - No mostrar la auditoría al cliente: su destinatario es el equipo interno. Pruebas previstas en `tests/test_briefing_quality.py`.
 - Pendiente de certificación: despliegue en Streamlit, acceso seguro de personal real, ejercicios de regresión y revisión manual de falsos positivos.
+
+
+## Beta 0.8 — Ficha estratégica editable (revisión humana)
+- En el Panel interno, selecciona un briefing y despliega **Revisión estratégica del equipo**.
+- Cada pregunta de auditoría permite marcar **pendiente**, **confirmado**, **aclarar** o **descartado**. Para confirmar o descartar debe explicarse el motivo. La evidencia debe contrastarse con el cliente o documentación real.
+- Compara **dos o tres corrientes madre**. Cada una necesita nombre, fundamento basado en respuestas, diferenciación y riesgos. Se prohíben alternativas duplicadas por nombre y nunca se elige automáticamente.
+- Un responsable escribe la justificación y elige una dirección. Se bloquea la aprobación de producción si hay preguntas sin resolver, una alternativa incompleta, contradicciones en la elección o consultas al cliente pendientes.
+- Se puede descargar una **revisión JSON** para retomarla en otra sesión, y volver a cargarla desde el panel. La importación comprueba versión y `submission_id`, con un tamaño máximo de 200 KB.
+- La **exportación del paquete creativo** incluye la ficha inicial, revisión editorial, bloqueos y estado de autorización. No cambia las respuestas originales ni escribe decisiones en Google Sheets/Drive.
+- Los datos de revisión se mantienen únicamente en la sesión hasta exportarlos; **NO hay persistencia automática**. No cerrar el navegador sin descargar el JSON.
+- Solo realizar pruebas internas con datos ficticios: siguen pendientes autentificación por usuario, permisos granulares, registro auditable de cambios, almacenamiento persistente y control de acceso de producción.
+- Pruebas nuevas en `tests/test_briefing_quality.py` comprueban controles de aprobación, comparación de dos enfoques y prevención de cargar revisiones de otro briefing.
