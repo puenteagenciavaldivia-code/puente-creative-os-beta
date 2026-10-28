@@ -7,6 +7,7 @@ from design_catalog import read_catalog, search_catalog
 from design_methodology import CRITERIA, BIBLIOGRAPHY
 from ai_art_direction import validate_suggestions
 from clarifications import build_request,validate_request,build_reply,validate_reply,attach_reply
+from creative_preselection import preselect
 
 class BriefingQualityTests(unittest.TestCase):
     def test_gibberish_is_flagged(self):
@@ -228,6 +229,20 @@ class ClarificationsTests(unittest.TestCase):
         reply=build_reply(req,{"clima":"Necesito ayuda"})
         with self.assertRaises(ValueError):
             validate_reply(reply,{"submission_id":"another-brief"},self.audit)
+
+class NoApiFallbackTests(unittest.TestCase):
+    def test_prefill_three_options_without_claiming_ai(self):
+        a={"negocio":"Ofrecemos caminatas por el bosque valdiviano.",
+           "referentes":"Nos gustan fotografías documentales y libros de botánica.",
+           "personalidad":"Somos tranquilos, cercanos y nos interesa la naturaleza."}
+        proposals=preselect(a)
+        self.assertEqual(len(proposals),3)
+        self.assertEqual(len({p["nombre"] for p in proposals}),3)
+        self.assertTrue(all(p["tipo"]=="preseleccion_por_reglas" for p in proposals))
+        self.assertTrue(all(len(p["fundamento"])>20 for p in proposals))
+
+    def test_empty_brief_produces_no_prefill(self):
+        self.assertEqual(preselect({}),[])
 
 if __name__=="__main__":
     unittest.main()
