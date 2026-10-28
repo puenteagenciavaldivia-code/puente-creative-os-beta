@@ -32,10 +32,11 @@ def build_handoff(record):
     }
     readiness = {}
     for task, fields in REQUIREMENTS.items():
-        gaps = [key for key in fields if not _filled(answers.get(key)) or quality.get(key, 1) < 0.75]
+        gaps = [key for key in fields if not _filled(answers.get(key)) or quality.get(key, 0) < 0.75]
         readiness[task] = {
             "informacion_pendiente": gaps,
             "requiere_revision_humana": True,
+            "diagnostico_verificado": False,
             "aprobado": False,
         }
     return {
