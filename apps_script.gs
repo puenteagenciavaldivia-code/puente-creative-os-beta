@@ -207,6 +207,28 @@ function clarificationRoute(p) {
       });
       return jsonReply({ok:true,items:items});
     }
+    if(action==='clarify_send_email') {
+      const token=String(p.access_token||'');
+      const destination=String(p.email||'').trim();
+      const link=String(p.link||'').trim();
+      if(!/^[a-f0-9]{64}$/.test(token)||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(destination)
+          ||destination.length>240||!/^https:\/\/[a-zA-Z0-9.-]+\.streamlit\.app\//.test(link)
+          ||link.indexOf(token)<0||link.length>1500)return reply('INVALID');
+      const targetRow=rowForClarification(sheet,token);
+      if(!targetRow)return reply('DENIED');
+      const x=sheet.getRange(targetRow,1,1,10).getDisplayValues()[0];
+      if(x[7]!=='pending'||Date.now()>=new Date(x[4]).getTime())return reply('CLOSED');
+      if(x[9])return reply('ALREADY_SENT');
+      if(MailApp.getRemainingDailyQuota()<1)return reply('QUOTA');
+      const brand=String(x[2]||'tu marca').replace(/^'/,'');
+      MailApp.sendEmail({
+        to:destination,
+        subject:'PUENTE · Unas preguntas breves sobre '+brand,
+        body:'Hola,\n\nPara preparar la propuesta de '+brand+' nos faltan algunos detalles. Puedes responderlos aquí:\n'+link+'\n\nEste enlace es privado, funciona una sola vez y vence en 7 días. No lo reenvíes.\n\nEquipo Agencia Puente'
+      });
+      sheet.getRange(targetRow,10).setValue(new Date().toISOString());
+      return jsonReply({ok:true,sent:true});
+    }
     const row=rowForClarification(sheet,p.access_token);
     if(!row)return reply('DENIED');
     const cells=sheet.getRange(row,1,1,10).getDisplayValues()[0];
