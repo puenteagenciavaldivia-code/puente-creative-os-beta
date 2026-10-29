@@ -11,6 +11,7 @@ from strategic_audit import audit_briefing
 from review_workflow import new_review,validate_review,prepare_reviewed_package
 from clarifications import build_request,validate_reply,attach_reply
 from creative_exchange import build_creative_prompt, import_creative_json
+from graphic_production import FORMAT_PRESETS, build_piece, build_production_plan, production_prompt, export_plan
 from design_catalog import search_catalog,category_names
 from design_methodology import BIBLIOGRAPHY,CRITERIA
 from dashboard_helpers import public_clarification_url,invitation_copy,whatsapp_share_url,mailto_url
@@ -358,6 +359,74 @@ with tabs[3]:
         with st.expander(name.replace("_"," ").capitalize()):
             st.write("Por completar: "+(", ".join(item["informacion_pendiente"]) or "Revisión humana pendiente"))
     st.caption("La autorización de esta beta no sustituye un registro auditado de permisos ni el contrato.")
+    st.divider()
+    st.markdown("#### Taller de piezas gráficas")
+    st.caption("Define una ficha por publicación o reel. Los formatos se especifican antes de generar; la ejecución se desbloquea solo con una dirección aprobada.")
+    templates={"Por confirmar":None,"Redes básico (referencial)":"basico",
+               "Redes ampliado (referencial)":"ampliado",
+               "Branding (referencial)":"branding"}
+    selected_contract=st.selectbox("Plan contratado",list(templates),
+        help="Selección informativa: verificar contra la cotización o contrato antes de entregar piezas.",
+        key="graphics_contract_"+rid)
+    saved_pieces=review.get("production_pieces")
+    if not isinstance(saved_pieces,list):
+        saved_pieces=[]
+    default_count=len(saved_pieces) if saved_pieces else 1
+    piece_count=st.number_input("Cantidad de piezas a preparar",min_value=1,max_value=30,
+        value=min(default_count,30),step=1,key="graphics_count_"+rid)
+    editable=[]
+    for n in range(int(piece_count)):
+        previous=saved_pieces[n] if n<len(saved_pieces) and isinstance(saved_pieces[n],dict) else {}
+        with st.expander("Pieza "+str(n+1)+" · "+str(previous.get("titulo") or "Nueva"),expanded=n==0):
+            formats=list(FORMAT_PRESETS)
+            original_kind=previous.get("formato_id")
+            kind=st.selectbox("Formato de publicación",formats,
+                index=formats.index(original_kind) if original_kind in formats else 0,
+                format_func=lambda k:FORMAT_PRESETS[k]["label"]+
+                    " ("+str(FORMAT_PRESETS[k]["width"])+"×"+str(FORMAT_PRESETS[k]["height"])+")",
+                key="graphics_format_"+rid+"_"+str(n))
+            title=st.text_input("Tema / título",value=previous.get("titulo",""),
+                key="graphics_title_"+rid+"_"+str(n))
+            objective=st.text_area("Objetivo de esta pieza",value=previous.get("objetivo",""),
+                height=75,key="graphics_objective_"+rid+"_"+str(n))
+            main_message=st.text_area("Mensaje principal",value=previous.get("mensaje_principal",""),
+                height=75,key="graphics_message_"+rid+"_"+str(n))
+            cta=st.text_input("Llamado a la acción",value=previous.get("cta",""),
+                key="graphics_cta_"+rid+"_"+str(n))
+            visual=st.text_area("Dirección visual y composición",value=previous.get("instrucciones_visuales",""),
+                height=85,key="graphics_visual_"+rid+"_"+str(n))
+            assets=st.text_input("Fotografías / logos disponibles y autorizados",value=previous.get("activos_fuente",""),
+                key="graphics_assets_"+rid+"_"+str(n))
+            caption=st.text_area("Pie de texto de la publicación",value=previous.get("copy",""),
+                height=95,key="graphics_copy_"+rid+"_"+str(n))
+            editable.append(build_piece(record["submission_id"],n+1,kind,title,objective,
+                main_message,cta,visual,assets,caption))
+    review["production_pieces"]=editable
+    review["production_plan_id"]=templates[selected_contract]
+    notes=st.text_area("Notas generales del director de arte",
+        value=review.get("production_notes",""),height=90,key="graphics_notes_"+rid)
+    review["production_notes"]=notes
+    graphic_plan=build_production_plan(record,review,audit,editable,notes,templates[selected_contract])
+    if graphic_plan["bloqueos"]:
+        st.warning("El plan de producción todavía está bloqueado. "+
+                   str(len(graphic_plan["bloqueos"]))+" condiciones requieren revisión.")
+        with st.expander("Ver requisitos pendientes para producir"):
+            for blocker in graphic_plan["bloqueos"]:
+                st.write("• "+blocker)
+    else:
+        st.success("Fichas completas: puedes preparar los encargos individuales de producción gráfica.")
+        for p in editable:
+            with st.expander("Encargo listo: "+p["titulo"]):
+                st.code(production_prompt(graphic_plan,p),language="text")
+                st.download_button("Descargar encargo "+p["piece_id"].split("-")[-1],
+                    production_prompt(graphic_plan,p),
+                    file_name="puente-"+p["piece_id"]+".txt",
+                    mime="text/plain",key="export_piece_"+p["piece_id"])
+    st.download_button("Exportar planificación de piezas (JSON)",
+        export_plan(graphic_plan),
+        file_name="puente-produccion-"+str(record["submission_id"])[:8]+".json",
+        mime="application/json",key="export_production_"+rid)
+    st.caption("La planificación se conserva junto a la revisión interna al pulsar «Guardar revisión en Sheets» en Documentos. Las piezas finales se deben diseñar, revisar y exportar por separado.")
 
 with tabs[4]:
     st.markdown("#### Documentos y entregables")
