@@ -1,10 +1,10 @@
-# PUENTE Creative OS — Beta 1.0
+# PUENTE Creative OS — Beta 1.1
 
 Sistema experimental de Agencia Puente para recopilar briefings, detectar vacíos estratégicos, solicitar aclaraciones y preparar decisiones de dirección de arte con revisión humana.
 
 ## Interfaces
 - `app.py`: briefing para cliente.
-- `pages/01_Panel_interno.py`: escritorio interno en pestañas de Resumen, Aclaraciones, Dirección de arte, Producción y Documentos.
+- `pages/01_Panel_interno.py`: escritorio interno en pestañas de Resumen, Aclaraciones, Dirección de arte, Producción y Documentos; incluye fichas individuales de producción con formatos exactos.
 - `pages/02_Aclaraciones.py`: respuestas complementarias desde enlaces de un solo uso y vencimiento, o respaldo por archivo JSON.
 
 ## Integraciones
@@ -23,6 +23,10 @@ Para ejecutar pruebas: `python -m unittest discover -s tests -v`. También exist
 
 ## Investigación creativa
 Consultar [METODO_DIRECCION_ARTE.md](METODO_DIRECCION_ARTE.md). La biblioteca es inicial y no equivale a un estudio exhaustivo de todos los libros ni movimientos. El director de arte aprueba o rechaza las alternativas.
+
+## Producción gráfica guiada
+
+El módulo `graphic_production.py` genera fichas de pieza y encargos de diseño por formato. Los encargos solamente se habilitan tras resolver la auditoría y registrar la aprobación humana de una dirección de arte. La exportación no crea una imagen ni un arte final. Consultar [FLUJO_PRODUCCION_GRAFICA.md](FLUJO_PRODUCCION_GRAFICA.md).
 
 ## Próximos hitos
 Autenticación individual, permisos de acceso, protección de datos de producción, integración probada de extremo a extremo y documentos PDF modulares según el plan comercial contratado. El historial básico de revisiones se habilita con el nuevo script, pero todavía no reemplaza una auditoría de seguridad.
