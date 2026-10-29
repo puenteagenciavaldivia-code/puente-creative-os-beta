@@ -300,3 +300,14 @@ function reviewRoute(p,action) {
   }
   return jsonReply({ok:true,found:false});
 }
+
+/**
+ * Ejecutar manualmente en el editor de Apps Script para autorizar el permiso
+ * de MailApp antes de enviar invitaciones desde la aplicación web.
+ * No envía ningún correo ni crea invitaciones.
+ */
+function autorizarCorreoPuente() {
+  const disponibles=MailApp.getRemainingDailyQuota();
+  console.log('MailApp autorizado. Cupo diario disponible: '+disponibles);
+  return disponibles;
+}
