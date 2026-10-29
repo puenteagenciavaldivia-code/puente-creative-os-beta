@@ -10,6 +10,7 @@ from clarifications import build_request,validate_request,build_reply,validate_r
 from creative_preselection import preselect
 from dashboard_helpers import public_clarification_url,invitation_copy,whatsapp_share_url,mailto_url
 from creative_exchange import build_creative_prompt,import_creative_json,sanitize_briefing
+from graphic_production import FORMAT_PRESETS,build_piece,build_production_plan,production_prompt
 
 class BriefingQualityTests(unittest.TestCase):
     def test_gibberish_is_flagged(self):
@@ -285,6 +286,62 @@ class ChatGPTHandoffTests(unittest.TestCase):
     def test_bad_ai_import_cannot_approve(self):
         with self.assertRaises((ValueError,TypeError)):
             import_creative_json('{"propuestas":[]}',{"nombre":"Prueba"})
+
+class GraphicProductionTests(unittest.TestCase):
+    def setUp(self):
+        self.record={"submission_id":"brand-123","answers":{"nombre":"Bosque Adentro"}}
+        self.audit={"preguntas_priorizadas":[{"id":"precios","pregunta":"¿Qué precios tienen?"}]}
+        self.review=new_review(self.record,self.audit)
+        self.piece=build_piece("brand-123",1,"instagram_post_4_5",
+            "Caminata interpretativa","Explicar cómo funciona una salida guiada",
+            "Recorridos en pequeños grupos con guía local",
+            "Consulta por disponibilidad",
+            "Fotografía documental del bosque, tipografía clara y contraste accesible",
+            "Fotografías originales autorizadas","Conoce el recorrido.")
+
+    def test_format_presets_are_exact(self):
+        self.assertEqual((FORMAT_PRESETS["instagram_post_4_5"]["width"],
+                          FORMAT_PRESETS["instagram_post_4_5"]["height"]),(1080,1350))
+        self.assertEqual((FORMAT_PRESETS["instagram_story_9_16"]["width"],
+                          FORMAT_PRESETS["instagram_story_9_16"]["height"]),(1080,1920))
+
+    def test_unapproved_direction_never_produces_prompt(self):
+        plan=build_production_plan(self.record,self.review,self.audit,[self.piece])
+        self.assertEqual(plan["estado"],"borrador_bloqueado")
+        self.assertTrue(plan["bloqueos"])
+        with self.assertRaises(ValueError):
+            production_prompt(plan,self.piece)
+
+    def test_verified_review_unblocks_only_with_explicit_approval(self):
+        self.review["responsable"]="Equipo Puente"
+        self.review["revision"]={"precios":{"estado":"confirmado","nota":"Tarifa confirmada por el cliente por escrito."}}
+        self.review["corrientes"]=[
+          {"nombre":"Art Nouveau","fundamento":"El cliente menciona libros botánicos antiguos de referencia.",
+           "diferenciacion":"Ilustración de plantas como sistema visual secundario.",
+           "riesgos":"El ornamento excesivo podría dificultar la lectura."},
+          {"nombre":"Estilo Tipográfico Internacional","fundamento":"Las salidas requieren información clara y jerarquizada.",
+           "diferenciacion":"Sistema tipográfico modular para la información práctica.",
+           "riesgos":"Puede perder calidez y expresar una identidad fría."}
+        ]
+        self.review["direccion_seleccionada"]="Estilo Tipográfico Internacional"
+        self.review["observaciones"]="Una estructura clara responde mejor al público objetivo."
+        blocked=build_production_plan(self.record,self.review,self.audit,[self.piece])
+        self.assertEqual(blocked["estado"],"borrador_bloqueado")
+        self.review["autorizacion_produccion"]=True
+        approved=build_production_plan(self.record,self.review,self.audit,[self.piece])
+        self.assertEqual(approved["estado"],"habilitado_para_produccion")
+        prompt=production_prompt(approved,self.piece)
+        self.assertIn("1080 × 1350",prompt)
+        self.assertIn("Estilo Tipográfico Internacional",prompt)
+        self.assertIn("No inventar precios",prompt)
+
+    def test_piece_must_belong_to_selected_briefing(self):
+        foreign=build_piece("other-brand",1,"instagram_story_9_16",
+            "Nueva publicación","Lanzar actividad para familias",
+            "Experiencias para grupos pequeños","Consulta ahora")
+        plan=build_production_plan(self.record,self.review,self.audit,[foreign])
+        self.assertEqual(plan["estado"],"borrador_bloqueado")
+        self.assertTrue(any("identificadores" in e for e in plan["bloqueos"]))
 
 if __name__=="__main__":
     unittest.main()
