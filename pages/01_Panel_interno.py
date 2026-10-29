@@ -10,8 +10,7 @@ from creative_handoff import build_handoff
 from strategic_audit import audit_briefing
 from review_workflow import new_review,validate_review,prepare_reviewed_package
 from clarifications import build_request,validate_reply,attach_reply
-from creative_preselection import preselect
-from ai_art_direction import propose_with_ai
+from creative_exchange import build_creative_prompt, import_creative_json
 from design_catalog import search_catalog,category_names
 from design_methodology import BIBLIOGRAPHY,CRITERIA
 from dashboard_helpers import public_clarification_url,invitation_copy,whatsapp_share_url,mailto_url
