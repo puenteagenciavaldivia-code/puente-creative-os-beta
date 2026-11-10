@@ -52,7 +52,7 @@ def validate_dossier(d):
     if not isinstance(sources,list):sources=[];errors.append("Faltan fuentes")
     known=set()
     for s in sources:
-        if not isinstance(s,dict) or not all(_text(s.get(k),3) for k in ("id","type","origin","usage")):
+        if not isinstance(s,dict) or not _text(s.get("id"),1) or not all(_text(s.get(k),3) for k in ("type","origin","usage")):
             errors.append("Fuente incompleta");continue
         if s["id"] in known:errors.append("ID de fuente repetido")
         known.add(s["id"])
