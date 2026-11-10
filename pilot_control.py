@@ -108,7 +108,11 @@ def check(directory):
                 missing.append('PERMISOS_LOCALES_AMPLIOS')
                 break
     with sqlite3.connect(path.as_uri()+'?mode=ro', uri=True) as db:
-        operators = db.execute('SELECT COUNT(DISTINCT subject) FROM pilot_users WHERE active=1').fetchone()[0]
+        total = db.execute('SELECT COUNT(DISTINCT subject) FROM pilot_users').fetchone()[0]
+        operators = db.execute('''SELECT COUNT(*) FROM
+            (SELECT subject FROM pilot_users GROUP BY subject HAVING MIN(active)=1)''').fetchone()[0]
+        if total > 2:
+            missing.append('REGISTRO_SUPERA_DOS_IDENTIDADES')
         if operators != 2:
             missing.append('DOS_OPERADORES_PENDIENTES')
         # Nunca imprimir sub ni correos en la salida.

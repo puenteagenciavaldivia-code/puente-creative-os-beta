@@ -1,5 +1,9 @@
 # Creative OS 1.0 — consolidación experimental
 
+**Último estado: rama `experiment/creative-os-1-reconciled`, 224/224 pruebas
+locales aprobadas. OAuth y laboratorio histórico recuperados; no crear duplicados.
+NO APTO para núcleo productivo. Ver la última sección para la conciliación vigente.**
+
 10 de noviembre de 2026. Base inicial: `aa39f218549ed9750c87faeb0e9c9d365bb6caee`. Primera rama: `experiment/creative-os-1-dossier`. Continuación: `experiment/creative-os-1-decisions`, basada en `54b38289b56c11014129d8702103c9f25adb6e40`.
 
 ## Resultado de producto
@@ -280,3 +284,50 @@ debe documentarse el responsable. No hay cambios en Beta, Google ni producción.
 
 **APTO para revisión del paquete operativo; NO APTO para núcleo productivo.
 04.01 ABIERTA — PRUEBA GOOGLE REAL PENDIENTE — 04.02 NO INICIADA.**
+
+### Reconciliación del PR DCP-02, candidata y prototipo de permisos
+
+Fuentes: PR #1 en c60ad1a9021823d55c8ff67ddbda8d4e72630ba3, candidata remota
+3dd35e66aaa03a38cc52c4184b3524c6d147a883 y ZIP de persistencia V1 SHA-256
+9cfe11e4f1059041cf5b3aed9c25bb113470c854b2dbcd60247a473f8718554c.
+La conciliación conserva ambos historiales en una rama experimental; no modifica
+el PR #1, main, despliegues ni el laboratorio Google.
+
+Se resolvieron tres conflictos del merge local: motor de dossier, tests y workflow.
+Se conservó el motor de la candidata y su UI compartida. Los nombres públicos del
+bridge del PR delegan en dossier_adapter: exige auditoría explícita, marca exacta
+y citas del briefing; no migra automáticamente aprobaciones o dossiers antiguos.
+La página del PR queda como navegación al Escritorio, sin segundo flujo de
+aprobación o importación débil. El responsable de texto sigue sin autenticar a
+una persona; el flujo protegido usa DecisionStore y política del servidor.
+
+Del prototipo recuperado se conservan dos garantías en NativePilotAccess: máximo
+dos identidades registradas, incluidas revocadas, y rechazo de alta que reactive
+una identidad revocada. La desactivación cubre todos sus proyectos en la misma
+base. Un registro previo de tres identidades o una revocación parcial se deniega
+sin borrado o reparación automática. La concesión concurrente se serializa en
+SQLite y no supera el límite. El preflight comprueba las mismas condiciones.
+No se introduce otro almacén de autorización paralelo ni se conecta GAS.
+
+**224/224 pruebas locales aprobadas**, Python 3.12.14, Streamlit 1.67.0, cero
+omitidas y criptografía obligatoria; 17 nuevas (8 bridge, 7 permisos, 2 preflight).
+Evidencia: `VALIDACION_RECONCILIACION_LOCAL.txt`. Compilación, diff y ausencia de
+conflictos Git comprobados. No se reejecutaron los paquetes históricos ni Google.
+
+Una sola CI sustituye el workflow redundante del PR: matriz de Python 3.11/3.12
+con Streamlit fijado a 1.67.0, pruebas criptográficas obligatorias. Evita repetir
+otra suite completa y combinar el piloto OIDC con versiones que no ofrecen su
+API. Esta matriz nueva NO se ejecutó remotamente ni acredita Python 3.11 local.
+La evidencia antigua de compatibilidad 1.40 se conserva para la candidata anterior,
+no para el piloto reconciliado. No se actualizó el Mac ni su entorno histórico.
+
+La continuidad recuperada corrige el plan: ya existían proyecto/cliente OAuth y
+uso real de Google, además de diagnóstico GAS y GAS-AUTH01 6/6 reales. El login
+histórico no prueba esta nueva entrada. Pendientes: probarla con los recursos
+existentes en el Mac, autoridad durable entre servicios, GAS-AUDIT01 real bajo
+autorización específica y aceptación creativa humana. Restaurar una copia conserva
+el registro a la fecha de esa copia: no acredita preservar revocaciones posteriores;
+la conciliación del registro vigente antes de habilitar acceso sigue pendiente.
+
+**APTO para revisión de la conciliación local; NO APTO para integrar al núcleo.
+04.01 ABIERTA — SIN CAMBIOS EN GOOGLE/PRODUCCIÓN — 04.02 NO INICIADA.**

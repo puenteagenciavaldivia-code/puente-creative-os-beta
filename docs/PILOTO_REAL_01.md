@@ -3,6 +3,29 @@
 Fecha: 2026-11-10. Estado: ENTRADA IMPLEMENTADA Y PROBADA LOCALMENTE; ejecución real NO INICIADA.
 Complementa el registro único `CREATIVE_OS_1_REVISION.md`; no reemplaza evidencias anteriores.
 
+## Rectificación por continuidad recuperada
+
+El cliente OAuth y el proyecto NO están por crear: el historial del 6–7 de
+noviembre identifica My First Project, `project-c9d8af08-6cc6-4493-8ad`, número
+795813178598, y el cliente PUENTE Creative OS - Laboratorio Local, con dos usuarios
+de prueba. Un aviso Google acredita uso real del proveedor el 7-nov a las 16:46.
+La ejecución real no iniciada de este documento se refiere a ESTA entrada nueva,
+no al laboratorio histórico. Se conservan los recursos existentes; no duplicarlos.
+
+La ruta histórica del Mac es `~/Downloads/PUENTE_0401_Puerta_A_Laboratorio`; su
+app.py seguía bloqueando operaciones aunque recibiera identidad. Había ya un
+prototipo de persistencia con 23 tests locales, sin conectar a esa UI. La
+reconciliación actual recupera su límite de dos identidades y no reactivación
+implícita. Una revocación del gate afecta todos los proyectos de esa identidad
+en ESTA base local. No implementa revocación entre servicios. Una base anterior
+con más de dos identidades o revocación parcial se deniega sin borrar registros.
+
+Pendiente específico: verificar la configuración no secreta y el entorno del Mac,
+conservar credenciales y dependencias históricas, y usar un entorno separado para
+la candidata. No reemplazar la instalación 1.42 histórica por 1.67 automáticamente.
+Las secciones siguientes conservan propuestas anteriores; esta rectificación
+prevalece cuando una fila afirme que deben crearse proyecto, cliente o usuarios.
+
 ## Decisión técnica propuesta
 
 Primer piloto en un único equipo controlado por Puente, con disco local persistente y

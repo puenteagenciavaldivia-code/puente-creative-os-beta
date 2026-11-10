@@ -70,6 +70,15 @@ class NativePilotAccess:
         with self.connect() as db:
             db.execute('BEGIN IMMEDIATE')
             try:
+                # Garantías de Puerta A V1: dos identidades, sin auto-reactivación.
+                prior = db.execute('SELECT MIN(active) FROM pilot_users WHERE subject=?', (subject,)).fetchone()[0]
+                total = db.execute('SELECT COUNT(DISTINCT subject) FROM pilot_users').fetchone()[0]
+                if total > 2 or (prior is None and (total >= 2 or not active)):
+                    raise ValueError('Límite de dos operadores o identidad no registrada.')
+                if prior == 0 and active:
+                    raise ValueError('No se reactiva una identidad revocada mediante un alta.')
+                if not active:
+                    db.execute('UPDATE pilot_users SET active=0 WHERE subject=?', (subject,))
                 db.execute('INSERT OR REPLACE INTO pilot_users VALUES(?,?,?,?,?)',
                            (subject, 'AGENCIA-FICTICIA', project, role, int(active)))
                 key = hashlib.sha256((ISSUER+'|'+subject).encode()).hexdigest()
@@ -115,9 +124,13 @@ class NativePilotAccess:
                 if self.actor(user) != actor or scope.agency != 'AGENCIA-FICTICIA':
                     return False
                 with self.connect() as db:
-                    row = db.execute('SELECT role,active FROM pilot_users WHERE subject=? AND agency=? AND project=?',
-                                     (actor.subject, scope.agency, scope.project)).fetchone()
-                return bool(row and row[1] == 1 and action in ROLES.get(row[0], ()))
+                    row = db.execute('''SELECT role,active,
+                        (SELECT MIN(active) FROM pilot_users WHERE subject=?),
+                        (SELECT COUNT(DISTINCT subject) FROM pilot_users)
+                        FROM pilot_users WHERE subject=? AND agency=? AND project=?''',
+                                     (actor.subject, actor.subject, scope.agency, scope.project)).fetchone()
+                return bool(row and row[1] == 1 and row[2] == 1 and row[3] <= 2
+                            and action in ROLES.get(row[0], ()))
             except Exception:
                 return False
         return allowed
@@ -129,10 +142,12 @@ class NativePilotAccess:
             self.record(None, 'access', 'denied')
             raise
         with self.connect() as db:
+            active = db.execute('SELECT MIN(active) FROM pilot_users WHERE subject=?', (actor.subject,)).fetchone()[0]
+            total = db.execute('SELECT COUNT(DISTINCT subject) FROM pilot_users').fetchone()[0]
             projects = [row[0] for row in db.execute(
                 'SELECT project FROM pilot_users WHERE subject=? AND agency=? AND active=1 AND role IN (?,?) ORDER BY project',
                 (actor.subject, 'AGENCIA-FICTICIA', 'direccion', 'operacion'))]
-        if not projects:
+        if not projects or active != 1 or total > 2:
             self.record(actor, 'access', 'denied')
             raise PermissionError('Sin proyectos autorizados en el piloto.')
         self.record(actor, 'access', 'allowed')

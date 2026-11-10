@@ -141,6 +141,55 @@ class NativePilotTests(unittest.TestCase):
         fresh = NativePilotAccess(self.path, 'client-ficticio', lambda: 1000)
         self.assertEqual(fresh.projects(self.user), [self.project])
 
+    def test_two_operator_limit_preserved_from_previous_lab(self):
+        self.access.set_user('20002', self.project, 'operacion')
+        with self.assertRaises(ValueError): self.access.set_user('30003', self.project, 'operacion')
+
+    def test_revoked_slot_is_not_reused_by_an_implicit_new_identity(self):
+        self.access.set_user('20002', self.project, 'operacion')
+        self.access.set_user('20002', self.project, 'operacion', active=False)
+        with self.assertRaises(ValueError): self.access.set_user('30003', self.project, 'operacion')
+
+    def test_provisioning_does_not_reactivate_revoked_user(self):
+        self.access.set_user('10001', self.project, 'direccion', active=False)
+        for project in (self.project, 'SYNTH-OTRO'):
+            with self.subTest(project=project):
+                with self.assertRaises(ValueError): self.access.set_user('10001', project, 'direccion')
+        with self.assertRaises(PermissionError): self.access.projects(self.user)
+
+    def test_revocation_covers_all_projects_for_the_identity(self):
+        other = Scope('AGENCIA-FICTICIA', 'SYNTH-OTRO')
+        self.access.set_user('10001', other.project, 'direccion')
+        self.access.set_user('10001', self.project, 'direccion', active=False)
+        self.assertFalse(self.access.policy(self.user)(self.actor, other, 'read'))
+
+    def test_legacy_partial_revocation_is_conservatively_denied(self):
+        self.access.set_user('10001', 'SYNTH-OTRO', 'direccion')
+        with sqlite3.connect(self.path) as db:
+            db.execute('UPDATE pilot_users SET active=0 WHERE project=?', (self.project,))
+        self.assertFalse(self.access.policy(self.user)(self.actor, Scope('AGENCIA-FICTICIA', 'SYNTH-OTRO'), 'read'))
+
+    def test_existing_overfull_registry_fails_closed_without_deleting_data(self):
+        with sqlite3.connect(self.path) as db:
+            for subject in ('20002', '30003'):
+                db.execute('INSERT INTO pilot_users VALUES(?,?,?,?,?)',
+                           (subject, self.scope.agency, self.project, 'operacion', 1))
+        with self.assertRaises(PermissionError): self.access.projects(self.user)
+        self.assertFalse(self.access.policy(self.user)(self.actor, self.scope, 'read'))
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(db.execute('SELECT COUNT(DISTINCT subject) FROM pilot_users').fetchone()[0], 3)
+
+    def test_concurrent_grants_respect_the_same_two_operator_limit(self):
+        from concurrent.futures import ThreadPoolExecutor
+        def provision(subject):
+            try:
+                self.access.set_user(subject, self.project, 'operacion')
+                return 'allowed'
+            except ValueError:
+                return 'denied'
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            self.assertEqual(sorted(pool.map(provision, ['20002', '30003'])), ['allowed', 'denied'])
+
     def test_disabled_app_does_not_create_database(self):
         missing = Path(self.tmp.name)/'must-not-exist.sqlite'
         with patch.dict(os.environ, {'PUENTE_OIDC_PILOT_ENABLED': '0', 'PUENTE_OIDC_PILOT_DB': str(missing)}):

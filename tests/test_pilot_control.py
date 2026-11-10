@@ -103,5 +103,24 @@ class PilotControlTests(unittest.TestCase):
         self.assertEqual(result['google_login'], 'NO_VERIFICADO')
         self.assertFalse(result['production_ready'])
 
+    def test_preflight_matches_gate_for_old_overfull_registry(self):
+        self.init()
+        with sqlite3.connect(self.root/'pilot.sqlite') as db:
+            for subject, active in [('10001', 1), ('20002', 1), ('30003', 0)]:
+                db.execute('INSERT INTO pilot_users VALUES(?,?,?,?,?)',
+                           (subject, 'AGENCIA-FICTICIA', self.project, 'direccion', active))
+        result = check(self.root)
+        self.assertIn('REGISTRO_SUPERA_DOS_IDENTIDADES', result['blockers'])
+
+    def test_preflight_counts_partial_revocation_as_revoked_identity(self):
+        self.init()
+        with sqlite3.connect(self.root/'pilot.sqlite') as db:
+            for subject, project, active in [('10001', self.project, 1),
+                                             ('10001', 'SYNTH-OTRO', 0),
+                                             ('20002', self.project, 1)]:
+                db.execute('INSERT INTO pilot_users VALUES(?,?,?,?,?)',
+                           (subject, 'AGENCIA-FICTICIA', project, 'direccion', active))
+        self.assertIn('DOS_OPERADORES_PENDIENTES', check(self.root)['blockers'])
+
 
 if __name__ == '__main__': unittest.main()
