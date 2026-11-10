@@ -1,6 +1,6 @@
 # Creative OS 1.0 — consolidación experimental
 
-10 de noviembre de 2026. Base: `aa39f218549ed9750c87faeb0e9c9d365bb6caee`. Rama: `experiment/creative-os-1-dossier`.
+10 de noviembre de 2026. Base inicial: `aa39f218549ed9750c87faeb0e9c9d365bb6caee`. Primera rama: `experiment/creative-os-1-dossier`. Continuación: `experiment/creative-os-1-decisions`, basada en `54b38289b56c11014129d8702103c9f25adb6e40`.
 
 ## Resultado de producto
 
@@ -58,7 +58,7 @@ Se recuperó de continuidad el esquema de ocho hitos: S1 alcance/arquitectura; S
 | Prioridad | Pendiente | Evidencia / condición de salida |
 |---|---|---|
 | P0 | Acceso individual y permisos por proyecto | Panel actual usa contraseña compartida; no se tocó. OIDC sigue sin integración real |
-| P0 | Decisiones durables y autoría verificable | La nueva UI guarda solo en sesión y exporta JSON; nombres/hashes no autentican a una persona |
+| P0 | Decisiones durables y autoría verificable | Repositorio local transaccional y demo persistente implementados en la continuación; integración con identidad verificada y disco durable productivo pendiente. Panel Beta conserva guardado en sesión |
 | P0 | Revisar salida externa y alcance de contrato | PDF es exploratorio interno; no se implementó aún filtrado automático por contrato |
 | P1 | Revisión creativa humana de tres casos | No hay aprobación ni medición de utilidad de usuarios reales |
 | P1 | Validación visual de dashboard y panel completo | AppTest aprobado; Chromium local bloqueado; hosting no probado |
@@ -74,3 +74,31 @@ Se recuperó de continuidad el esquema de ocho hitos: S1 alcance/arquitectura; S
 Reversión: abandonar la rama restaura la base main; no hubo migraciones ni escrituras de datos. Antes de integrar, revisar el diff y repetir solo los checks afectados por nuevas modificaciones. No usar datos de clientes hasta cerrar acceso, privacidad y autorización. Ningún estado de esta entrega cierra 04.01 ni inicia 04.02.
 
 **04.01 ABIERTA — RAMA EXPERIMENTAL PARA REVISIÓN — SIN DESPLIEGUE — 04.02 NO INICIADA.**
+
+## Continuación — decisiones persistentes locales
+
+Se añadió `decision_store.py`, con SQLite de la biblioteca estándar: revisiones inmutables por API, decisiones nuevas sin sobrescribir anteriores, comprobación de integridad y aislamiento lógico por agencia/proyecto. Cada decisión queda ligada a versión, hash del dossier y actor proporcionado por el servidor. Una revisión posterior no hereda la aprobación anterior. El actor de auditoría no se obtiene del campo de nombre libre del dossier.
+
+Se reutilizaron `bind_dossier`, `approve_bound`, los modelos de revisión Beta y el patrón transaccional SQLite de laboratorio ya documentado. No se creó otro motor de autorización creativa ni se adaptó Apps Script. Los actores deben llegar desde una futura autenticación real; la política se inyecta exclusivamente desde el servidor, deniega por defecto y se consulta en cada llamada, también en reintentos. Una excepción de política no concede acceso.
+
+Guardar versión o decisión y su evento de auditoría sucede en una transacción `BEGIN IMMEDIATE`. Un fallo al insertar el evento revierte la operación. La versión esperada evita escrituras perdidas; un identificador de solicitud devuelve el mismo resultado si se repite y rechaza reutilización con otro contenido. El historial registra acción, actor, fecha y resultado para mutaciones satisfactorias y denegaciones de política. Los conflictos de versión/validación se devuelven como errores y no generan eventos persistentes; cuando la base falla no se garantiza poder registrar el propio fallo.
+
+`decision_demo.py` permite revisar ese recorrido sin conectar el panel Beta: guardar propuesta, aprobar/rechazar, recuperar en otra sesión y descargar decisión/historial. Hay dos identidades SELECCIONABLES y FICTICIAS: dirección y operación; operación no aprueba. Es un escenario de prueba, no un alta ni una asignación de roles a personas reales. No se modificó el flujo productivo ni se habilitó un login aparente. La base usa `.local/` y queda fuera de Git. No hay migración de datos existentes ni endpoints nuevos.
+
+### Evidencia de la continuación
+
+**102/102 pruebas locales satisfactorias**: 70 anteriores + 28 de almacenamiento + 4 de UI persistente. Python 3.12.14, SQLite 3.53.1, Streamlit 1.67.0. Registro actual en `docs/VALIDACION_LOCAL.txt`.
+
+Pruebas nuevas: recuperación con instancia y proceso Python nuevos; recuperación de decisión tras reiniciar la sesión Streamlit; aislamiento de agencia/proyecto; consulta sin permiso de aprobación; actor desconocido/desactivado; denegación por defecto y ante fallo de política; reintentos idénticos y colisión de identificadores; aprobación obsoleta invalidada; rechazo posterior a aprobación; permisos de producción siempre falsos; rollback ante fallo de auditoría; detección de alteración de revisión, evento o decisión; dos escritores locales simultáneos con un único ganador; copia mediante SQLite backup y restauración local con igualdad de decisión e historial. No se probó una restauración operativa en Google ni hosting.
+
+La compilación y `git diff --check` pasan. No se añadieron dependencias. Las pruebas escriben solo en directorios temporales con fixtures y limpian sus bases. No hubo llamadas a servicios externos, despliegues, cambios de credenciales, ejecuciones GAS ni cierre de etapa.
+
+### Límites y dictamen actualizado
+
+- La persistencia se ha demostrado en disco LOCAL. Streamlit Community Cloud o múltiples réplicas requieren una decisión de almacenamiento durable; no asumir que SQLite local resuelve ese entorno.
+- El encadenamiento SHA-256 detecta modificaciones accidentales verificadas en pruebas, pero no es firma, no repudio ni almacenamiento inmutable. Un administrador de la base puede reescribir una cadena completa o truncarla. La copia no está cifrada; retención, permisos del sistema y gestión de respaldos siguen pendientes para datos reales.
+- No se probó OIDC ni autenticidad de `issuer/sub`. La API de almacenamiento debe ser interna y nunca aceptar actores/políticas desde JSON cliente. La política de la demo es ficticia. No se probó revocación global ni revocación retroactiva de aprobaciones anteriores.
+- Hay transacciones y contención comprobadas dentro de un archivo SQLite local. No hay atomicidad distribuida con Apps Script ni concurrencia entre hosts. La política de acceso está fuera de esa transacción y requiere una fuente autoritativa antes de integración real.
+- La evaluación creativa humana, el alcance contractual del PDF y los pilotos reales siguen pendientes. Estos cambios no cierran los otros P0 del registro.
+
+**NO APTO para integrar al núcleo productivo. APTO para revisión local del dossier con historial persistente.** Próxima prioridad: contrato de identidad verificada y persistencia durable para el entorno elegido, con revisión humana de los dossiers en paralelo. No duplicar el repositorio de decisiones si ese contrato puede adaptarse; no desplegar esta demo de identidades seleccionables.

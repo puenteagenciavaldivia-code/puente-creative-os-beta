@@ -32,6 +32,14 @@ El módulo `graphic_production.py` genera fichas de pieza y encargos de diseño 
 Autenticación individual, permisos de acceso, protección de datos de producción, integración probada de extremo a extremo y documentos PDF modulares según el plan comercial contratado. El historial básico de revisiones se habilita con el nuevo script, pero todavía no reemplaza una auditoría de seguridad.
 # Dirección Creativa Primero — rama Creative OS 1.0
 
+La continuación de persistencia está en `experiment/creative-os-1-decisions`. Para probar historial local con identidades **simuladas**:
+
+```bash
+streamlit run decision_demo.py
+```
+
+Usa exclusivamente fixtures. Guarda una versión, decide con dirección ficticia, abre otra sesión y consulta el historial. Operación ficticia puede guardar propuestas, pero no aprobarlas. La base queda en `.local/decision_demo.sqlite` (excluida de Git). El selector de identidad no es autenticación: no usar esta demo con datos reales ni exponerla como servicio.
+
 Esta rama añade dossier profesional HTML/PDF y revisión creativa independiente de la producción. Para una demo local sin Google, claves ni clientes reales:
 
 ```bash
