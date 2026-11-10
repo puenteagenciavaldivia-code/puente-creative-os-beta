@@ -1,0 +1,22 @@
+{
+  "status": "LOCAL_APROBADO",
+  "identity": "SIMULADA — no OAuth real",
+  "dossier_version": 1,
+  "decision_persisted": true,
+  "production_approved": false,
+  "client_sections": [
+    "strategy",
+    "direction"
+  ],
+  "history_events": 2,
+  "restore_matches": true,
+  "restored_sessions_invalidated": true,
+  "session_revoked": true,
+  "backup_format": "puente.sqlite.backup.v1",
+  "limitations": [
+    "Sin evaluación humana",
+    "Sin Google real",
+    "Sin cookies/PKCE",
+    "Solo un archivo SQLite local"
+  ]
+}

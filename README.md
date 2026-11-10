@@ -32,6 +32,8 @@ El módulo `graphic_production.py` genera fichas de pieza y encargos de diseño 
 Autenticación individual, permisos de acceso, protección de datos de producción, integración probada de extremo a extremo y documentos PDF modulares según el plan comercial contratado. El historial básico de revisiones se habilita con el nuevo script, pero todavía no reemplaza una auditoría de seguridad.
 # Dirección Creativa Primero — rama Creative OS 1.0
 
+Ensayo local completo, exclusivamente con datos ficticios: `python pilot_rehearsal.py`. La continuación `experiment/creative-os-1-pilot-readiness` añade sesión local, proyección contractual para cliente y backup/restauración verificados. No crea un login real ni despliega servicios.
+
 La continuación de persistencia está en `experiment/creative-os-1-decisions`. Para probar historial local con identidades **simuladas**:
 
 ```bash

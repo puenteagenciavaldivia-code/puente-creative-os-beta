@@ -144,3 +144,34 @@ Resultado: firma válida aceptada; clave incorrecta, payload modificado, token s
 **Dictamen actualizado: APTO para revisión del adaptador criptográfico offline; NO APTO para integrar al núcleo productivo.** Sigue pendiente verificar certificados de Google reales, configurar el flujo OAuth aprobado, implementar sesión/state/PKCE y consumidor durable de nonce, y escoger almacenamiento durable para el entorno de alojamiento. Ninguna prueba utiliza cuentas reales ni valida ese flujo end-to-end.
 
 **04.01 ABIERTA — BLOQUEO LOCAL DE DEPENDENCIAS RESUELTO — SIN DESPLIEGUES — 04.02 NO INICIADA.**
+
+## Tanda de preparación del piloto — sesión, contrato y recuperación
+
+Rama `experiment/creative-os-1-pilot-readiness`, continuación del contenido de `5a5a84e5054fd898e37d26622e0cb80277266013`.
+
+### Implementación
+
+- `session_store.py`: desafíos de acceso con caducidad, state de un solo uso y binding de navegador; consumo atómico en SQLite antes de verificar identidad; errores de verificación consumen el desafío. Sesiones opacas, handles/state almacenados como SHA-256, expiración absoluta/inactividad, revocación individual y de todas las sesiones locales de un actor. No usa roles de claims para conceder acceso.
+- `client_delivery.py`: proyección de entrega por contrato del servidor y proyecto. Exige aprobación creativa vigente, permite únicamente entregables conocidos y exporta solo la ruta seleccionada. Excluye revisión interna, auditoría, datos del actor, riesgos internos y alternativas no seleccionadas. La comparación exige un resumen separado para cliente, no reutiliza el razonamiento interno. Las fuentes requieren tipo público/licenciado y marca explícita de aprobación para cliente; esa marca no acredita por sí sola una licencia real. HTML escapado y etiquetas en español. El PDF interno previo no se transforma automáticamente en documento externo.
+- `store_backup.py`: copia consistente con SQLite backup, integrity_check, manifiesto SHA-256, creación exclusiva sin sobrescritura y restauración en base nueva. La restauración conserva decisiones/historial, pero invalida sesiones y desafíos de login anteriores: evita reactivar accesos revocados después de la copia. No implementa respaldos cloud ni cifrado.
+- `pilot_rehearsal.py`: ensayo local completo con fixture de identidad → sesión → política por proyecto → versión → decisión → entrega contractual → copia/restauración → cierre de sesión. La identidad se SIMULA, no se presenta como inicio de sesión Google ni aceptación humana. Borra el directorio temporal al terminar. Evidencia exportada sin handles ni tokens en `examples/pilot_rehearsal.json`; ejemplo externo ficticio en `examples/client_delivery_synthetic.html`.
+
+### Verificación final
+
+**170/170 tests locales aprobados, cero omitidos**: 137 previos, incluidas nueve firmas criptográficas offline, más 33 de esta tanda. Casos nuevos: recuperación de sesión tras reinicio, caducidad y logout, callback duplicado y dos callbacks locales simultáneos con un solo ganador, vinculación a navegador, fallo de verificador, handles no almacenados en claro, invalidación de sesiones al restaurar; contrato ajeno/desconocido, aprobación ausente/obsoleta, exclusión de campos internos, proyección independiente del original, HTML escapado; copia y restauración sin sobrescritura, detección de alteración, original intacto y ensayo integrado.
+
+Comandos: `python -m unittest discover -s tests -v`, `python -m compileall -q .`, `git diff --check`. Resultado consolidado en `docs/VALIDACION_LOCAL.txt`. El ensayo reporta versión 1, dos eventos históricos, decisión persistida, producción false, secciones strategy/direction y restauración coincidente. El dashboard nuevo no se desplegó ni se conectó a estos servicios.
+
+### Límites y criterios pendientes
+
+Estos módulos son APIs internas: la aplicación deberá proporcionar contrato, política, binding y verificador desde el servidor. No aceptar esos parámetros como autoridad del cliente. No hay rutas OAuth, PKCE, cookies Secure/HttpOnly/SameSite, protección CSRF completa, rate limiting, configuración del proveedor ni verificación real de la cuenta. No se autoriza desplegar las demos con selectores de identidad.
+
+La expiración y revocación comprobadas afectan a esta base LOCAL; no son logout global Google ni revocación entre servidores. Los callbacks concurrentes se probaron sobre un archivo local. Hace falta implementar retención/limpieza de desafíos caducados y controlar cuota de intentos antes de exponer el acceso. Las bases y backups pueden contener datos sensibles y no están cifrados. El manifiesto es integridad, no firma ni prueba contra un administrador malicioso. No publicar ni versionar bases/certificados privados.
+
+La selección de hosting y almacenamiento durable continúa abierta: SQLite requiere un host con disco persistente y un escritor coordinado. No se certifica que el alojamiento Streamlit existente garantice esa condición ni costo cero. Mantener frontend Streamlit y adaptar este contrato a un backend durable evita reconstruir la dirección creativa; ningún proveedor nuevo quedó contratado/configurado.
+
+La evaluación humana de los tres dossiers, la confirmación de contratos reales y la licencia de fuentes siguen pendientes. No son sustituibles por más tests de código. También falta conectar la proyección contractual al panel con datos autorizados; no se modificó la salida habitual de clientes ni el backend productivo.
+
+**Dictamen: APTO para ensayo local integrado y revisión; NO APTO para núcleo productivo.** Próximo hito: decisión concreta de alojamiento/disco durable y revisión creativa de tres dossiers, antes de autorizar configuración OAuth y un piloto humano. No ampliar a más infraestructura ni repetir pruebas sin un cambio que lo justifique.
+
+**04.01 ABIERTA — 170 PRUEBAS LOCALES — SIN MAIN/PRODUCCIÓN — 04.02 NO INICIADA.**
