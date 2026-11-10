@@ -118,3 +118,17 @@ El adaptador opcional `google_library_verifier` delega la verificación a `googl
 **Dictamen: APTO para revisar el contrato y preparar integración aislada; NO APTO para activar acceso real ni integrar al núcleo.** Próxima prioridad: cerrar plataforma de alojamiento y almacenamiento durable, y después autorizar nominalmente configuración OAuth y ensayo end-to-end. La evaluación creativa humana de los dossiers continúa pendiente y no debe darse por realizada.
 
 **04.01 ABIERTA — SIN LOGIN REAL NI DESPLIEGUES — 04.02 NO INICIADA.**
+
+## Continuación — ensayo criptográfico preparado, bloqueado por dependencia
+
+Rama `experiment/creative-os-1-token-verification`, sobre el contenido del contrato de identidad (`0752bab2923a175e5215abb334a49ba609ca38d0`). Se añadió una suite opcional de nueve pruebas con RSA y certificados efímeros ficticios: firma correcta, clave incorrecta, payload alterado, token sin firma, audiencia/emisor incorrectos, expiración, repetición de nonce y fallo de certificados. El transporte de certificados se sustituye por un fixture y cualquier uso del transporte HTTP real queda bloqueado dentro de esos tests. No se registra material privado.
+
+No se modificó el adaptador, el login, la UI ni la configuración de Google. No se cambiaron credenciales ni se desplegó. `requirements-test-oidc.txt` declara dependencias opcionales; no se cambió el workflow para instalarlas automáticamente.
+
+**Estado comprobado:** google.auth no está instalado, cryptography ya está disponible. La instalación de dependencias fue rechazada por revisión automática, que citó una restricción anterior de trabajo de solo lectura. No se eludió ni reintentó. El siguiente paso requiere aprobación expresa de instalación LOCAL, sin nuevas cuentas ni permisos Google.
+
+**Resultado actual: 137 tests descubiertos, 128 aprobados y 9 OMITIDOS.** No informar 137/137 aprobados. Compilación y diff satisfactorios. Los nueve tests nuevos aún requieren ejecución y, si corresponde, correcciones; su código está preparado para revisión, no validado criptográficamente. El registro de esta tanda está en `docs/VALIDACION_LOCAL.txt`.
+
+Próxima acción preparada, pendiente de autorización: instalar `requirements-test-oidc.txt` en el entorno aislado y ejecutar exclusivamente la suite criptográfica; después repetir regresión solo si se corrige código. Aun con firmas locales aprobadas, seguirán pendientes confianza en certificados Google reales, configuración OAuth, gestión de sesión y prueba real de inicio de sesión.
+
+**DICTAMEN: BLOQUEADO para completar la validación criptográfica; NO APTO para integrar al núcleo. 04.01 ABIERTA; 04.02 NO INICIADA.**
