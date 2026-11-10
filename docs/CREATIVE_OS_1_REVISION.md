@@ -132,3 +132,15 @@ No se modificó el adaptador, el login, la UI ni la configuración de Google. No
 Próxima acción preparada, pendiente de autorización: instalar `requirements-test-oidc.txt` en el entorno aislado y ejecutar exclusivamente la suite criptográfica; después repetir regresión solo si se corrige código. Aun con firmas locales aprobadas, seguirán pendientes confianza en certificados Google reales, configuración OAuth, gestión de sesión y prueba real de inicio de sesión.
 
 **DICTAMEN: BLOQUEADO para completar la validación criptográfica; NO APTO para integrar al núcleo. 04.01 ABIERTA; 04.02 NO INICIADA.**
+
+### Resolución del bloqueo — instalación expresamente autorizada
+
+El usuario autorizó instalar dependencias únicamente en el entorno aislado. Se instaló `requirements-test-oidc.txt`: google-auth 2.62.1, cryptography 49.0.0, requests 2.34.2. No se crearon credenciales, no se cambió Google ni el sistema productivo.
+
+Se ejecutó `python3 -m unittest discover -s tests -p test_google_token_crypto.py -v`: **9/9 APROBADAS, 0 omitidas**, en 0,242 segundos. El adaptador utiliza ahora en estas pruebas la biblioteca oficial y firmas RSA reales sobre tokens ficticios, con certificado efímero local. El transporte de certificados se sustituye por un fixture y el transporte HTTP real está bloqueado durante la prueba.
+
+Resultado: firma válida aceptada; clave incorrecta, payload modificado, token sin firma, audiencia incorrecta, emisor incorrecto, expiración, nonce repetido y fallo al obtener certificados rechazados. No se modificó código funcional. No se repitieron los otros 128 tests: su resultado previo se conserva, y las nueve omisiones anteriores quedaron resueltas por esta ejecución específica. No se afirma una nueva ejecución conjunta de 137 tests. Evidencia adicional en `docs/VALIDACION_CRIPTO_LOCAL.txt`.
+
+**Dictamen actualizado: APTO para revisión del adaptador criptográfico offline; NO APTO para integrar al núcleo productivo.** Sigue pendiente verificar certificados de Google reales, configurar el flujo OAuth aprobado, implementar sesión/state/PKCE y consumidor durable de nonce, y escoger almacenamiento durable para el entorno de alojamiento. Ninguna prueba utiliza cuentas reales ni valida ese flujo end-to-end.
+
+**04.01 ABIERTA — BLOQUEO LOCAL DE DEPENDENCIAS RESUELTO — SIN DESPLIEGUES — 04.02 NO INICIADA.**

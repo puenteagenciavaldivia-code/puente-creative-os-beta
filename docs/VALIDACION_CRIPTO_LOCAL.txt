@@ -1,0 +1,14 @@
+test_certificate_error (test_google_token_crypto.GoogleTokenCryptoTests.test_certificate_error) ... ok
+test_expired (test_google_token_crypto.GoogleTokenCryptoTests.test_expired) ... ok
+test_modified_payload (test_google_token_crypto.GoogleTokenCryptoTests.test_modified_payload) ... ok
+test_replay_nonce (test_google_token_crypto.GoogleTokenCryptoTests.test_replay_nonce) ... ok
+test_unsigned (test_google_token_crypto.GoogleTokenCryptoTests.test_unsigned) ... ok
+test_valid_signature (test_google_token_crypto.GoogleTokenCryptoTests.test_valid_signature) ... ok
+test_wrong_audience (test_google_token_crypto.GoogleTokenCryptoTests.test_wrong_audience) ... ok
+test_wrong_issuer (test_google_token_crypto.GoogleTokenCryptoTests.test_wrong_issuer) ... ok
+test_wrong_key (test_google_token_crypto.GoogleTokenCryptoTests.test_wrong_key) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.242s
+
+OK
