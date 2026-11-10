@@ -102,3 +102,19 @@ La compilación y `git diff --check` pasan. No se añadieron dependencias. Las p
 - La evaluación creativa humana, el alcance contractual del PDF y los pilotos reales siguen pendientes. Estos cambios no cierran los otros P0 del registro.
 
 **NO APTO para integrar al núcleo productivo. APTO para revisión local del dossier con historial persistente.** Próxima prioridad: contrato de identidad verificada y persistencia durable para el entorno elegido, con revisión humana de los dossiers en paralelo. No duplicar el repositorio de decisiones si ese contrato puede adaptarse; no desplegar esta demo de identidades seleccionables.
+
+## Continuación — contrato de identidad del servidor
+
+Rama `experiment/creative-os-1-identity`, sobre el contenido de la rama de decisiones (commit remoto `02711868665aa4a187f19674cc21076671851112`).
+
+`identity_boundary.py` prepara un punto interno que requiere token, audiencia configurada en servidor, verificador criptográfico y consumo atómico de nonce de sesión. No acepta un objeto Actor ni roles enviados por el navegador. Comprueba emisor Google, audiencia única, azp si existe, sub, iat/exp finitos y nonce. Devuelve Actor usando sub y emisor canónico; los correos y roles declarados en claims no conceden permisos. El almacén aplica su política por proyecto después, incluso si la identidad se verificó.
+
+El adaptador opcional `google_library_verifier` delega la verificación a `google.oauth2.id_token.verify_oauth2_token`, con audiencia explícita y tiempo límite en el transporte de certificados. No se ejecuta al importar. Su dependencia se declara aparte en `requirements-oidc.txt`; no se cambió la instalación habitual, el panel, credenciales ni configuración de Google. Referencias primarias consultadas: https://google-auth.readthedocs.io/en/latest/reference/google.oauth2.id_token.html y https://developers.google.com/identity/gsi/web/guides/verify-google-id-token .
+
+**Validación: 128/128 pruebas locales aprobadas**, 26 nuevas sobre el contrato de identidad. Verificador y nonce simulados, sin llamadas externas: emisor/audiencia/azp incorrectos; expiración y fechas futuras; números no finitos; sub inválido; nonce ausente, incorrecto o reutilizado; errores del verificador y del almacén de nonce; mensajes sin token/detalles sensibles; identidad válida sin permisos denegada; recorrido de identidad simulada → política → revisión/decisión persistente. Se mantuvieron las 102 pruebas anteriores. Compilación y diff correctos. Registro consolidado en `docs/VALIDACION_LOCAL.txt`.
+
+**Límites:** no se probó firma criptográfica con tokens reales ni se instaló o ejecutó el adaptador opcional de Google; las pruebas verifican el contrato con un verificador ficticio. No hay callback OAuth, gestión de state/PKCE, cookies/sesión, logout, renovación o rate limiting. El consumidor de nonce es un contrato: todavía debe implementarse como almacenamiento de sesión del servidor, con caducidad, consumo atómico y asociación a la sesión; no basta con un set en memoria compartido en producción. El endpoint futuro nunca debe aceptar funciones/verificadores desde el cliente. La dependencia opcional y el acceso a certificados necesitan prueba de integración posterior. No se configura OAuth ni se crean credenciales con esta entrega.
+
+**Dictamen: APTO para revisar el contrato y preparar integración aislada; NO APTO para activar acceso real ni integrar al núcleo.** Próxima prioridad: cerrar plataforma de alojamiento y almacenamiento durable, y después autorizar nominalmente configuración OAuth y ensayo end-to-end. La evaluación creativa humana de los dossiers continúa pendiente y no debe darse por realizada.
+
+**04.01 ABIERTA — SIN LOGIN REAL NI DESPLIEGUES — 04.02 NO INICIADA.**

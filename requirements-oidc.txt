@@ -1,0 +1,3 @@
+# Dependencia opcional del adaptador de verificación. No activa ni configura OAuth.
+-r requirements.txt
+google-auth>=2.38,<3
