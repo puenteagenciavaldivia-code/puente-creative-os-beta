@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 import sqlite3
+import time
 from pathlib import Path
 
 
@@ -45,6 +46,10 @@ def restore_database(backup,destination):
             tables={r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
             if 'identity_sessions' in tables:db.execute('UPDATE identity_sessions SET revoked=1')
             if 'login_challenges' in tables:db.execute('UPDATE login_challenges SET used=1')
+            # La cookie OIDC nativa vive fuera de SQLite. El gate del piloto exige
+            # un ID token emitido después de esta recuperación, en cada operación.
+            if 'pilot_access_meta' in tables:
+                db.execute('UPDATE pilot_access_meta SET not_before=? WHERE id=1',(time.time(),))
         _check(destination)
         result['sha256']=hashlib.sha256(destination.read_bytes()).hexdigest()
         result['bytes']=destination.stat().st_size

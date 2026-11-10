@@ -203,3 +203,55 @@ La instalación mínima del workflow anterior no incluía dependencias criptogr�
 No se crean cuentas OAuth, credenciales, despliegues o permisos como consecuencia de «ejecutar pruebas». Requieren autorización específica del recurso y su entorno. Tampoco se marca aceptación humana en nombre de dirección. Los fixtures y las bibliotecas criptográficas probadas no constituyen ese consentimiento ni un login real.
 
 **Dictamen: NO APTO para integrar al núcleo productivo. Candidata local apta para revisión y planificación del piloto real.** El siguiente paso debe resolver plataforma/almacenamiento y la configuración OAuth nominal, junto con aceptación humana. No ampliar suites locales por volumen: repetirlas solo por cambios o fallos.
+
+### Preparación de prueba real 01 — 2026-11-10
+
+Plan concreto en [PILOTO_REAL_01.md](PILOTO_REAL_01.md): un equipo local de Puente,
+dos operadores en turnos separados y proyectos ficticios, OIDC nativo y política
+del servidor. No se ejecutó Google, no se crearon recursos y no se repitieron tests.
+Antes del login falta implementar la entrada OIDC, auditoría de denegaciones y
+controles de sesión/recuperación: las demos actuales siguen siendo simuladas.
+OAuth y equipo siguen pendientes de autorización/confirmación específicas. La
+cookie OIDC nativa no queda invalidada por restaurar SQLite; se exige verificar
+ese caso explícitamente. No se declara preparación ejecutable ni aptitud productiva.
+
+### Continuación — entrada local OIDC y autorización persistente
+
+Se añadió `pilot_oidc_app.py` como entrada independiente, apagada por defecto,
+con control de escucha local y configuración incompleta denegada. No se modificó
+la demo ni el acceso Beta. El único origen de identidad de esta UI es st.user;
+no hay selectores de identidad ni roles recibidos del cliente.
+
+`native_pilot_access.py` conserva un registro local por sub/proyecto, con roles
+dirección y operación. Valida el contexto de los claims ya verificados por el
+proveedor nativo (NO verifica firmas por sí mismo) y reconsulta vigencia/permisos
+en cada llamada del almacén. Emisor canónico, audiencia/azp, fechas finitas, exp y
+máximo de 15 minutos desde iat. Desconocidos/desactivados se deniegan; cambios de
+registro y acceso se registran con identificador seudonimizado. Las denegaciones
+del almacén conservan su evento durable. No se implementó una UI administrativa.
+
+`store_backup.py` ahora fija un umbral de emisión tras restauración para bloquear
+claims previos en el gate del piloto. No borra cookies Google ni revoca sesiones
+globales. Se deshabilitaron exportaciones en esta entrada hasta disponer de un
+flujo que reautorice la descarga. `requirements-pilot.txt` separa la dependencia
+de OIDC nativo de la instalación Beta.
+
+**196/196 pruebas LOCALES aprobadas, cero omitidas**, Python 3.12.14 y Streamlit
+1.67.0 con criptografía obligatoria. Incluye las 175 anteriores y 21 nuevas:
+claims inválidos, identidad desconocida, permisos por proyecto, desactivación en
+política existente, límite de vigencia, restauración, UI apagada, recorrido de UI
+con guardado/decisión humana simulada y aprobación de operación denegada.
+Evidencia: `VALIDACION_PILOTO_OIDC_LOCAL.txt`. Compilación y diff correctos.
+Dos errores iniciales del test de UI mezclaban reloj fijo y reloj real; se corrigió
+el fixture antes de la regresión completa. No eran logins Google fallidos.
+
+**Pendiente real:** Authlib no instalado; ningún callback ni cuenta Google usado.
+Faltan equipo confirmado, autorización nominal OAuth, bootstrap privado de sub,
+instalación/configuración independiente, prueba del proveedor y aceptación humana.
+No se repitió compatibilidad 1.40: la entrada OIDC exige entorno 1.67 separado.
+No se validaron rate limiting, descargas protegidas, hosting remoto, concurrencia
+distribuida ni comunicación Streamlit–Apps Script. Los tests no representan una
+autorización para crear esos recursos. Plan operativo actualizado en `PILOTO_REAL_01.md`.
+
+**Dictamen: APTO para revisión del adaptador local; NO APTO para núcleo productivo.
+04.01 ABIERTA — GOOGLE REAL NO EJECUTADO — 04.02 NO INICIADA.**

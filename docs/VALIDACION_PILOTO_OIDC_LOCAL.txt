@@ -1,0 +1,296 @@
+test_clear_answer_receives_full_credit (test_briefing_quality.BriefingQualityTests.test_clear_answer_receives_full_credit) ... ok
+test_gibberish_is_flagged (test_briefing_quality.BriefingQualityTests.test_gibberish_is_flagged) ... ok
+test_missing_core_information_blocks_approval (test_briefing_quality.BriefingQualityTests.test_missing_core_information_blocks_approval) ... ok
+test_realistic_briefing_is_distinct_from_placeholder (test_briefing_quality.BriefingQualityTests.test_realistic_briefing_is_distinct_from_placeholder) ... ok
+test_bad_ai_import_cannot_approve (test_briefing_quality.ChatGPTHandoffTests.test_bad_ai_import_cannot_approve) ... ok
+test_prompt_preserves_evidence_but_not_private_unknown_fields (test_briefing_quality.ChatGPTHandoffTests.test_prompt_preserves_evidence_but_not_private_unknown_fields) ... ok
+test_cannot_import_to_another_brand (test_briefing_quality.ClarificationsTests.test_cannot_import_to_another_brand) ... ok
+test_targeted_questions_roundtrip (test_briefing_quality.ClarificationsTests.test_targeted_questions_roundtrip) ... ok
+test_catalog_has_diverse_categories_and_unique_ids (test_briefing_quality.DesignCatalogTests.test_catalog_has_diverse_categories_and_unique_ids) ... ok
+test_search_finds_both_history_and_photo (test_briefing_quality.DesignCatalogTests.test_search_finds_both_history_and_photo) ... ok
+test_format_presets_are_exact (test_briefing_quality.GraphicProductionTests.test_format_presets_are_exact) ... ok
+test_piece_must_belong_to_selected_briefing (test_briefing_quality.GraphicProductionTests.test_piece_must_belong_to_selected_briefing) ... ok
+test_unapproved_direction_never_produces_prompt (test_briefing_quality.GraphicProductionTests.test_unapproved_direction_never_produces_prompt) ... ok
+test_verified_review_unblocks_only_with_explicit_approval (test_briefing_quality.GraphicProductionTests.test_verified_review_unblocks_only_with_explicit_approval) ... ok
+test_handoff_preserves_original_and_never_approves (test_briefing_quality.HandoffTests.test_handoff_preserves_original_and_never_approves) ... ok
+test_optional_missing_does_not_raise_flags (test_briefing_quality.HandoffTests.test_optional_missing_does_not_raise_flags) ... ok
+test_default_cannot_approve_or_produce (test_briefing_quality.HumanReviewWorkflowTests.test_default_cannot_approve_or_produce) ... ok
+test_rejects_cross_brand_review (test_briefing_quality.HumanReviewWorkflowTests.test_rejects_cross_brand_review) ... ok
+test_requires_two_distinct_evidenced_directions (test_briefing_quality.HumanReviewWorkflowTests.test_requires_two_distinct_evidenced_directions) ... ok
+test_invites_use_same_link (test_briefing_quality.InvitationLinkTests.test_invites_use_same_link) ... ok
+test_link_rejects_other_hosts (test_briefing_quality.InvitationLinkTests.test_link_rejects_other_hosts) ... ok
+test_secure_link_never_contains_briefing_data (test_briefing_quality.InvitationLinkTests.test_secure_link_never_contains_briefing_data) ... ok
+test_ai_output_requires_exact_source_evidence (test_briefing_quality.MethodologyTests.test_ai_output_requires_exact_source_evidence) ... ok
+test_references_have_verifiable_sources (test_briefing_quality.MethodologyTests.test_references_have_verifiable_sources) ... ok
+test_empty_brief_produces_no_prefill (test_briefing_quality.NoApiFallbackTests.test_empty_brief_produces_no_prefill) ... ok
+test_prefill_three_options_without_claiming_ai (test_briefing_quality.NoApiFallbackTests.test_prefill_three_options_without_claiming_ai) ... ok
+test_avoid_duplicate_questions_when_info_explicit (test_briefing_quality.StrategicAuditTests.test_avoid_duplicate_questions_when_info_explicit) ... ok
+test_bosque_adentro_vague_mentions_still_need_details (test_briefing_quality.StrategicAuditTests.test_bosque_adentro_vague_mentions_still_need_details) ... ok
+test_tourism_gaps_even_with_fully_written_brief (test_briefing_quality.StrategicAuditTests.test_tourism_gaps_even_with_fully_written_brief) ... ok
+test_backup_restore_local_roundtrip (test_decision_store.DecisionStoreTests.test_backup_restore_local_roundtrip) ... ok
+test_competing_writes_only_one_wins (test_decision_store.DecisionStoreTests.test_competing_writes_only_one_wins) ... ok
+test_corrupted_decision_detected_on_retry (test_decision_store.DecisionStoreTests.test_corrupted_decision_detected_on_retry) ... ok
+test_corrupted_event_detected (test_decision_store.DecisionStoreTests.test_corrupted_event_detected) ... ok
+test_corrupted_revision_detected (test_decision_store.DecisionStoreTests.test_corrupted_revision_detected) ... ok
+test_cross_agency_denied (test_decision_store.DecisionStoreTests.test_cross_agency_denied) ... ok
+test_cross_project_denied (test_decision_store.DecisionStoreTests.test_cross_project_denied) ... ok
+test_default_deny (test_decision_store.DecisionStoreTests.test_default_deny) ... ok
+test_disabled_actor_denied_even_idempotent_retry (test_decision_store.DecisionStoreTests.test_disabled_actor_denied_even_idempotent_retry) ... ok
+test_failed_audit_rolls_back_decision (test_decision_store.DecisionStoreTests.test_failed_audit_rolls_back_decision) ... ok
+test_failed_audit_rolls_back_revision (test_decision_store.DecisionStoreTests.test_failed_audit_rolls_back_revision) ... ok
+test_idempotent_decision_has_single_event (test_decision_store.DecisionStoreTests.test_idempotent_decision_has_single_event) ... ok
+test_input_approval_ignored (test_decision_store.DecisionStoreTests.test_input_approval_ignored) ... ok
+test_invalid_actor_denied (test_decision_store.DecisionStoreTests.test_invalid_actor_denied) ... ok
+test_new_revision_invalidates_prior_decision (test_decision_store.DecisionStoreTests.test_new_revision_invalidates_prior_decision) ... ok
+test_no_production_permission (test_decision_store.DecisionStoreTests.test_no_production_permission) ... ok
+test_pending_questions_block_approval (test_decision_store.DecisionStoreTests.test_pending_questions_block_approval) ... ok
+test_persist_and_reload_new_instance (test_decision_store.DecisionStoreTests.test_persist_and_reload_new_instance) ... ok
+test_policy_exception_denies (test_decision_store.DecisionStoreTests.test_policy_exception_denies) ... ok
+test_project_binding_required (test_decision_store.DecisionStoreTests.test_project_binding_required) ... ok
+test_real_process_restart_reads_saved_revision (test_decision_store.DecisionStoreTests.test_real_process_restart_reads_saved_revision) ... ok
+test_rejection_supersedes_approval (test_decision_store.DecisionStoreTests.test_rejection_supersedes_approval) ... ok
+test_request_reuse_with_different_payload_rejected (test_decision_store.DecisionStoreTests.test_request_reuse_with_different_payload_rejected) ... ok
+test_stale_write_rejected (test_decision_store.DecisionStoreTests.test_stale_write_rejected) ... ok
+test_truthy_policy_does_not_allow (test_decision_store.DecisionStoreTests.test_truthy_policy_does_not_allow) ... ok
+test_unknown_actor_denied (test_decision_store.DecisionStoreTests.test_unknown_actor_denied) ... ok
+test_viewer_can_read (test_decision_store.DecisionStoreTests.test_viewer_can_read) ... ok
+test_viewer_cannot_decide (test_decision_store.DecisionStoreTests.test_viewer_cannot_decide) ... ok
+test_decision_survives_new_session (test_decision_ui.DecisionUITests.test_decision_survives_new_session) ... 2026-11-10 08:51:23.044 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-10 08:51:23.458 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_new_revision_removes_current_approval (test_decision_ui.DecisionUITests.test_new_revision_removes_current_approval) ... 2026-11-10 08:51:23.568 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_operation_identity_cannot_approve (test_decision_ui.DecisionUITests.test_operation_identity_cannot_approve) ... 2026-11-10 08:51:23.724 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_project_history_not_shared (test_decision_ui.DecisionUITests.test_project_history_not_shared) ... 2026-11-10 08:51:23.879 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_approval_never_imported (test_dossier_integration.DossierIntegrationTests.test_approval_never_imported) ... ok
+test_boolean_approval_required (test_dossier_integration.DossierIntegrationTests.test_boolean_approval_required) ... ok
+test_cached_validation_cannot_bypass (test_dossier_integration.DossierIntegrationTests.test_cached_validation_cannot_bypass) ... ok
+test_changed_answers_invalidate (test_dossier_integration.DossierIntegrationTests.test_changed_answers_invalidate) ... ok
+test_changed_audit_invalidate (test_dossier_integration.DossierIntegrationTests.test_changed_audit_invalidate) ... ok
+test_changed_submission_invalidate (test_dossier_integration.DossierIntegrationTests.test_changed_submission_invalidate) ... ok
+test_comparison_types_rejected (test_dossier_integration.DossierIntegrationTests.test_comparison_types_rejected) ... ok
+test_content_change_invalidates_approval (test_dossier_integration.DossierIntegrationTests.test_content_change_invalidates_approval) ... ok
+test_creative_delivery_without_production (test_dossier_integration.DossierIntegrationTests.test_creative_delivery_without_production) ... ok
+test_cross_brand_rejected (test_dossier_integration.DossierIntegrationTests.test_cross_brand_rejected) ... ok
+test_duplicate_names_rejected (test_dossier_integration.DossierIntegrationTests.test_duplicate_names_rejected) ... ok
+test_fabricated_quote_blocks (test_dossier_integration.DossierIntegrationTests.test_fabricated_quote_blocks) ... ok
+test_html_escapes_user_content (test_dossier_integration.DossierIntegrationTests.test_html_escapes_user_content) ... ok
+test_html_has_no_external_resources (test_dossier_integration.DossierIntegrationTests.test_html_has_no_external_resources) ... ok
+test_invalid_html_export_blocks (test_dossier_integration.DossierIntegrationTests.test_invalid_html_export_blocks) ... ok
+test_json_duplicate_rejected (test_dossier_integration.DossierIntegrationTests.test_json_duplicate_rejected) ... ok
+test_json_size_limit (test_dossier_integration.DossierIntegrationTests.test_json_size_limit) ... ok
+test_legacy_mapping_does_not_mutate (test_dossier_integration.DossierIntegrationTests.test_legacy_mapping_does_not_mutate) ... ok
+test_malformed_structures_fail_without_crash (test_dossier_integration.DossierIntegrationTests.test_malformed_structures_fail_without_crash) ... ok
+test_manual_handoff_not_production (test_dossier_integration.DossierIntegrationTests.test_manual_handoff_not_production) ... ok
+test_missing_brief_quote_blocks (test_dossier_integration.DossierIntegrationTests.test_missing_brief_quote_blocks) ... ok
+test_missing_reviewer_blocks (test_dossier_integration.DossierIntegrationTests.test_missing_reviewer_blocks) ... ok
+test_no_duplicate_visual_signature (test_dossier_integration.DossierIntegrationTests.test_no_duplicate_visual_signature) ... ok
+test_nonfinite_json_rejected (test_dossier_integration.DossierIntegrationTests.test_nonfinite_json_rejected) ... ok
+test_pdf_generated_for_all_cases (test_dossier_integration.DossierIntegrationTests.test_pdf_generated_for_all_cases) ... ok
+test_pdf_invalid_input_rejected (test_dossier_integration.DossierIntegrationTests.test_pdf_invalid_input_rejected) ... ok
+test_piece_substitution_rejected (test_dossier_integration.DossierIntegrationTests.test_piece_substitution_rejected) ... ok
+test_questions_pending_block_signoff (test_dossier_integration.DossierIntegrationTests.test_questions_pending_block_signoff) ... ok
+test_request_excludes_unknown_private_fields (test_dossier_integration.DossierIntegrationTests.test_request_excludes_unknown_private_fields) ... ok
+test_research_limit_visible (test_dossier_integration.DossierIntegrationTests.test_research_limit_visible) ... ok
+test_routes_do_not_generate_images (test_dossier_integration.DossierIntegrationTests.test_routes_do_not_generate_images) ... ok
+test_three_synthetic_cases_valid (test_dossier_integration.DossierIntegrationTests.test_three_synthetic_cases_valid) ... ok
+test_truthy_legacy_approval_cannot_enable_production (test_dossier_integration.DossierIntegrationTests.test_truthy_legacy_approval_cannot_enable_production) ... ok
+test_unknown_handoff_selection_rejected (test_dossier_integration.DossierIntegrationTests.test_unknown_handoff_selection_rejected) ... ok
+test_unknown_selection_blocks (test_dossier_integration.DossierIntegrationTests.test_unknown_selection_blocks) ... ok
+test_unknown_source_rejected (test_dossier_integration.DossierIntegrationTests.test_unknown_source_rejected) ... ok
+test_wrong_root_rejected (test_dossier_integration.DossierIntegrationTests.test_wrong_root_rejected) ... ok
+test_creative_only_approval_flow (test_dossier_ui.DossierUITests.test_creative_only_approval_flow) ... 2026-11-10 08:51:24.067 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-10 08:51:24.183 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 08:51:24.185 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 08:51:24.198 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 08:51:24.200 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 08:51:24.212 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 08:51:24.214 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 08:51:24.227 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 08:51:24.229 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 08:51:24.241 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 08:51:24.242 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+ok
+test_editing_invalidates_visible_approval (test_dossier_ui.DossierUITests.test_editing_invalidates_visible_approval) ... 2026-11-10 08:51:24.251 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-10 08:51:24.358 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 08:51:24.360 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 08:51:24.372 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 08:51:24.373 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+ok
+test_invalid_import_shows_error (test_dossier_ui.DossierUITests.test_invalid_import_shows_error) ... 2026-11-10 08:51:24.386 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_three_cases_render_and_validate (test_dossier_ui.DossierUITests.test_three_cases_render_and_validate) ... 2026-11-10 08:51:24.501 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-10 08:51:24.616 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 08:51:24.618 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 08:51:24.635 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 08:51:24.636 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 08:51:24.651 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 08:51:24.653 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+ok
+test_certificate_error (test_google_token_crypto.GoogleTokenCryptoTests.test_certificate_error) ... ok
+test_expired (test_google_token_crypto.GoogleTokenCryptoTests.test_expired) ... ok
+test_modified_payload (test_google_token_crypto.GoogleTokenCryptoTests.test_modified_payload) ... ok
+test_replay_nonce (test_google_token_crypto.GoogleTokenCryptoTests.test_replay_nonce) ... ok
+test_unsigned (test_google_token_crypto.GoogleTokenCryptoTests.test_unsigned) ... ok
+test_valid_signature (test_google_token_crypto.GoogleTokenCryptoTests.test_valid_signature) ... ok
+test_wrong_audience (test_google_token_crypto.GoogleTokenCryptoTests.test_wrong_audience) ... ok
+test_wrong_issuer (test_google_token_crypto.GoogleTokenCryptoTests.test_wrong_issuer) ... ok
+test_wrong_key (test_google_token_crypto.GoogleTokenCryptoTests.test_wrong_key) ... ok
+test_actor_uses_sub_not_email (test_identity_boundary.IdentityBoundaryTests.test_actor_uses_sub_not_email) ... ok
+test_alternate_issuer_canonicalized (test_identity_boundary.IdentityBoundaryTests.test_alternate_issuer_canonicalized) ... ok
+test_audience_array_rejected (test_identity_boundary.IdentityBoundaryTests.test_audience_array_rejected) ... ok
+test_bool_expiry (test_identity_boundary.IdentityBoundaryTests.test_bool_expiry) ... ok
+test_boundary_and_policy_and_store (test_identity_boundary.IdentityBoundaryTests.test_boundary_and_policy_and_store) ... ok
+test_email_as_subject_rejected (test_identity_boundary.IdentityBoundaryTests.test_email_as_subject_rejected) ... ok
+test_expired (test_identity_boundary.IdentityBoundaryTests.test_expired) ... ok
+test_failing_nonce_store_denies (test_identity_boundary.IdentityBoundaryTests.test_failing_nonce_store_denies) ... ok
+test_future_issue (test_identity_boundary.IdentityBoundaryTests.test_future_issue) ... ok
+test_identity_does_not_grant_permission (test_identity_boundary.IdentityBoundaryTests.test_identity_does_not_grant_permission) ... ok
+test_infinite_expiry (test_identity_boundary.IdentityBoundaryTests.test_infinite_expiry) ... ok
+test_missing_expiry (test_identity_boundary.IdentityBoundaryTests.test_missing_expiry) ... ok
+test_missing_nonce (test_identity_boundary.IdentityBoundaryTests.test_missing_nonce) ... ok
+test_missing_server_dependencies (test_identity_boundary.IdentityBoundaryTests.test_missing_server_dependencies) ... ok
+test_missing_subject (test_identity_boundary.IdentityBoundaryTests.test_missing_subject) ... ok
+test_nonfinite_expiry (test_identity_boundary.IdentityBoundaryTests.test_nonfinite_expiry) ... ok
+test_oversize_token_never_verified (test_identity_boundary.IdentityBoundaryTests.test_oversize_token_never_verified) ... ok
+test_reused_nonce (test_identity_boundary.IdentityBoundaryTests.test_reused_nonce) ... ok
+test_truthy_nonce_does_not_allow (test_identity_boundary.IdentityBoundaryTests.test_truthy_nonce_does_not_allow) ... ok
+test_unconfigured_verifier_denies (test_identity_boundary.IdentityBoundaryTests.test_unconfigured_verifier_denies) ... ok
+test_unknown_issuer (test_identity_boundary.IdentityBoundaryTests.test_unknown_issuer) ... ok
+test_verifier_failure_redacted (test_identity_boundary.IdentityBoundaryTests.test_verifier_failure_redacted) ... ok
+test_verifier_gets_server_audience (test_identity_boundary.IdentityBoundaryTests.test_verifier_gets_server_audience) ... ok
+test_wrong_audience (test_identity_boundary.IdentityBoundaryTests.test_wrong_audience) ... ok
+test_wrong_authorized_party (test_identity_boundary.IdentityBoundaryTests.test_wrong_authorized_party) ... ok
+test_wrong_nonce_not_consumed (test_identity_boundary.IdentityBoundaryTests.test_wrong_nonce_not_consumed) ... ok
+test_canonical_identity (test_native_pilot.NativePilotTests.test_canonical_identity) ... ok
+test_cross_project_denied_and_durable_event (test_native_pilot.NativePilotTests.test_cross_project_denied_and_durable_event) ... ok
+test_disabled_app_does_not_create_database (test_native_pilot.NativePilotTests.test_disabled_app_does_not_create_database) ... 2026-11-10 08:51:24.806 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_email_and_claimed_role_do_not_grant_access (test_native_pilot.NativePilotTests.test_email_and_claimed_role_do_not_grant_access) ... ok
+test_existing_gate_after_restore_requires_new_identity (test_native_pilot.NativePilotTests.test_existing_gate_after_restore_requires_new_identity) ... ok
+test_expiry_rechecked_on_each_operation (test_native_pilot.NativePilotTests.test_expiry_rechecked_on_each_operation) ... ok
+test_invalid_claims_are_denied (test_native_pilot.NativePilotTests.test_invalid_claims_are_denied) ... ok
+test_invalid_registration_rejected (test_native_pilot.NativePilotTests.test_invalid_registration_rejected) ... ok
+test_missing_epoch_fails_closed (test_native_pilot.NativePilotTests.test_missing_epoch_fails_closed) ... ok
+test_operator_cannot_approve (test_native_pilot.NativePilotTests.test_operator_cannot_approve) ... ok
+test_policy_rechecks_epoch_even_if_created_before_restore (test_native_pilot.NativePilotTests.test_policy_rechecks_epoch_even_if_created_before_restore) ... ok
+test_project_list_excludes_other_users (test_native_pilot.NativePilotTests.test_project_list_excludes_other_users) ... ok
+test_registry_not_cached_for_existing_policy (test_native_pilot.NativePilotTests.test_registry_not_cached_for_existing_policy) ... ok
+test_registry_survives_new_access_instance (test_native_pilot.NativePilotTests.test_registry_survives_new_access_instance) ... ok
+test_ui_known_identity_loads_only_assigned_project (test_native_pilot.NativePilotTests.test_ui_known_identity_loads_only_assigned_project) ... 2026-11-10 08:51:24.930 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_ui_operator_approval_denied (test_native_pilot.NativePilotTests.test_ui_operator_approval_denied) ... 2026-11-10 08:51:25.044 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_ui_revocation_removes_project_controls (test_native_pilot.NativePilotTests.test_ui_revocation_removes_project_controls) ... 2026-11-10 08:51:25.186 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_ui_save_and_human_decision_persist (test_native_pilot.NativePilotTests.test_ui_save_and_human_decision_persist) ... 2026-11-10 08:51:25.310 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_ui_unknown_identity_stops_before_project_controls (test_native_pilot.NativePilotTests.test_ui_unknown_identity_stops_before_project_controls) ... 2026-11-10 08:51:25.463 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_unknown_role_in_database_denied (test_native_pilot.NativePilotTests.test_unknown_role_in_database_denied) ... ok
+test_unknown_user_logged_without_raw_claims (test_native_pilot.NativePilotTests.test_unknown_user_logged_without_raw_claims) ... ok
+test_changed_copy_rejected (test_pilot_readiness.BackupTests.test_changed_copy_rejected) ... ok
+test_existing_backup_not_overwritten (test_pilot_readiness.BackupTests.test_existing_backup_not_overwritten) ... ok
+test_existing_restore_not_overwritten (test_pilot_readiness.BackupTests.test_existing_restore_not_overwritten) ... ok
+test_missing_source_rejected (test_pilot_readiness.BackupTests.test_missing_source_rejected) ... ok
+test_original_not_changed (test_pilot_readiness.BackupTests.test_original_not_changed) ... ok
+test_restore_verified_copy (test_pilot_readiness.BackupTests.test_restore_verified_copy) ... ok
+test_same_file_rejected (test_pilot_readiness.BackupTests.test_same_file_rejected) ... ok
+test_comparison_cannot_leak_internal_tradeoffs (test_pilot_readiness.ClientDeliveryTests.test_comparison_cannot_leak_internal_tradeoffs) ... ok
+test_cross_project_contract_rejected (test_pilot_readiness.ClientDeliveryTests.test_cross_project_contract_rejected) ... ok
+test_html_escapes_content (test_pilot_readiness.ClientDeliveryTests.test_html_escapes_content) ... ok
+test_internal_metadata_absent (test_pilot_readiness.ClientDeliveryTests.test_internal_metadata_absent) ... ok
+test_internal_sources_excluded (test_pilot_readiness.ClientDeliveryTests.test_internal_sources_excluded) ... ok
+test_only_contracted_direction (test_pilot_readiness.ClientDeliveryTests.test_only_contracted_direction) ... ok
+test_only_selected_alternative (test_pilot_readiness.ClientDeliveryTests.test_only_selected_alternative) ... ok
+test_projection_cannot_mutate_original (test_pilot_readiness.ClientDeliveryTests.test_projection_cannot_mutate_original) ... ok
+test_stale_approval_rejected (test_pilot_readiness.ClientDeliveryTests.test_stale_approval_rejected) ... ok
+test_unapproved_dossier_rejected (test_pilot_readiness.ClientDeliveryTests.test_unapproved_dossier_rejected) ... ok
+test_unknown_deliverable_rejected (test_pilot_readiness.ClientDeliveryTests.test_unknown_deliverable_rejected) ... ok
+test_full_local_workflow (test_pilot_readiness.PilotRehearsalTests.test_full_local_workflow) ... ok
+test_rehearsal_does_not_export_handles_or_internal_notes (test_pilot_readiness.PilotRehearsalTests.test_rehearsal_does_not_export_handles_or_internal_notes) ... ok
+test_absolute_expiry (test_pilot_readiness.SessionTests.test_absolute_expiry) ... ok
+test_callback_cannot_repeat (test_pilot_readiness.SessionTests.test_callback_cannot_repeat) ... ok
+test_concurrent_callbacks_one_winner (test_pilot_readiness.SessionTests.test_concurrent_callbacks_one_winner) ... ok
+test_expired_login (test_pilot_readiness.SessionTests.test_expired_login) ... ok
+test_failed_verification_consumes_challenge (test_pilot_readiness.SessionTests.test_failed_verification_consumes_challenge) ... ok
+test_handles_not_stored_in_clear (test_pilot_readiness.SessionTests.test_handles_not_stored_in_clear) ... ok
+test_idle_expiry (test_pilot_readiness.SessionTests.test_idle_expiry) ... ok
+test_logout (test_pilot_readiness.SessionTests.test_logout) ... ok
+test_restore_invalidates_sessions_and_pending_callbacks (test_pilot_readiness.SessionTests.test_restore_invalidates_sessions_and_pending_callbacks) ... ok
+test_revoke_all_local_actor_sessions (test_pilot_readiness.SessionTests.test_revoke_all_local_actor_sessions) ... ok
+test_roundtrip_new_store (test_pilot_readiness.SessionTests.test_roundtrip_new_store) ... ok
+test_unknown_state (test_pilot_readiness.SessionTests.test_unknown_state) ... ok
+test_wrong_browser_binding (test_pilot_readiness.SessionTests.test_wrong_browser_binding) ... ok
+test_large_node_count_rejected (test_release_adversarial.ImportBoundaryTests.test_large_node_count_rejected) ... ok
+test_nested_json_rejected (test_release_adversarial.ImportBoundaryTests.test_nested_json_rejected) ... ok
+test_unhashable_citation_field_rejected (test_release_adversarial.ImportBoundaryTests.test_unhashable_citation_field_rejected) ... ok
+test_unknown_direction_citation_rejected (test_release_adversarial.ImportBoundaryTests.test_unknown_direction_citation_rejected) ... ok
+test_wrong_citation_structures_rejected (test_release_adversarial.ImportBoundaryTests.test_wrong_citation_structures_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 196 tests in 2.626s
+
+OK
