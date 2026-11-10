@@ -12,6 +12,12 @@ from native_pilot_access import NativePilotAccess
 from review_workflow import new_review
 
 
+def identity_user(api):
+    """Solo proxies del servidor Streamlit; nunca claims aportados por la UI."""
+    user = getattr(api, 'user', None)
+    return user if user is not None else getattr(api, 'experimental_user', None)
+
+
 def main():
     st.set_page_config(page_title='PUENTE · Piloto OIDC aislado', page_icon='🌉')
     st.title('PUENTE · Piloto de identidad')
@@ -19,7 +25,8 @@ def main():
     if os.environ.get('PUENTE_OIDC_PILOT_ENABLED') != '1':
         st.info('Piloto desactivado. No se inicia Google ni se crea una base.')
         return
-    if not all(hasattr(st, name) for name in ('login', 'logout', 'user')):
+    oidc_user = identity_user(st)
+    if not all(hasattr(st, name) for name in ('login', 'logout')) or oidc_user is None:
         st.error('Este piloto requiere la versión OIDC del entorno independiente.')
         return
     if importlib.util.find_spec('authlib') is None:
@@ -53,16 +60,16 @@ def main():
     except Exception:
         st.error('Configuración del piloto incompleta o no aislada. No se inicia acceso.')
         return
-    if not st.user.is_logged_in:
+    if not getattr(oidc_user, 'is_logged_in', False):
         if st.button('Identificarme con Google'):
             st.login()
         return
     if st.button('Cerrar sesión'):
         st.logout()
         return
-    # Claims suministrados por Streamlit tras su callback nativo. Nunca text_input/JSON.
-    user = dict(st.user)
-    user['is_logged_in'] = st.user.is_logged_in
+    # Proxies nativos 1.42/actual: nunca text_input/JSON del navegador.
+    user = dict(oidc_user.to_dict()) if hasattr(oidc_user, 'to_dict') else dict(oidc_user)
+    user['is_logged_in'] = oidc_user.is_logged_in
     try:
         access = NativePilotAccess(path, audience)
         projects = access.projects(user)

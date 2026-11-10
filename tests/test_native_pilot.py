@@ -209,7 +209,8 @@ class NativePilotTests(unittest.TestCase):
         env = {'PUENTE_OIDC_PILOT_ENABLED': '1', 'PUENTE_OIDC_PILOT_DB': str(self.path)}
         get_option = __import__('streamlit').get_option
         option = lambda name: 'localhost' if name == 'server.address' else get_option(name)
-        with patch.dict(os.environ, env), patch('streamlit.user', user), patch('importlib.util.find_spec', side_effect=find), patch('streamlit.get_option', side_effect=option):
+        user_attribute = 'user' if hasattr(__import__('streamlit'), 'user') else 'experimental_user'
+        with patch.dict(os.environ, env), patch('streamlit.'+user_attribute, user), patch('importlib.util.find_spec', side_effect=find), patch('streamlit.get_option', side_effect=option):
             app.run()
         self.assertFalse(app.exception)
         return app

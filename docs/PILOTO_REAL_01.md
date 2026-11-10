@@ -5,6 +5,24 @@ Complementa el registro único `CREATIVE_OS_1_REVISION.md`; no reemplaza evidenc
 
 ## Rectificación por continuidad recuperada
 
+**Compatibilidad del Mac confirmada por captura del usuario:** Python 3.9.6,
+Streamlit 1.42.2, Authlib 1.3.2 en la .venv histórica. Se añadió el perfil separado
+`requirements-pilot-mac.txt` y soporte del proxy nativo st.experimental_user sin
+perder st.user moderno. No se modifica la .venv anterior. Las instrucciones
+anteriores que exigen exclusivamente 1.67 ya no aplican al perfil Mac compatible.
+
+`PREPARAR_MAC_0401.command` crea únicamente un entorno nuevo dentro de la carpeta
+de la candidata, exige macOS/Python 3.9 y se detiene si el destino existe. Instala
+el perfil y verifica dependencias; no copia, abre ni genera secretos, bases o
+cuentas. No inicia la aplicación ni Google. Se comprobó sintaxis bash; no se ha
+ejecutado en el Mac. Un fallo conserva la carpeta para diagnóstico, sin borrarla
+ni reintentar automáticamente. El operador debe enviar solo salida saneada.
+
+229/229 pruebas LOCALES sobre Linux Python 3.9.25 + Streamlit 1.42.2 + Authlib
+1.3.2; 229/229 también con Python 3.12.14 y esa pareja de dependencias. No son
+pruebas de macOS ni de Python 3.9.6 exacto, ni nuevos logins Google. Registros:
+`VALIDACION_COMPATIBILIDAD_PY39_LOCAL.txt` y `VALIDACION_COMPATIBILIDAD_142_LOCAL.txt`.
+
 El cliente OAuth y el proyecto NO están por crear: el historial del 6–7 de
 noviembre identifica My First Project, `project-c9d8af08-6cc6-4493-8ad`, número
 795813178598, y el cliente PUENTE Creative OS - Laboratorio Local, con dos usuarios

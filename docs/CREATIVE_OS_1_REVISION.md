@@ -1,6 +1,6 @@
 # Creative OS 1.0 — consolidación experimental
 
-**Último estado: rama `experiment/creative-os-1-reconciled`, 224/224 pruebas
+**Último estado: rama `experiment/creative-os-1-reconciled`, perfil Mac compatible y 229/229 pruebas
 locales aprobadas. OAuth y laboratorio histórico recuperados; no crear duplicados.
 NO APTO para núcleo productivo. Ver la última sección para la conciliación vigente.**
 
@@ -331,3 +331,34 @@ la conciliación del registro vigente antes de habilitar acceso sigue pendiente.
 
 **APTO para revisión de la conciliación local; NO APTO para integrar al núcleo.
 04.01 ABIERTA — SIN CAMBIOS EN GOOGLE/PRODUCCIÓN — 04.02 NO INICIADA.**
+
+### Compatibilidad con el Mac observado
+
+La captura del usuario confirma Python 3.9.6, Streamlit 1.42.2 y Authlib 1.3.2
+dentro de la .venv de Puerta A. Se preserva esa instalación. La entrada nueva
+admite ahora el proxy nativo st.experimental_user en 1.42 y st.user moderno;
+ninguno se sustituye por claims de formulario. Se mantienen todos los controles
+de identidad, vigencia, dos operadores, proyectos y revocación. Preflight acepta
+1.42.2 únicamente con Authlib 1.3.2 para evitar reinstalar la combinación fallida
+registrada en el historial. Fuente primaria consultada:
+https://docs.streamlit.io/1.42.0/develop/api-reference/user/st.user .
+
+Se creó un perfil independiente `requirements-pilot-mac.txt` y preparador macOS
+que exige Python 3.9 y un entorno destino inexistente. No toca la carpeta histórica
+ni lee/copia valores secretos. No crea base, usuarios o configuración OAuth.
+La preparación de dependencias todavía debe ejecutarse por el usuario en su Mac.
+
+**229/229 pruebas aprobadas en cada uno de dos entornos Linux**: Python 3.9.25 y
+3.12.14, ambos con Streamlit 1.42.2 y Authlib 1.3.2; cero omitidas y criptografía
+obligatoria. Cinco casos nuevos de selección de proxy y perfil de dependencias.
+En 3.9 se resolvieron google-auth 2.50.0 y requests 2.32.5; no se impusieron las
+versiones de Python 3.12. Comprobación de dependencias y compileall correctos.
+No afirmar compatibilidad ejecutada de macOS/Python 3.9.6 ni login real nuevo.
+
+La nueva matriz CI conserva dos jobs: Python 3.9/Streamlit 1.42.2 y Python
+3.12/Streamlit 1.67.0. Se fija Authlib 1.3.2. El segundo mantiene la evidencia
+histórica 224/224; no se ejecutaron aquí las 229 con 1.67 ni la matriz remota.
+El preparador pasó bash -n; no se ejecutó sobre macOS. No hubo cambios Google.
+
+**APTO para preparar por separado el perfil local Mac; NO APTO para producción.
+04.01 ABIERTA — LOGIN DE ESTA CANDIDATA PENDIENTE — 04.02 NO INICIADA.**

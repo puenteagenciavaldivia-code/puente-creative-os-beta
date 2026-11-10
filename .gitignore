@@ -3,6 +3,7 @@
 __pycache__/
 *.pyc
 .local/
+.venv-piloto-mac-142/
 *.sqlite
 *.sqlite-journal
 *.sqlite-wal

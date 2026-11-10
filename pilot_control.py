@@ -96,8 +96,10 @@ def check(directory):
         except importlib.metadata.PackageNotFoundError:
             versions[distribution] = 'NO_INSTALADO'
             missing.append('DEPENDENCIA_'+distribution)
-    if versions['streamlit'] != '1.67.0':
+    if versions['streamlit'] not in ('1.67.0', '1.42.2'):
         missing.append('VERSION_STREAMLIT_NO_VALIDADA')
+    if versions['streamlit'] == '1.42.2' and versions['Authlib'] != '1.3.2':
+        missing.append('VERSION_AUTHLIB_NO_VALIDADA_PARA_MAC')
     # No leer, copiar, imprimir ni validar valores secretos en esta comprobación.
     secrets = root/'.streamlit/secrets.toml'
     if secrets.is_symlink() or not secrets.is_file():
