@@ -109,6 +109,15 @@ def main():
         st.caption('Exportaciones deshabilitadas en este paso; no hay enlaces de descarga que eludan una nueva autorización.')
     except PermissionError:
         st.error('Acceso denegado o vencido. Contacta al responsable o vuelve a identificarte.')
+        # Bootstrap explícito: solo el propietario ve su propio identificador;
+        # no se registra una cuenta ni se le concede permiso por iniciar sesión.
+        try:
+            enrollment_actor = access.actor(user)
+        except PermissionError:
+            return
+        if st.checkbox('Mostrar mi identificador para solicitar alta al responsable'):
+            st.code(enrollment_actor.subject, language=None)
+            st.caption('Comparte este identificador solo por el canal privado acordado. No es un alta ni una aprobación.')
     except Exception:
         st.error('Operación no completada. Revisar el registro local sin publicar datos ni credenciales.')
 

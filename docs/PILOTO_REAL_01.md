@@ -154,8 +154,9 @@ aunque este piloto local resulte satisfactorio.
 - Inicializar una base NUEVA mediante `NativePilotAccess` y dar de alta los sub
   verificados con `set_user`, solo bajo la autorización nominal pendiente. Es una
   API administrativa local, no una pantalla de alta. No hay autoinscripción ni
-  promoción del primer usuario. La captura privada de sub para bootstrap sigue
-  pendiente de acordar; no extraerla de correos ni pedir tokens.
+  promoción del primer usuario. La UI permite mostrar el propio sub verificado
+  cuando el usuario denegado lo solicita expresamente. Compartirlo por el canal
+  privado acordado; no extraerlo de correos ni pedir tokens. Mostrarlo NO da acceso.
 - Almacenar secretos únicamente en la configuración local del entorno aprobado,
   nunca en Git/Chat. Campos [auth]: redirect_uri local indicado, cookie_secret
   aleatorio de al menos 32 caracteres, client_id, client_secret y metadata Google.
@@ -183,6 +184,71 @@ administrativo concurrente; el alcance sigue siendo dos turnos en un equipo.
 Revisión estática del Streamlit 1.67.0 instalado: el callback delega el intercambio
 a Authlib y usa userinfo; su código activa PKCE S256 si el metadata lo anuncia.
 Esta lectura NO verifica metadata real, state/nonce, firma, cookies ni PKCE en Google.
+
+## Herramientas operativas preparadas — continuación
+
+`pilot_control.py` implementa tres operaciones locales, sin red:
+
+| Operación | Efecto | Protección |
+|---|---|---|
+| init | Directorio nuevo 0700, DB 0600, configuración loopback, ejemplo inerte y casos P00–P09 sin ejecutar | Rechaza directorios existentes; no crea secrets.toml, claves ni usuarios |
+| check | Comprueba marcador, integridad, dependencias, presencia/permisos de configuración y número de operadores | Lectura; no abre secretos; no valida sus valores ni certifica OAuth |
+| user | Alta/desactivación en un fixture específico | Autorización nominal previa, confirmación explícita y sub mediante entrada local oculta; no aceptar datos por Chat |
+
+La confirmación de línea de comandos es un reconocimiento del operador, no un
+sistema de autenticación del administrador. Requiere acceso autorizado al equipo
+y archivo; la evidencia manual debe identificar al responsable del cambio. No hay
+administración remota ni autorización autoasignada.
+
+Ensayo del CLI realizado exclusivamente en `.local/pilot-operativo-ficticio`, con
+client ID ficticio y cero cuentas. Resultado BLOQUEADO, correctamente: Authlib no
+instalado, configuración OIDC ausente y dos operadores pendientes. Evidencia
+saneada en `PREFLIGHT_OPERATIVO_FICTICIO.json`. No equivale a verificar el futuro Mac.
+
+32 pruebas focalizadas aprobadas (10 del CLI y 22 del gate/UI); 11 son nuevas en
+esta continuación. Se conservaron las 196 de la regresión previa como evidencia
+histórica, sin afirmar una nueva ejecución conjunta de 207. Detalle en
+`VALIDACION_OPERACION_PILOTO.txt`. Compilación y comprobación de diff satisfactorias.
+
+### Secuencia preparada para el equipo confirmado
+
+Después de autorizar recursos OAuth y escoger el equipo, usar rutas NUEVAS y
+absolutas. Los siguientes comandos son instrucciones preparadas, NO ejecutadas en
+un equipo Puente. No reutilizar el entorno ni secretos de Beta.
+
+```bash
+python3 -m venv /RUTA/NUEVA/entorno
+/RUTA/NUEVA/entorno/bin/python -m pip install -r /RUTA/CODIGO/requirements-pilot.txt
+/RUTA/NUEVA/entorno/bin/python /RUTA/CODIGO/pilot_control.py init --directory /RUTA/NUEVA/laboratorio --audience CLIENT_ID_PUBLICO_AUTORIZADO
+/RUTA/NUEVA/entorno/bin/python /RUTA/CODIGO/pilot_control.py check --directory /RUTA/NUEVA/laboratorio
+```
+
+Es esperable que check bloquee mientras falten configuración y operadores. No
+superar el bloqueo con datos inventados en una prueba REAL. El ejemplo TOML es
+inerte y no habilita el login. La revisión y carga privada de secretos se harán
+solo tras autorizar el cliente nominal; no se incluyen en el ZIP.
+
+La inscripción se realiza en este orden: login consentido → ver el propio sub sin
+acceso a proyectos → responsable verifica por canal privado → alta local autorizada
+→ nueva consulta de proyectos. Para el alta, el responsable usa:
+
+```bash
+/RUTA/NUEVA/entorno/bin/python /RUTA/CODIGO/pilot_control.py user --directory /RUTA/NUEVA/laboratorio --project ID_SYNTH_DEL_PAQUETE --role direccion --authorized-change
+```
+
+El segundo operador usa el rol operacion. Para revocar, repetir la operación de
+ese operador con `--disable`. El sub se introduce de forma oculta en el equipo;
+no se pasa como argumento ni se imprime. Cada operador solo recibe sus proyectos
+asignados. La cuenta del caso negativo no se registra.
+
+Tras preparar la configuración privada, ejecutar desde el directorio laboratorio,
+fijando las variables del entorno de ese proceso y usando la entrada indicada en
+la sección anterior. No iniciar el login desde este entorno remoto para simular
+que se ha probado localhost en el equipo de Puente.
+
+Decisión concreta pendiente en Chat: equipo y responsable del piloto. Después,
+autorización nominal de proyecto/cliente OAuth, dos operadores y un caso negativo
+consentido. No hay integración ni permiso de producción por aprobar el paquete.
 
 Fuentes oficiales consultadas el 2026-11-10:
 - https://docs.streamlit.io/develop/concepts/connections/authentication

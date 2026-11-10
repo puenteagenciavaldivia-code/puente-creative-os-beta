@@ -184,6 +184,16 @@ class NativePilotTests(unittest.TestCase):
         self.assertTrue(app.error)
         self.assertEqual(len(app.selectbox), 0)
 
+    def test_self_enrollment_display_does_not_grant_access(self):
+        self.user['sub'] = '20002'
+        app = self.ui(self.user)
+        app.checkbox[0].check()
+        self.run_ui(app, self.user)
+        self.assertEqual(app.code[0].value, '20002')
+        self.assertEqual(len(app.selectbox), 0)
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(db.execute("SELECT COUNT(*) FROM pilot_users WHERE subject='20002'").fetchone()[0], 0)
+
     def test_ui_save_and_human_decision_persist(self):
         app = self.ui(self.user)
         app.button[1].click()

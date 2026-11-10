@@ -1,0 +1,17 @@
+{
+  "status": "BLOQUEADO",
+  "versions": {
+    "streamlit": "1.67.0",
+    "Authlib": "NO_INSTALADO",
+    "google-auth": "2.62.1"
+  },
+  "blockers": [
+    "DEPENDENCIA_Authlib",
+    "CONFIGURACION_OIDC_LOCAL_PENDIENTE",
+    "DOS_OPERADORES_PENDIENTES"
+  ],
+  "google_login": "NO_VERIFICADO",
+  "permissions_and_cookie_flow": "NO_VERIFICADO",
+  "oauth_values": "NO_LEIDOS",
+  "production_ready": false
+}

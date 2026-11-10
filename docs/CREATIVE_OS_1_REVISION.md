@@ -255,3 +255,28 @@ autorización para crear esos recursos. Plan operativo actualizado en `PILOTO_RE
 
 **Dictamen: APTO para revisión del adaptador local; NO APTO para núcleo productivo.
 04.01 ABIERTA — GOOGLE REAL NO EJECUTADO — 04.02 NO INICIADA.**
+
+### Continuación — paquete operativo del piloto
+
+`pilot_control.py` prepara un directorio nuevo, una base vacía sin usuarios,
+configuración de escucha local, plantilla inerte y matriz P00–P09 marcada NO
+EJECUTADO. La comprobación es de lectura y no abre valores de secretos. La gestión
+local de usuarios exige confirmación nominal previa y recibe sub mediante entrada
+oculta; acepta únicamente proyectos de los fixtures. La UI permite al propietario
+consultar su propio sub para el bootstrap, sin autoalta ni acceso al expediente.
+
+**Pruebas focalizadas: 32/32 aprobadas**, 10 del CLI y 22 del gate/UI, incluidas 11
+nuevas. No se repitió la suite completa de 196 de la tanda anterior; no declarar
+207 pruebas ejecutadas conjuntamente. Evidencia: `VALIDACION_OPERACION_PILOTO.txt`.
+Compilación y diff satisfactorios. Ensayo real del CLI sobre carpeta local ficticia
+vacía: bloqueo correcto por Authlib, configuración OIDC y operadores pendientes,
+registrado en `PREFLIGHT_OPERATIVO_FICTICIO.json`. No se instaló infraestructura.
+
+El paquete todavía necesita equipo/responsable, cliente OAuth autorizado y cuentas
+consentidas. No se ha ejecutado login real. El preflight no valida secretos ni
+confianza del proveedor: solo condiciones locales. La administración del registro
+es privilegiada por acceso al equipo, sin autenticación de administrador en UI;
+debe documentarse el responsable. No hay cambios en Beta, Google ni producción.
+
+**APTO para revisión del paquete operativo; NO APTO para núcleo productivo.
+04.01 ABIERTA — PRUEBA GOOGLE REAL PENDIENTE — 04.02 NO INICIADA.**

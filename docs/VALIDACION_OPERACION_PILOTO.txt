@@ -1,0 +1,49 @@
+test_check_is_read_only_and_does_not_read_secrets (test_pilot_control.PilotControlTests.test_check_is_read_only_and_does_not_read_secrets) ... ok
+test_database_symlink_refused (test_pilot_control.PilotControlTests.test_database_symlink_refused) ... ok
+test_existing_directory_refused_without_changes (test_pilot_control.PilotControlTests.test_existing_directory_refused_without_changes) ... ok
+test_fictional_grant_and_revocation_recorded (test_pilot_control.PilotControlTests.test_fictional_grant_and_revocation_recorded) ... ok
+test_foreign_database_or_marker_refused (test_pilot_control.PilotControlTests.test_foreign_database_or_marker_refused) ... ok
+test_initialization_never_creates_real_config_or_users (test_pilot_control.PilotControlTests.test_initialization_never_creates_real_config_or_users) ... ok
+test_invalid_audience_does_not_create_directory (test_pilot_control.PilotControlTests.test_invalid_audience_does_not_create_directory) ... ok
+test_missing_dependencies_are_blockers (test_pilot_control.PilotControlTests.test_missing_dependencies_are_blockers) ... ok
+test_preconditions_never_equal_real_login_success (test_pilot_control.PilotControlTests.test_preconditions_never_equal_real_login_success) ... ok
+test_real_project_refused (test_pilot_control.PilotControlTests.test_real_project_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.012s
+
+OK
+test_canonical_identity (test_native_pilot.NativePilotTests.test_canonical_identity) ... ok
+test_cross_project_denied_and_durable_event (test_native_pilot.NativePilotTests.test_cross_project_denied_and_durable_event) ... ok
+test_disabled_app_does_not_create_database (test_native_pilot.NativePilotTests.test_disabled_app_does_not_create_database) ... 2026-11-10 08:59:00.427 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_email_and_claimed_role_do_not_grant_access (test_native_pilot.NativePilotTests.test_email_and_claimed_role_do_not_grant_access) ... ok
+test_existing_gate_after_restore_requires_new_identity (test_native_pilot.NativePilotTests.test_existing_gate_after_restore_requires_new_identity) ... ok
+test_expiry_rechecked_on_each_operation (test_native_pilot.NativePilotTests.test_expiry_rechecked_on_each_operation) ... ok
+test_invalid_claims_are_denied (test_native_pilot.NativePilotTests.test_invalid_claims_are_denied) ... ok
+test_invalid_registration_rejected (test_native_pilot.NativePilotTests.test_invalid_registration_rejected) ... ok
+test_missing_epoch_fails_closed (test_native_pilot.NativePilotTests.test_missing_epoch_fails_closed) ... ok
+test_operator_cannot_approve (test_native_pilot.NativePilotTests.test_operator_cannot_approve) ... ok
+test_policy_rechecks_epoch_even_if_created_before_restore (test_native_pilot.NativePilotTests.test_policy_rechecks_epoch_even_if_created_before_restore) ... ok
+test_project_list_excludes_other_users (test_native_pilot.NativePilotTests.test_project_list_excludes_other_users) ... ok
+test_registry_not_cached_for_existing_policy (test_native_pilot.NativePilotTests.test_registry_not_cached_for_existing_policy) ... ok
+test_registry_survives_new_access_instance (test_native_pilot.NativePilotTests.test_registry_survives_new_access_instance) ... ok
+test_self_enrollment_display_does_not_grant_access (test_native_pilot.NativePilotTests.test_self_enrollment_display_does_not_grant_access) ... 2026-11-10 08:59:00.599 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_ui_known_identity_loads_only_assigned_project (test_native_pilot.NativePilotTests.test_ui_known_identity_loads_only_assigned_project) ... 2026-11-10 08:59:00.723 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_ui_operator_approval_denied (test_native_pilot.NativePilotTests.test_ui_operator_approval_denied) ... 2026-11-10 08:59:01.061 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_ui_revocation_removes_project_controls (test_native_pilot.NativePilotTests.test_ui_revocation_removes_project_controls) ... 2026-11-10 08:59:01.217 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_ui_save_and_human_decision_persist (test_native_pilot.NativePilotTests.test_ui_save_and_human_decision_persist) ... 2026-11-10 08:59:01.340 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_ui_unknown_identity_stops_before_project_controls (test_native_pilot.NativePilotTests.test_ui_unknown_identity_stops_before_project_controls) ... 2026-11-10 08:59:01.500 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_unknown_role_in_database_denied (test_native_pilot.NativePilotTests.test_unknown_role_in_database_denied) ... ok
+test_unknown_user_logged_without_raw_claims (test_native_pilot.NativePilotTests.test_unknown_user_logged_without_raw_claims) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 1.196s
+
+OK
