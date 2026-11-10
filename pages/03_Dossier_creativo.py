@@ -6,7 +6,7 @@ import hmac
 import streamlit as st
 from strategic_audit import audit_briefing
 from creative_dossier_bridge import prepare_for_brief, finalize_from_review, deliver_creative
-from dossier_engine import validate_dossier, dossier_html
+from dossier_engine import validate_dossier, dossier_html, digest
 
 st.set_page_config(page_title="Dossier creativo | PUENTE",page_icon="🎨",layout="wide")
 st.title("Dirección creativa · Dossier profesional")
@@ -88,13 +88,16 @@ if st.button("Verificar aprobación creativa",key="approve_dcp_"+sid):
     try:
         approved=finalize_from_review(package,record,audit,review)
         st.session_state["dcp_approved_"+sid]=approved
+        st.session_state["dcp_review_hash_"+sid]=digest(review)
         st.success("Dirección creativa validada con la revisión de Puente.")
     except (ValueError,TypeError,KeyError) as exc:
         st.error("No es posible aprobar la entrega: "+str(exc))
 
 approved=st.session_state.get("dcp_approved_"+sid)
 if approved:
-    if approved.get("hash")!=package.get("hash") or approved.get("source_briefing_hash")!=package.get("source_briefing_hash"):
+    if (approved.get("hash")!=package.get("hash") or
+        approved.get("source_briefing_hash")!=digest(record) or
+        st.session_state.get("dcp_review_hash_"+sid)!=digest(review)):
         st.session_state.pop("dcp_approved_"+sid,None)
         st.warning("La propuesta cambió. Revisa nuevamente la dirección.")
         st.stop()
