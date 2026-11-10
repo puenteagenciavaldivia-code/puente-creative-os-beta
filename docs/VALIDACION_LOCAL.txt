@@ -55,14 +55,14 @@ test_truthy_policy_does_not_allow (test_decision_store.DecisionStoreTests.test_t
 test_unknown_actor_denied (test_decision_store.DecisionStoreTests.test_unknown_actor_denied) ... ok
 test_viewer_can_read (test_decision_store.DecisionStoreTests.test_viewer_can_read) ... ok
 test_viewer_cannot_decide (test_decision_store.DecisionStoreTests.test_viewer_cannot_decide) ... ok
-test_decision_survives_new_session (test_decision_ui.DecisionUITests.test_decision_survives_new_session) ... 2026-11-10 08:21:20.679 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
-2026-11-10 08:21:21.060 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+test_decision_survives_new_session (test_decision_ui.DecisionUITests.test_decision_survives_new_session) ... 2026-11-10 08:26:31.585 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-10 08:26:31.993 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
 ok
-test_new_revision_removes_current_approval (test_decision_ui.DecisionUITests.test_new_revision_removes_current_approval) ... 2026-11-10 08:21:21.172 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+test_new_revision_removes_current_approval (test_decision_ui.DecisionUITests.test_new_revision_removes_current_approval) ... 2026-11-10 08:26:32.103 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
 ok
-test_operation_identity_cannot_approve (test_decision_ui.DecisionUITests.test_operation_identity_cannot_approve) ... 2026-11-10 08:21:21.327 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+test_operation_identity_cannot_approve (test_decision_ui.DecisionUITests.test_operation_identity_cannot_approve) ... 2026-11-10 08:26:32.264 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
 ok
-test_project_history_not_shared (test_decision_ui.DecisionUITests.test_project_history_not_shared) ... 2026-11-10 08:21:21.480 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+test_project_history_not_shared (test_decision_ui.DecisionUITests.test_project_history_not_shared) ... 2026-11-10 08:26:32.417 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
 ok
 test_approval_never_imported (test_dossier_integration.DossierIntegrationTests.test_approval_never_imported) ... ok
 test_boolean_approval_required (test_dossier_integration.DossierIntegrationTests.test_boolean_approval_required) ... ok
@@ -101,91 +101,91 @@ test_unknown_handoff_selection_rejected (test_dossier_integration.DossierIntegra
 test_unknown_selection_blocks (test_dossier_integration.DossierIntegrationTests.test_unknown_selection_blocks) ... ok
 test_unknown_source_rejected (test_dossier_integration.DossierIntegrationTests.test_unknown_source_rejected) ... ok
 test_wrong_root_rejected (test_dossier_integration.DossierIntegrationTests.test_wrong_root_rejected) ... ok
-test_creative_only_approval_flow (test_dossier_ui.DossierUITests.test_creative_only_approval_flow) ... 2026-11-10 08:21:21.663 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
-2026-11-10 08:21:21.774 Please replace `use_container_width` with `width`.
+test_creative_only_approval_flow (test_dossier_ui.DossierUITests.test_creative_only_approval_flow) ... 2026-11-10 08:26:32.602 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-10 08:26:32.712 Please replace `use_container_width` with `width`.
 
 `use_container_width` will be removed after 2025-12-31.
 
 For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
-2026-11-10 08:21:21.776 Please replace `st.components.v1.html` with `st.iframe`.
+2026-11-10 08:26:32.714 Please replace `st.components.v1.html` with `st.iframe`.
 
 `st.components.v1.html` will be removed after 2026-06-01.
-2026-11-10 08:21:21.788 Please replace `use_container_width` with `width`.
+2026-11-10 08:26:32.727 Please replace `use_container_width` with `width`.
 
 `use_container_width` will be removed after 2025-12-31.
 
 For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
-2026-11-10 08:21:21.790 Please replace `st.components.v1.html` with `st.iframe`.
+2026-11-10 08:26:32.729 Please replace `st.components.v1.html` with `st.iframe`.
 
 `st.components.v1.html` will be removed after 2026-06-01.
-2026-11-10 08:21:21.802 Please replace `use_container_width` with `width`.
+2026-11-10 08:26:32.741 Please replace `use_container_width` with `width`.
 
 `use_container_width` will be removed after 2025-12-31.
 
 For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
-2026-11-10 08:21:21.804 Please replace `st.components.v1.html` with `st.iframe`.
+2026-11-10 08:26:32.742 Please replace `st.components.v1.html` with `st.iframe`.
 
 `st.components.v1.html` will be removed after 2026-06-01.
-2026-11-10 08:21:21.815 Please replace `use_container_width` with `width`.
+2026-11-10 08:26:32.753 Please replace `use_container_width` with `width`.
 
 `use_container_width` will be removed after 2025-12-31.
 
 For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
-2026-11-10 08:21:21.816 Please replace `st.components.v1.html` with `st.iframe`.
+2026-11-10 08:26:32.755 Please replace `st.components.v1.html` with `st.iframe`.
 
 `st.components.v1.html` will be removed after 2026-06-01.
-2026-11-10 08:21:21.828 Please replace `use_container_width` with `width`.
+2026-11-10 08:26:32.766 Please replace `use_container_width` with `width`.
 
 `use_container_width` will be removed after 2025-12-31.
 
 For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
-2026-11-10 08:21:21.829 Please replace `st.components.v1.html` with `st.iframe`.
-
-`st.components.v1.html` will be removed after 2026-06-01.
-ok
-test_editing_invalidates_visible_approval (test_dossier_ui.DossierUITests.test_editing_invalidates_visible_approval) ... 2026-11-10 08:21:21.838 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
-2026-11-10 08:21:21.947 Please replace `use_container_width` with `width`.
-
-`use_container_width` will be removed after 2025-12-31.
-
-For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
-2026-11-10 08:21:21.949 Please replace `st.components.v1.html` with `st.iframe`.
-
-`st.components.v1.html` will be removed after 2026-06-01.
-2026-11-10 08:21:21.961 Please replace `use_container_width` with `width`.
-
-`use_container_width` will be removed after 2025-12-31.
-
-For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
-2026-11-10 08:21:21.962 Please replace `st.components.v1.html` with `st.iframe`.
+2026-11-10 08:26:32.768 Please replace `st.components.v1.html` with `st.iframe`.
 
 `st.components.v1.html` will be removed after 2026-06-01.
 ok
-test_invalid_import_shows_error (test_dossier_ui.DossierUITests.test_invalid_import_shows_error) ... 2026-11-10 08:21:21.974 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+test_editing_invalidates_visible_approval (test_dossier_ui.DossierUITests.test_editing_invalidates_visible_approval) ... 2026-11-10 08:26:32.777 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-10 08:26:32.885 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 08:26:32.886 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 08:26:32.898 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 08:26:32.900 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
 ok
-test_three_cases_render_and_validate (test_dossier_ui.DossierUITests.test_three_cases_render_and_validate) ... 2026-11-10 08:21:22.087 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
-2026-11-10 08:21:22.197 Please replace `use_container_width` with `width`.
+test_invalid_import_shows_error (test_dossier_ui.DossierUITests.test_invalid_import_shows_error) ... 2026-11-10 08:26:32.913 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_three_cases_render_and_validate (test_dossier_ui.DossierUITests.test_three_cases_render_and_validate) ... 2026-11-10 08:26:33.027 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-10 08:26:33.142 Please replace `use_container_width` with `width`.
 
 `use_container_width` will be removed after 2025-12-31.
 
 For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
-2026-11-10 08:21:22.199 Please replace `st.components.v1.html` with `st.iframe`.
+2026-11-10 08:26:33.144 Please replace `st.components.v1.html` with `st.iframe`.
 
 `st.components.v1.html` will be removed after 2026-06-01.
-2026-11-10 08:21:22.214 Please replace `use_container_width` with `width`.
+2026-11-10 08:26:33.159 Please replace `use_container_width` with `width`.
 
 `use_container_width` will be removed after 2025-12-31.
 
 For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
-2026-11-10 08:21:22.216 Please replace `st.components.v1.html` with `st.iframe`.
+2026-11-10 08:26:33.161 Please replace `st.components.v1.html` with `st.iframe`.
 
 `st.components.v1.html` will be removed after 2026-06-01.
-2026-11-10 08:21:22.231 Please replace `use_container_width` with `width`.
+2026-11-10 08:26:33.177 Please replace `use_container_width` with `width`.
 
 `use_container_width` will be removed after 2025-12-31.
 
 For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
-2026-11-10 08:21:22.233 Please replace `st.components.v1.html` with `st.iframe`.
+2026-11-10 08:26:33.178 Please replace `st.components.v1.html` with `st.iframe`.
 
 `st.components.v1.html` will be removed after 2026-06-01.
 ok
@@ -257,8 +257,13 @@ test_revoke_all_local_actor_sessions (test_pilot_readiness.SessionTests.test_rev
 test_roundtrip_new_store (test_pilot_readiness.SessionTests.test_roundtrip_new_store) ... ok
 test_unknown_state (test_pilot_readiness.SessionTests.test_unknown_state) ... ok
 test_wrong_browser_binding (test_pilot_readiness.SessionTests.test_wrong_browser_binding) ... ok
+test_large_node_count_rejected (test_release_adversarial.ImportBoundaryTests.test_large_node_count_rejected) ... ok
+test_nested_json_rejected (test_release_adversarial.ImportBoundaryTests.test_nested_json_rejected) ... ok
+test_unhashable_citation_field_rejected (test_release_adversarial.ImportBoundaryTests.test_unhashable_citation_field_rejected) ... ok
+test_unknown_direction_citation_rejected (test_release_adversarial.ImportBoundaryTests.test_unknown_direction_citation_rejected) ... ok
+test_wrong_citation_structures_rejected (test_release_adversarial.ImportBoundaryTests.test_wrong_citation_structures_rejected) ... ok
 
 ----------------------------------------------------------------------
-Ran 170 tests in 1.777s
+Ran 175 tests in 1.801s
 
 OK

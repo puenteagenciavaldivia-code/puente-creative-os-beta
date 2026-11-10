@@ -175,3 +175,31 @@ La evaluación humana de los tres dossiers, la confirmación de contratos reales
 **Dictamen: APTO para ensayo local integrado y revisión; NO APTO para núcleo productivo.** Próximo hito: decisión concreta de alojamiento/disco durable y revisión creativa de tres dossiers, antes de autorizar configuración OAuth y un piloto humano. No ampliar a más infraestructura ni repetir pruebas sin un cambio que lo justifique.
 
 **04.01 ABIERTA — 170 PRUEBAS LOCALES — SIN MAIN/PRODUCCIÓN — 04.02 NO INICIADA.**
+
+## Validación de candidata — límites hostiles y compatibilidad
+
+Rama `experiment/creative-os-1-release-validation`, continuación del contenido de `a315306529be4cf6ac35facfc06a32271bfaf301`.
+
+Se corrigieron citas JSON cuyo campo era una lista/objeto y podían provocar errores en la interfaz; se limita la estructura a 32 niveles y 10.000 nodos además del límite de bytes. Cinco pruebas adversariales nuevas cubren esos límites y citas ajenas a las alternativas. No se alteran las aprobaciones humanas ni el alcance del contrato.
+
+La instalación mínima del workflow anterior no incluía dependencias criptográficas y podía omitir nueve tests silenciosamente. El workflow ahora instala `requirements-test-oidc.txt` y activa `PUENTE_REQUIRE_CRYPTO_TESTS=1`: si faltan dependencias, falla la importación en lugar de mostrar un verde incompleto. Se preparó matriz Python 3.11/3.12 con Streamlit 1.40.0/latest. No se disparó ni se verificó esa matriz en GitHub Actions; es configuración para revisión.
+
+**Resultados locales: 175/175 APROBADAS con Streamlit 1.67.0 y 175/175 con 1.40.0**, ambas en Python 3.12.14, cero omitidas y criptografía obligatoria. Dos entornos aislados, mismo código. En la primera pasada de 1.40 fallaron dos recorridos al usar objetos Path como opciones de selectbox. Se corrigieron ambas demos a opciones de texto y se repitió la suite mínima completa satisfactoriamente. No se declara validación local de Python 3.11, otros sistemas operativos ni hosting remoto.
+
+`pip check` sin conflictos, compilación y diff satisfactorios. Registros: `docs/VALIDACION_LOCAL.txt` (1.67) y `docs/VALIDACION_MINIMA.txt` (1.40). No hubo despliegue, fusión a main, credenciales nuevas ni configuración de Google.
+
+### Umbral de producción pendiente — evidencia que no sustituyen las pruebas locales
+
+| Condición | Estado | Evidencia necesaria |
+|---|---|---|
+| Contratos, dossier, sesión y persistencia local | Verificados técnicamente en laboratorio | Aprobación de revisión del código |
+| Login Google end-to-end | NO VERIFICADO | Cliente OAuth autorizado, retorno, state/PKCE, cookies seguras, dos operadores y denegación de tercero en entorno aislado |
+| Roles y revocación con identidad real | NO VERIFICADO | Política autoritativa en servidor, alta/desactivación autorizadas y pruebas de acceso cruzado |
+| Almacenamiento durable del hosting | NO VERIFICADO | Plataforma elegida, reinicio/redeploy sin pérdida, respaldo y recuperación en ese entorno |
+| Calidad de dirección creativa | PENDIENTE HUMANO | Evaluación explícita de los tres dossiers por dirección; registrar selección, fundamento y correcciones |
+| Aceptación operativa | PENDIENTE | Dos operadores completan briefing → revisión → dossier → decisión → entrega con contrato autorizado |
+| Restauración y sesión en el entorno objetivo | NO VERIFICADO | Restaurar copia aislada conservando expedientes e invalidando accesos previos |
+
+No se crean cuentas OAuth, credenciales, despliegues o permisos como consecuencia de «ejecutar pruebas». Requieren autorización específica del recurso y su entorno. Tampoco se marca aceptación humana en nombre de dirección. Los fixtures y las bibliotecas criptográficas probadas no constituyen ese consentimiento ni un login real.
+
+**Dictamen: NO APTO para integrar al núcleo productivo. Candidata local apta para revisión y planificación del piloto real.** El siguiente paso debe resolver plataforma/almacenamiento y la configuración OAuth nominal, junto con aceptación humana. No ampliar suites locales por volumen: repetirlas solo por cambios o fallos.

@@ -2,6 +2,7 @@
 No prueba confianza en certificados Google reales. No instala dependencias.
 """
 import base64
+import os
 import json
 import time
 import unittest
@@ -17,6 +18,8 @@ try:
     AVAILABLE=True
 except ImportError:
     AVAILABLE=False
+if not AVAILABLE and os.environ.get('PUENTE_REQUIRE_CRYPTO_TESTS')=='1':
+    raise RuntimeError('Validación completa exige dependencias criptográficas; no se permite omitir la suite.')
 
 
 @unittest.skipUnless(AVAILABLE,'Faltan dependencias opcionales; no constituye aprobación criptográfica')

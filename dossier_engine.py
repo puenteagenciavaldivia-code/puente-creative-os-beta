@@ -63,6 +63,12 @@ def validate_dossier(d):
         if not isinstance(p.get('visual_signature'),str) or not p['visual_signature'].strip():errors.append(f'direction {idx+1}: missing visual_signature')
     if len(set(ids))!=len(ids):errors.append('duplicate direction IDs')
     if len(set(signatures))!=len(signatures):errors.append('duplicate visual signatures')
+    if 'brief_evidence' in d:
+        evidence=d['brief_evidence']
+        if not isinstance(evidence,list) or not all(isinstance(x,dict) and
+                all(isinstance(x.get(k),str) for k in ('direction_id','field','quote'))
+                and x['direction_id'] in ids for x in evidence):
+            errors.append('brief_evidence must contain valid text citations')
     names=[p.get('name','').casefold().strip() for p in directions if isinstance(p.get('name'),str)]
     if len(set(names))!=len(names):errors.append('duplicate direction names')
     comparison=d.get('comparison',{})

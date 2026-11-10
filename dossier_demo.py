@@ -9,8 +9,8 @@ st.set_page_config(page_title='PUENTE · Dirección creativa', page_icon='🌉',
 st.title('Dirección creativa primero')
 st.caption('Creative OS 1.0 · Rama experimental · Demostración con marcas ficticias')
 paths = sorted((Path(__file__).parent/'examples').glob('*_synthetic.json'))
-chosen = st.selectbox('Caso ficticio', paths, format_func=lambda p: p.stem.replace('_synthetic','').replace('_',' ').title())
-fixture = json.loads(chosen.read_text(encoding='utf-8'))
+chosen = st.selectbox('Caso ficticio', [str(p) for p in paths], format_func=lambda p: Path(p).stem.replace('_synthetic','').replace('_',' ').title())
+fixture = json.loads(Path(chosen).read_text(encoding='utf-8'))
 audit = fixture['audit']
 record = fixture['record']
 review = new_review(record, audit)

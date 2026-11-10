@@ -44,8 +44,16 @@ def parse_dossier(text):
             out[key] = value
         return out
     try:
-        return json.loads(text, object_pairs_hook=unique,
-                          parse_constant=lambda x: (_ for _ in ()).throw(ValueError('Número no finito.')))
+        value = json.loads(text, object_pairs_hook=unique,
+                           parse_constant=lambda x: (_ for _ in ()).throw(ValueError('Número no finito.')))
+        pending=[(value,0)];count=0
+        while pending:
+            item,depth=pending.pop();count+=1
+            if depth>32 or count>10000:
+                raise ValueError('JSON demasiado complejo.')
+            if isinstance(item,dict):pending.extend((v,depth+1) for v in item.values())
+            elif isinstance(item,list):pending.extend((v,depth+1) for v in item)
+        return value
     except (RecursionError, json.JSONDecodeError) as exc:
         raise ValueError('JSON no válido o demasiado anidado.') from exc
 
@@ -110,6 +118,7 @@ def quality_evidence(dossier, record):
         evidence = [e for e in supplied if isinstance(e, dict)
                     and e.get('direction_id') == direction['id']]
         valid = [e for e in evidence if isinstance(e.get('quote'), str)
+                 and isinstance(e.get('field'),str)
                  and len(e['quote'].strip()) >= 8
                  and e['quote'] in str(answers.get(e.get('field'), ''))]
         rows.append({'direction': direction['name'], 'brief_quotes_verified': len(valid),
