@@ -30,3 +30,17 @@ El módulo `graphic_production.py` genera fichas de pieza y encargos de diseño 
 
 ## Próximos hitos
 Autenticación individual, permisos de acceso, protección de datos de producción, integración probada de extremo a extremo y documentos PDF modulares según el plan comercial contratado. El historial básico de revisiones se habilita con el nuevo script, pero todavía no reemplaza una auditoría de seguridad.
+# Dirección Creativa Primero — rama Creative OS 1.0
+
+Esta rama añade dossier profesional HTML/PDF y revisión creativa independiente de la producción. Para una demo local sin Google, claves ni clientes reales:
+
+```bash
+python -m pip install -r requirements.txt
+streamlit run dossier_demo.py
+```
+
+Tres casos ficticios y sus dossiers están en `examples/`. El panel existente incorpora una pestaña **Dossier**, conservando sus controles de acceso. La demo no valida identidad real ni usa el backend. Las decisiones se guardan solo en sesión y pueden exportarse; no sustituyen auditoría durable.
+
+Pruebas: `python -m unittest discover -s tests -v`.
+
+Estado, evidencias y pendientes: [revisión de Creative OS 1.0](docs/CREATIVE_OS_1_REVISION.md). **No desplegado; 04.01 abierta.**

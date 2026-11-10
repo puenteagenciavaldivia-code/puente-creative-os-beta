@@ -1,0 +1,125 @@
+{
+  "record": {
+    "submission_id": "SYNTH-TALLER_RIO",
+    "answers": {
+      "nombre": "Taller Río · marca ficticia",
+      "negocio": "Taller de reparación de bicicletas que enseña a cuidar lo que ya tienes.",
+      "publico": "Personas que usan bicicleta a diario y valoran autonomía y reparación.",
+      "objetivo": "Explicar la oferta con claridad y abrir conversaciones informadas."
+    }
+  },
+  "audit": {
+    "preguntas_priorizadas": []
+  },
+  "dossier": {
+    "schema_version": "puente.dossier.v0.2",
+    "brand": "Taller Río · marca ficticia",
+    "brief": "Taller de reparación de bicicletas que enseña a cuidar lo que ya tienes.",
+    "audience": "Personas que usan bicicleta a diario y valoran autonomía y reparación.",
+    "communication_problem": "La propuesta se confunde con ofertas genéricas y necesita una voz reconocible.",
+    "objective": "Explicar la oferta con claridad y abrir conversaciones informadas.",
+    "constraints": [
+      "Caso íntegramente ficticio; no es campaña aprobada.",
+      "No fabricar logotipo ni activos con licencia.",
+      "Producción opcional; dirección creativa requiere revisión humana."
+    ],
+    "directions": [
+      {
+        "id": "A",
+        "name": "La ciudad se repara pedaleando",
+        "insight": "Personas que usan bicicleta a diario y valoran autonomía y reparación.",
+        "big_idea": "Cada reparación devuelve un recorrido posible.",
+        "promise": "Hacer comprensible la propuesta antes de pedir una decisión.",
+        "visual_system": "Diario de trayectos, marcas de ruta y fotografía de manos reparando.",
+        "typography": "Tipografía grotesca de señalética y números de kilometraje como acento.",
+        "photography": "Documental a altura del ciclista; piezas usadas y reparaciones visibles.",
+        "composition": "Retícula de mapa con una ruta dominante, aire y notas de taller.",
+        "differentiation": "Conecta reparación con autonomía urbana, sin estética de carrera deportiva.",
+        "visual_signature": "mapa_trayecto_taller",
+        "risks": [
+          "No inventar testimonios, precios, resultados ni autorizaciones.",
+          "Validar legibilidad y activos con dirección humana antes de producir."
+        ],
+        "applications": {
+          "feed": "Cada reparación devuelve un recorrido posible. Una idea principal y un único foco visual.",
+          "carousel": "Contexto, problema, propuesta y próximo paso en cuatro momentos.",
+          "story": "Pregunta concreta con respuesta y continuidad de la retícula.",
+          "reel": "Escena observacional breve seguida de explicación humana."
+        },
+        "references": [
+          "SYNTH-BRIEF",
+          "INTERNA"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Antes de comprar, vuelve a rodar",
+        "insight": "Personas que usan bicicleta a diario y valoran autonomía y reparación.",
+        "big_idea": "Una pieza recuperada cuenta otra historia.",
+        "promise": "Hacer comprensible la propuesta antes de pedir una decisión.",
+        "visual_system": "Inventario editorial de piezas con antes/después y materiales honestos.",
+        "typography": "Serif de catálogo con sans técnica para instrucciones breves.",
+        "photography": "Bodegones de piezas recuperadas sobre superficies claras, sin filtros dramáticos.",
+        "composition": "Dípticos de transformación y fichas de material con un foco por página.",
+        "differentiation": "Hace visible el valor de conservar mediante objetos, no mediante mapas.",
+        "visual_signature": "inventario_piezas_diptico",
+        "risks": [
+          "No inventar testimonios, precios, resultados ni autorizaciones.",
+          "Validar legibilidad y activos con dirección humana antes de producir."
+        ],
+        "applications": {
+          "feed": "Una pieza recuperada cuenta otra historia. Una idea principal y un único foco visual.",
+          "carousel": "Contexto, problema, propuesta y próximo paso en cuatro momentos.",
+          "story": "Pregunta concreta con respuesta y continuidad de la retícula.",
+          "reel": "Escena observacional breve seguida de explicación humana."
+        },
+        "references": [
+          "SYNTH-BRIEF",
+          "INTERNA"
+        ]
+      }
+    ],
+    "comparison": {
+      "criteria": [
+        "Pertinencia al briefing",
+        "Diferencia conceptual",
+        "Viabilidad manual",
+        "Legibilidad"
+      ],
+      "tradeoffs": "A prioriza una experiencia cotidiana reconocible; B organiza la propuesta mediante un sistema visual distinto. Ambas requieren prueba de comprensión con personas.",
+      "recommendation": "A",
+      "rejected_reasons": {
+        "B": "Se conserva como alternativa viable; A expresa primero el problema comunicacional del caso ficticio."
+      }
+    },
+    "source_register": [
+      {
+        "id": "SYNTH-BRIEF",
+        "type": "internal",
+        "origin": "Fixture redactado para pruebas, sin cliente real.",
+        "usage": "Contexto hipotético; no evidencia de mercado."
+      },
+      {
+        "id": "INTERNA",
+        "type": "internal",
+        "origin": "Alternativas editoriales de laboratorio.",
+        "usage": "Propuesta para evaluar; no referencias externas consultadas."
+      }
+    ],
+    "brief_evidence": [
+      {
+        "direction_id": "A",
+        "field": "negocio",
+        "quote": "Taller de reparación de bicicletas que enseña a cuidar lo que ya tienes."
+      },
+      {
+        "direction_id": "B",
+        "field": "negocio",
+        "quote": "Taller de reparación de bicicletas que enseña a cuidar lo que ya tienes."
+      }
+    ],
+    "requested_route": "undecided",
+    "competitor_research_confirmed": false,
+    "production_approved": false
+  }
+}

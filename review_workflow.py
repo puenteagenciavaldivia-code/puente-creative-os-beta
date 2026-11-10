@@ -94,7 +94,7 @@ def prepare_reviewed_package(handoff,review,audit):
     result["revision_editorial"]=copy.deepcopy(review)
     result["bloqueos_de_produccion"]=errors
     result["listo_para_revision_final"]=not errors
-    result["aprobado_para_produccion"]=bool(not errors and review.get("autorizacion_produccion"))
+    result["aprobado_para_produccion"]=bool(not errors and review.get("autorizacion_produccion") is True)
     result["revision_generada_utc"]=datetime.now(timezone.utc).isoformat()
     if result["aprobado_para_produccion"]:
         result["decisiones_creativas"]["corriente_madre"]=review["direccion_seleccionada"]

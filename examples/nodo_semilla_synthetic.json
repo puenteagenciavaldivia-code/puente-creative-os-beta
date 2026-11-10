@@ -1,0 +1,125 @@
+{
+  "record": {
+    "submission_id": "SYNTH-NODO_SEMILLA",
+    "answers": {
+      "nombre": "Nodo Semilla · marca ficticia",
+      "negocio": "Intercambio comunitario de semillas y talleres de cultivo para principiantes.",
+      "publico": "Vecinos sin experiencia que quieren cultivar en espacios pequeños.",
+      "objetivo": "Explicar la oferta con claridad y abrir conversaciones informadas."
+    }
+  },
+  "audit": {
+    "preguntas_priorizadas": []
+  },
+  "dossier": {
+    "schema_version": "puente.dossier.v0.2",
+    "brand": "Nodo Semilla · marca ficticia",
+    "brief": "Intercambio comunitario de semillas y talleres de cultivo para principiantes.",
+    "audience": "Vecinos sin experiencia que quieren cultivar en espacios pequeños.",
+    "communication_problem": "La propuesta se confunde con ofertas genéricas y necesita una voz reconocible.",
+    "objective": "Explicar la oferta con claridad y abrir conversaciones informadas.",
+    "constraints": [
+      "Caso íntegramente ficticio; no es campaña aprobada.",
+      "No fabricar logotipo ni activos con licencia.",
+      "Producción opcional; dirección creativa requiere revisión humana."
+    ],
+    "directions": [
+      {
+        "id": "A",
+        "name": "El primer brote es una conversación",
+        "insight": "Vecinos sin experiencia que quieren cultivar en espacios pequeños.",
+        "big_idea": "Aprender a cultivar empieza compartiendo una pregunta.",
+        "promise": "Hacer comprensible la propuesta antes de pedir una decisión.",
+        "visual_system": "Botánica cotidiana con anotaciones de prueba y conversación comunitaria.",
+        "typography": "Sans cercana en preguntas y serif expresiva en nombres de plantas.",
+        "photography": "Manos, macetas pequeñas y procesos reales; no cosechas irreales.",
+        "composition": "Pregunta dominante y respuesta visual; alternar proceso y resultado observado.",
+        "differentiation": "Da protagonismo a la incertidumbre del principiante, sin retórica de abundancia.",
+        "visual_signature": "pregunta_brote_anotacion",
+        "risks": [
+          "No inventar testimonios, precios, resultados ni autorizaciones.",
+          "Validar legibilidad y activos con dirección humana antes de producir."
+        ],
+        "applications": {
+          "feed": "Aprender a cultivar empieza compartiendo una pregunta. Una idea principal y un único foco visual.",
+          "carousel": "Contexto, problema, propuesta y próximo paso en cuatro momentos.",
+          "story": "Pregunta concreta con respuesta y continuidad de la retícula.",
+          "reel": "Escena observacional breve seguida de explicación humana."
+        },
+        "references": [
+          "SYNTH-BRIEF",
+          "INTERNA"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Un metro puede empezar algo",
+        "insight": "Vecinos sin experiencia que quieren cultivar en espacios pequeños.",
+        "big_idea": "Poco espacio, una práctica que crece.",
+        "promise": "Hacer comprensible la propuesta antes de pedir una decisión.",
+        "visual_system": "Planos de pequeños huertos y módulos de cultivo como sistema gráfico.",
+        "typography": "Sans geométrica funcional y cifras grandes para medidas verificables.",
+        "photography": "Vista cenital de recipientes y etapas de siembra claramente diferenciadas.",
+        "composition": "Grilla modular inspirada en el espacio disponible; escala visible sin inventar rendimiento.",
+        "differentiation": "Resuelve una limitación espacial con organización visual, en lugar de conversación.",
+        "visual_signature": "modulo_huerto_cenital",
+        "risks": [
+          "No inventar testimonios, precios, resultados ni autorizaciones.",
+          "Validar legibilidad y activos con dirección humana antes de producir."
+        ],
+        "applications": {
+          "feed": "Poco espacio, una práctica que crece. Una idea principal y un único foco visual.",
+          "carousel": "Contexto, problema, propuesta y próximo paso en cuatro momentos.",
+          "story": "Pregunta concreta con respuesta y continuidad de la retícula.",
+          "reel": "Escena observacional breve seguida de explicación humana."
+        },
+        "references": [
+          "SYNTH-BRIEF",
+          "INTERNA"
+        ]
+      }
+    ],
+    "comparison": {
+      "criteria": [
+        "Pertinencia al briefing",
+        "Diferencia conceptual",
+        "Viabilidad manual",
+        "Legibilidad"
+      ],
+      "tradeoffs": "A prioriza una experiencia cotidiana reconocible; B organiza la propuesta mediante un sistema visual distinto. Ambas requieren prueba de comprensión con personas.",
+      "recommendation": "A",
+      "rejected_reasons": {
+        "B": "Se conserva como alternativa viable; A expresa primero el problema comunicacional del caso ficticio."
+      }
+    },
+    "source_register": [
+      {
+        "id": "SYNTH-BRIEF",
+        "type": "internal",
+        "origin": "Fixture redactado para pruebas, sin cliente real.",
+        "usage": "Contexto hipotético; no evidencia de mercado."
+      },
+      {
+        "id": "INTERNA",
+        "type": "internal",
+        "origin": "Alternativas editoriales de laboratorio.",
+        "usage": "Propuesta para evaluar; no referencias externas consultadas."
+      }
+    ],
+    "brief_evidence": [
+      {
+        "direction_id": "A",
+        "field": "negocio",
+        "quote": "Intercambio comunitario de semillas y talleres de cultivo para principiantes."
+      },
+      {
+        "direction_id": "B",
+        "field": "negocio",
+        "quote": "Intercambio comunitario de semillas y talleres de cultivo para principiantes."
+      }
+    ],
+    "requested_route": "undecided",
+    "competitor_research_confirmed": false,
+    "production_approved": false
+  }
+}

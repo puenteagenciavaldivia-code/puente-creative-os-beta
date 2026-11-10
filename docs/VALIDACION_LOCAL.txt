@@ -1,0 +1,159 @@
+test_clear_answer_receives_full_credit (test_briefing_quality.BriefingQualityTests.test_clear_answer_receives_full_credit) ... ok
+test_gibberish_is_flagged (test_briefing_quality.BriefingQualityTests.test_gibberish_is_flagged) ... ok
+test_missing_core_information_blocks_approval (test_briefing_quality.BriefingQualityTests.test_missing_core_information_blocks_approval) ... ok
+test_realistic_briefing_is_distinct_from_placeholder (test_briefing_quality.BriefingQualityTests.test_realistic_briefing_is_distinct_from_placeholder) ... ok
+test_bad_ai_import_cannot_approve (test_briefing_quality.ChatGPTHandoffTests.test_bad_ai_import_cannot_approve) ... ok
+test_prompt_preserves_evidence_but_not_private_unknown_fields (test_briefing_quality.ChatGPTHandoffTests.test_prompt_preserves_evidence_but_not_private_unknown_fields) ... ok
+test_cannot_import_to_another_brand (test_briefing_quality.ClarificationsTests.test_cannot_import_to_another_brand) ... ok
+test_targeted_questions_roundtrip (test_briefing_quality.ClarificationsTests.test_targeted_questions_roundtrip) ... ok
+test_catalog_has_diverse_categories_and_unique_ids (test_briefing_quality.DesignCatalogTests.test_catalog_has_diverse_categories_and_unique_ids) ... ok
+test_search_finds_both_history_and_photo (test_briefing_quality.DesignCatalogTests.test_search_finds_both_history_and_photo) ... ok
+test_format_presets_are_exact (test_briefing_quality.GraphicProductionTests.test_format_presets_are_exact) ... ok
+test_piece_must_belong_to_selected_briefing (test_briefing_quality.GraphicProductionTests.test_piece_must_belong_to_selected_briefing) ... ok
+test_unapproved_direction_never_produces_prompt (test_briefing_quality.GraphicProductionTests.test_unapproved_direction_never_produces_prompt) ... ok
+test_verified_review_unblocks_only_with_explicit_approval (test_briefing_quality.GraphicProductionTests.test_verified_review_unblocks_only_with_explicit_approval) ... ok
+test_handoff_preserves_original_and_never_approves (test_briefing_quality.HandoffTests.test_handoff_preserves_original_and_never_approves) ... ok
+test_optional_missing_does_not_raise_flags (test_briefing_quality.HandoffTests.test_optional_missing_does_not_raise_flags) ... ok
+test_default_cannot_approve_or_produce (test_briefing_quality.HumanReviewWorkflowTests.test_default_cannot_approve_or_produce) ... ok
+test_rejects_cross_brand_review (test_briefing_quality.HumanReviewWorkflowTests.test_rejects_cross_brand_review) ... ok
+test_requires_two_distinct_evidenced_directions (test_briefing_quality.HumanReviewWorkflowTests.test_requires_two_distinct_evidenced_directions) ... ok
+test_invites_use_same_link (test_briefing_quality.InvitationLinkTests.test_invites_use_same_link) ... ok
+test_link_rejects_other_hosts (test_briefing_quality.InvitationLinkTests.test_link_rejects_other_hosts) ... ok
+test_secure_link_never_contains_briefing_data (test_briefing_quality.InvitationLinkTests.test_secure_link_never_contains_briefing_data) ... ok
+test_ai_output_requires_exact_source_evidence (test_briefing_quality.MethodologyTests.test_ai_output_requires_exact_source_evidence) ... ok
+test_references_have_verifiable_sources (test_briefing_quality.MethodologyTests.test_references_have_verifiable_sources) ... ok
+test_empty_brief_produces_no_prefill (test_briefing_quality.NoApiFallbackTests.test_empty_brief_produces_no_prefill) ... ok
+test_prefill_three_options_without_claiming_ai (test_briefing_quality.NoApiFallbackTests.test_prefill_three_options_without_claiming_ai) ... ok
+test_avoid_duplicate_questions_when_info_explicit (test_briefing_quality.StrategicAuditTests.test_avoid_duplicate_questions_when_info_explicit) ... ok
+test_bosque_adentro_vague_mentions_still_need_details (test_briefing_quality.StrategicAuditTests.test_bosque_adentro_vague_mentions_still_need_details) ... ok
+test_tourism_gaps_even_with_fully_written_brief (test_briefing_quality.StrategicAuditTests.test_tourism_gaps_even_with_fully_written_brief) ... ok
+test_approval_never_imported (test_dossier_integration.DossierIntegrationTests.test_approval_never_imported) ... ok
+test_boolean_approval_required (test_dossier_integration.DossierIntegrationTests.test_boolean_approval_required) ... ok
+test_cached_validation_cannot_bypass (test_dossier_integration.DossierIntegrationTests.test_cached_validation_cannot_bypass) ... ok
+test_changed_answers_invalidate (test_dossier_integration.DossierIntegrationTests.test_changed_answers_invalidate) ... ok
+test_changed_audit_invalidate (test_dossier_integration.DossierIntegrationTests.test_changed_audit_invalidate) ... ok
+test_changed_submission_invalidate (test_dossier_integration.DossierIntegrationTests.test_changed_submission_invalidate) ... ok
+test_comparison_types_rejected (test_dossier_integration.DossierIntegrationTests.test_comparison_types_rejected) ... ok
+test_content_change_invalidates_approval (test_dossier_integration.DossierIntegrationTests.test_content_change_invalidates_approval) ... ok
+test_creative_delivery_without_production (test_dossier_integration.DossierIntegrationTests.test_creative_delivery_without_production) ... ok
+test_cross_brand_rejected (test_dossier_integration.DossierIntegrationTests.test_cross_brand_rejected) ... ok
+test_duplicate_names_rejected (test_dossier_integration.DossierIntegrationTests.test_duplicate_names_rejected) ... ok
+test_fabricated_quote_blocks (test_dossier_integration.DossierIntegrationTests.test_fabricated_quote_blocks) ... ok
+test_html_escapes_user_content (test_dossier_integration.DossierIntegrationTests.test_html_escapes_user_content) ... ok
+test_html_has_no_external_resources (test_dossier_integration.DossierIntegrationTests.test_html_has_no_external_resources) ... ok
+test_invalid_html_export_blocks (test_dossier_integration.DossierIntegrationTests.test_invalid_html_export_blocks) ... ok
+test_json_duplicate_rejected (test_dossier_integration.DossierIntegrationTests.test_json_duplicate_rejected) ... ok
+test_json_size_limit (test_dossier_integration.DossierIntegrationTests.test_json_size_limit) ... ok
+test_legacy_mapping_does_not_mutate (test_dossier_integration.DossierIntegrationTests.test_legacy_mapping_does_not_mutate) ... ok
+test_malformed_structures_fail_without_crash (test_dossier_integration.DossierIntegrationTests.test_malformed_structures_fail_without_crash) ... ok
+test_manual_handoff_not_production (test_dossier_integration.DossierIntegrationTests.test_manual_handoff_not_production) ... ok
+test_missing_brief_quote_blocks (test_dossier_integration.DossierIntegrationTests.test_missing_brief_quote_blocks) ... ok
+test_missing_reviewer_blocks (test_dossier_integration.DossierIntegrationTests.test_missing_reviewer_blocks) ... ok
+test_no_duplicate_visual_signature (test_dossier_integration.DossierIntegrationTests.test_no_duplicate_visual_signature) ... ok
+test_nonfinite_json_rejected (test_dossier_integration.DossierIntegrationTests.test_nonfinite_json_rejected) ... ok
+test_pdf_generated_for_all_cases (test_dossier_integration.DossierIntegrationTests.test_pdf_generated_for_all_cases) ... ok
+test_pdf_invalid_input_rejected (test_dossier_integration.DossierIntegrationTests.test_pdf_invalid_input_rejected) ... ok
+test_piece_substitution_rejected (test_dossier_integration.DossierIntegrationTests.test_piece_substitution_rejected) ... ok
+test_questions_pending_block_signoff (test_dossier_integration.DossierIntegrationTests.test_questions_pending_block_signoff) ... ok
+test_request_excludes_unknown_private_fields (test_dossier_integration.DossierIntegrationTests.test_request_excludes_unknown_private_fields) ... ok
+test_research_limit_visible (test_dossier_integration.DossierIntegrationTests.test_research_limit_visible) ... ok
+test_routes_do_not_generate_images (test_dossier_integration.DossierIntegrationTests.test_routes_do_not_generate_images) ... ok
+test_three_synthetic_cases_valid (test_dossier_integration.DossierIntegrationTests.test_three_synthetic_cases_valid) ... ok
+test_truthy_legacy_approval_cannot_enable_production (test_dossier_integration.DossierIntegrationTests.test_truthy_legacy_approval_cannot_enable_production) ... ok
+test_unknown_handoff_selection_rejected (test_dossier_integration.DossierIntegrationTests.test_unknown_handoff_selection_rejected) ... ok
+test_unknown_selection_blocks (test_dossier_integration.DossierIntegrationTests.test_unknown_selection_blocks) ... ok
+test_unknown_source_rejected (test_dossier_integration.DossierIntegrationTests.test_unknown_source_rejected) ... ok
+test_wrong_root_rejected (test_dossier_integration.DossierIntegrationTests.test_wrong_root_rejected) ... ok
+test_creative_only_approval_flow (test_dossier_ui.DossierUITests.test_creative_only_approval_flow) ... 2026-11-10 01:34:17.766 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-10 01:34:17.982 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 01:34:18.147 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 01:34:18.160 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 01:34:18.161 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 01:34:18.174 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 01:34:18.175 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 01:34:18.186 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 01:34:18.187 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 01:34:18.198 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 01:34:18.200 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+ok
+test_editing_invalidates_visible_approval (test_dossier_ui.DossierUITests.test_editing_invalidates_visible_approval) ... 2026-11-10 01:34:18.208 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-10 01:34:18.312 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 01:34:18.314 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 01:34:18.329 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 01:34:18.330 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+ok
+test_invalid_import_shows_error (test_dossier_ui.DossierUITests.test_invalid_import_shows_error) ... 2026-11-10 01:34:18.344 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_three_cases_render_and_validate (test_dossier_ui.DossierUITests.test_three_cases_render_and_validate) ... 2026-11-10 01:34:18.451 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-10 01:34:18.557 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 01:34:18.559 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 01:34:18.575 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 01:34:18.577 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-11-10 01:34:18.592 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-11-10 01:34:18.594 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+ok
+
+----------------------------------------------------------------------
+Ran 70 tests in 0.868s
+
+OK

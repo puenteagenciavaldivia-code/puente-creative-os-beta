@@ -93,6 +93,8 @@ def production_prompt(plan,piece):
     valid={p["piece_id"]:p for p in plan.get("piezas",[])}
     if piece.get("piece_id") not in valid:
         raise ValueError("La pieza no pertenece a este plan.")
+    if piece != valid[piece["piece_id"]]:
+        raise ValueError("La pieza cambió después de preparar el plan. Requiere nueva revisión.")
     errors=validate_piece(piece)
     if errors:raise ValueError("; ".join(errors))
     preset=FORMAT_PRESETS[piece["formato_id"]]

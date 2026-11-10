@@ -6,6 +6,7 @@ import unittest
 import requests
 import hmac
 import streamlit as st
+from dossier_ui import render_dossier_workspace
 from creative_handoff import build_handoff
 from strategic_audit import audit_briefing
 from review_workflow import new_review,validate_review,prepare_reviewed_package
@@ -133,7 +134,7 @@ st.divider()
 st.subheader(str(selected.get("brand") or "Sin nombre"))
 st.caption("Completitud orientativa: "+str(selected.get("score",0))+
            "/100 · No equivale a aprobación estratégica.")
-tabs=st.tabs(["Resumen","Aclaraciones","Dirección de arte","Producción","Documentos"])
+tabs=st.tabs(["Resumen","Aclaraciones","Dirección de arte","Producción","Documentos","Dossier"])
 
 with tabs[0]:
     st.markdown("#### La marca en pocas palabras")
@@ -503,3 +504,7 @@ with tabs[4]:
                 except (ValueError,UnicodeDecodeError,TypeError) as exc:
                     st.error("No se pudo cargar la revisión: "+str(exc))
     st.caption("El guardado persistente requiere desplegar la nueva versión de Apps Script. Si no está activado, descarga tu revisión para conservarla.")
+
+
+with tabs[5]:
+    render_dossier_workspace(record,audit,review)

@@ -1,0 +1,125 @@
+{
+  "record": {
+    "submission_id": "SYNTH-ESTELA",
+    "answers": {
+      "nombre": "Estela · marca ficticia",
+      "negocio": "Alojamiento pequeño para viajeros que quieren descansar y recorrer a pie.",
+      "publico": "Viajeros que buscan calma y contacto cotidiano con el barrio.",
+      "objetivo": "Explicar la oferta con claridad y abrir conversaciones informadas."
+    }
+  },
+  "audit": {
+    "preguntas_priorizadas": []
+  },
+  "dossier": {
+    "schema_version": "puente.dossier.v0.2",
+    "brand": "Estela · marca ficticia",
+    "brief": "Alojamiento pequeño para viajeros que quieren descansar y recorrer a pie.",
+    "audience": "Viajeros que buscan calma y contacto cotidiano con el barrio.",
+    "communication_problem": "La propuesta se confunde con ofertas genéricas y necesita una voz reconocible.",
+    "objective": "Explicar la oferta con claridad y abrir conversaciones informadas.",
+    "constraints": [
+      "Caso íntegramente ficticio; no es campaña aprobada.",
+      "No fabricar logotipo ni activos con licencia.",
+      "Producción opcional; dirección creativa requiere revisión humana."
+    ],
+    "directions": [
+      {
+        "id": "A",
+        "name": "Dormir aquí, conocer despacio",
+        "insight": "Viajeros que buscan calma y contacto cotidiano con el barrio.",
+        "big_idea": "Una buena mañana empieza sin itinerario obligatorio.",
+        "promise": "Hacer comprensible la propuesta antes de pedir una decisión.",
+        "visual_system": "Cuaderno de paseo con ventanas, luz suave y notas del barrio.",
+        "typography": "Serif cálida editorial con sans pequeña para indicaciones precisas.",
+        "photography": "Luz de mañana, espacios habitados sin personas identificables y recorridos a pie.",
+        "composition": "Una imagen grande y una observación corta; secuencias con pausas amplias.",
+        "differentiation": "Vende el ritmo de la visita, sin prometer servicios no confirmados.",
+        "visual_signature": "cuaderno_paseo_ventana",
+        "risks": [
+          "No inventar testimonios, precios, resultados ni autorizaciones.",
+          "Validar legibilidad y activos con dirección humana antes de producir."
+        ],
+        "applications": {
+          "feed": "Una buena mañana empieza sin itinerario obligatorio. Una idea principal y un único foco visual.",
+          "carousel": "Contexto, problema, propuesta y próximo paso en cuatro momentos.",
+          "story": "Pregunta concreta con respuesta y continuidad de la retícula.",
+          "reel": "Escena observacional breve seguida de explicación humana."
+        },
+        "references": [
+          "SYNTH-BRIEF",
+          "INTERNA"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Un punto para volver",
+        "insight": "Viajeros que buscan calma y contacto cotidiano con el barrio.",
+        "big_idea": "Sal a explorar. Ten un lugar tranquilo al que regresar.",
+        "promise": "Hacer comprensible la propuesta antes de pedir una decisión.",
+        "visual_system": "Sistema de coordenadas y formas de refugio, colores de orientación.",
+        "typography": "Sans humanista robusta, títulos cortos y datos ordenados en módulos.",
+        "photography": "Umbrales y trayectos con encuadre frontal y detalles de llegada.",
+        "composition": "Marco constante como punto de referencia y contenido variable en el centro.",
+        "differentiation": "Organiza la experiencia desde la llegada y seguridad emocional, no desde la lentitud.",
+        "visual_signature": "coordenada_refugio_marco",
+        "risks": [
+          "No inventar testimonios, precios, resultados ni autorizaciones.",
+          "Validar legibilidad y activos con dirección humana antes de producir."
+        ],
+        "applications": {
+          "feed": "Sal a explorar. Ten un lugar tranquilo al que regresar. Una idea principal y un único foco visual.",
+          "carousel": "Contexto, problema, propuesta y próximo paso en cuatro momentos.",
+          "story": "Pregunta concreta con respuesta y continuidad de la retícula.",
+          "reel": "Escena observacional breve seguida de explicación humana."
+        },
+        "references": [
+          "SYNTH-BRIEF",
+          "INTERNA"
+        ]
+      }
+    ],
+    "comparison": {
+      "criteria": [
+        "Pertinencia al briefing",
+        "Diferencia conceptual",
+        "Viabilidad manual",
+        "Legibilidad"
+      ],
+      "tradeoffs": "A prioriza una experiencia cotidiana reconocible; B organiza la propuesta mediante un sistema visual distinto. Ambas requieren prueba de comprensión con personas.",
+      "recommendation": "A",
+      "rejected_reasons": {
+        "B": "Se conserva como alternativa viable; A expresa primero el problema comunicacional del caso ficticio."
+      }
+    },
+    "source_register": [
+      {
+        "id": "SYNTH-BRIEF",
+        "type": "internal",
+        "origin": "Fixture redactado para pruebas, sin cliente real.",
+        "usage": "Contexto hipotético; no evidencia de mercado."
+      },
+      {
+        "id": "INTERNA",
+        "type": "internal",
+        "origin": "Alternativas editoriales de laboratorio.",
+        "usage": "Propuesta para evaluar; no referencias externas consultadas."
+      }
+    ],
+    "brief_evidence": [
+      {
+        "direction_id": "A",
+        "field": "negocio",
+        "quote": "Alojamiento pequeño para viajeros que quieren descansar y recorrer a pie."
+      },
+      {
+        "direction_id": "B",
+        "field": "negocio",
+        "quote": "Alojamiento pequeño para viajeros que quieren descansar y recorrer a pie."
+      }
+    ],
+    "requested_route": "undecided",
+    "competitor_research_confirmed": false,
+    "production_approved": false
+  }
+}
