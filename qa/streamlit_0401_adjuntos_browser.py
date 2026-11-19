@@ -64,14 +64,14 @@ with sync_playwright() as pw:
 
         uploader.set_input_files({"name": "marca-b.png", "mimeType": "image/png", "buffer": b"synthetic-logo-b"})
         page.wait_for_timeout(1200)
-        check("replacement_requires_new_consent", not page.get_by_label(CHECK_LABEL, exact=True).is_checked())
-        check("replacement_keeps_single_file", page.get_by_text("1 archivo(s) preparados para enviar al finalizar.", exact=True).count() > 0)
+        check("new_file_addition_revokes_consent", not page.get_by_label(CHECK_LABEL, exact=True).is_checked())
+        check("addition_keeps_both_files", page.get_by_text("2 archivo(s) preparados para enviar al finalizar.", exact=True).count() > 0)
         check("continue_blocked_without_consent", page.get_by_role("button", name="Continuar →", exact=True).is_disabled())
         page.screenshot(path=str(OUT / "attachment_consent_revoked.png"), full_page=True)
 
         uploader.set_input_files([])
         page.wait_for_timeout(1100)
-        check("empty_selection_resets_count", page.get_by_text("1 archivo(s) preparados para enviar al finalizar.", exact=True).count() == 0)
+        check("empty_selection_resets_count", page.get_by_text("2 archivo(s) preparados para enviar al finalizar.", exact=True).count() == 0)
         check("empty_selection_resets_consent", not page.get_by_label(CHECK_LABEL, exact=True).is_checked())
         page.screenshot(path=str(OUT / "attachment_selection_empty.png"), full_page=True)
     except Exception as exc:
