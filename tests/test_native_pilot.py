@@ -141,6 +141,17 @@ class NativePilotTests(unittest.TestCase):
         fresh = NativePilotAccess(self.path, 'client-ficticio', lambda: 1000)
         self.assertEqual(fresh.projects(self.user), [self.project])
 
+    def test_legacy_streamlit_missing_oidc_user_fails_closed(self):
+        st = __import__('streamlit')
+        if hasattr(st, 'user'):
+            self.skipTest('Current Streamlit exposes st.user')
+        env = {'PUENTE_OIDC_PILOT_ENABLED': '1', 'PUENTE_OIDC_PILOT_DB': str(self.path)}
+        with patch.dict(os.environ, env):
+            app = AppTest.from_file(str(ROOT/'pilot_oidc_app.py')).run()
+        self.assertFalse(app.exception)
+        self.assertTrue(app.error)
+        self.assertEqual(len(app.selectbox), 0)
+
     def test_disabled_app_does_not_create_database(self):
         missing = Path(self.tmp.name)/'must-not-exist.sqlite'
         with patch.dict(os.environ, {'PUENTE_OIDC_PILOT_ENABLED': '0', 'PUENTE_OIDC_PILOT_DB': str(missing)}):
@@ -172,18 +183,21 @@ class NativePilotTests(unittest.TestCase):
             'client_id': 'client-ficticio', 'client_secret': 'FICTICIO', 'cookie_secret': 'FICTICIO'*8}}
         return self.run_ui(app, user)
 
+    @unittest.skipUnless(hasattr(__import__('streamlit'), 'user'), 'OIDC UI requires Streamlit st.user; legacy 1.40 validates disabled-only')
     def test_ui_known_identity_loads_only_assigned_project(self):
         app = self.ui(self.user)
         self.assertFalse(app.error)
         self.assertEqual(app.selectbox[0].options, [self.project])
         self.assertFalse(any('simulada' in str(s.label).lower() for s in app.selectbox))
 
+    @unittest.skipUnless(hasattr(__import__('streamlit'), 'user'), 'OIDC UI requires Streamlit st.user; legacy 1.40 validates disabled-only')
     def test_ui_unknown_identity_stops_before_project_controls(self):
         self.user['sub'] = '20002'
         app = self.ui(self.user)
         self.assertTrue(app.error)
         self.assertEqual(len(app.selectbox), 0)
 
+    @unittest.skipUnless(hasattr(__import__('streamlit'), 'user'), 'OIDC UI requires Streamlit st.user; legacy 1.40 validates disabled-only')
     def test_self_enrollment_display_does_not_grant_access(self):
         self.user['sub'] = '20002'
         app = self.ui(self.user)
@@ -194,6 +208,7 @@ class NativePilotTests(unittest.TestCase):
         with sqlite3.connect(self.path) as db:
             self.assertEqual(db.execute("SELECT COUNT(*) FROM pilot_users WHERE subject='20002'").fetchone()[0], 0)
 
+    @unittest.skipUnless(hasattr(__import__('streamlit'), 'user'), 'OIDC UI requires Streamlit st.user; legacy 1.40 validates disabled-only')
     def test_ui_save_and_human_decision_persist(self):
         app = self.ui(self.user)
         app.button[1].click()
@@ -207,6 +222,7 @@ class NativePilotTests(unittest.TestCase):
         self.assertFalse(app.error)
         self.assertEqual(self.store.latest_decision(self.actor, self.scope)['package']['status'], 'creative_approved')
 
+    @unittest.skipUnless(hasattr(__import__('streamlit'), 'user'), 'OIDC UI requires Streamlit st.user; legacy 1.40 validates disabled-only')
     def test_ui_revocation_removes_project_controls(self):
         app = self.ui(self.user)
         self.access.set_user('10001', self.project, 'direccion', active=False)
@@ -214,6 +230,7 @@ class NativePilotTests(unittest.TestCase):
         self.assertTrue(app.error)
         self.assertEqual(len(app.selectbox), 0)
 
+    @unittest.skipUnless(hasattr(__import__('streamlit'), 'user'), 'OIDC UI requires Streamlit st.user; legacy 1.40 validates disabled-only')
     def test_ui_operator_approval_denied(self):
         self.save()
         self.access.set_user('10001', self.project, 'operacion')
