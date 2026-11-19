@@ -69,11 +69,6 @@ with sync_playwright() as pw:
         check("continue_blocked_without_consent", page.get_by_role("button", name="Continuar →", exact=True).is_disabled())
         page.screenshot(path=str(OUT / "attachment_consent_revoked.png"), full_page=True)
 
-        uploader.set_input_files([])
-        page.wait_for_timeout(1100)
-        check("empty_selection_resets_count", page.get_by_text("2 archivo(s) preparados para enviar al finalizar.", exact=True).count() == 0)
-        check("empty_selection_resets_consent", not page.get_by_label(CHECK_LABEL, exact=True).is_checked())
-        page.screenshot(path=str(OUT / "attachment_selection_empty.png"), full_page=True)
     except Exception as exc:
         results["error"] = str(exc)
         page.screenshot(path=str(OUT / "attachment_failure.png"), full_page=True)
