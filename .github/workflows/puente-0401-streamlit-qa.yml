@@ -1,0 +1,86 @@
+name: PUENTE 04.01 Streamlit - QA isolated
+on:
+  push:
+    branches:
+      - qa/0401-streamlit-unblock-20261119
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - experiment/creative-os-1-oidc-pilot-entry
+
+permissions:
+  contents: read
+
+jobs:
+  streamlit-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      STREAMLIT_BROWSER_GATHER_USAGE_STATS: "false"
+      STREAMLIT_SERVER_ADDRESS: "127.0.0.1"
+      STREAMLIT_SERVER_PORT: "8766"
+      STREAMLIT_SERVER_HEADLESS: "true"
+      PUENTE_QA_URL: "http://127.0.0.1:8766"
+      PUENTE_QA_OUT: "qa_artifacts"
+    steps:
+      - name: Checkout isolated QA branch
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies and Playwright
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt playwright
+          python -m playwright install --with-deps chromium
+      - name: Run native decision-store tests
+        run: |
+          set -o pipefail
+          mkdir -p qa_artifacts
+          python -m unittest discover -s tests -p 'test_decision_store.py' -v 2>&1 | tee qa_artifacts/native_tests.log
+      - name: Verify native test results were recorded
+        run: |
+          test -s qa_artifacts/native_tests.log
+          grep -q 'Ran 28 tests' qa_artifacts/native_tests.log
+          grep -q '^OK
+        run: |
+          unset SHEETS_WEBHOOK_URL SHEETS_WEBHOOK_TOKEN
+          python -m streamlit run app.py --server.address 127.0.0.1 --server.port 8766 --server.headless true > qa_artifacts/streamlit.log 2>&1 &
+          echo $! > qa_artifacts/streamlit.pid
+          for i in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:8766/_stcore/health > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          tail -100 qa_artifacts/streamlit.log
+          exit 1
+      - name: Test 5-step form in Chromium and download synthetic JSON
+        run: python qa/streamlit_0401_e2e.py
+      - name: Upload QA evidence even if checks fail
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: puente-0401-streamlit-qa-evidence
+          path: qa_artifacts/
+          retention-days: 14
+ qa_artifacts/native_tests.log
+      - name: Start authentic Streamlit app without Google credentials
+        run: |
+          unset SHEETS_WEBHOOK_URL SHEETS_WEBHOOK_TOKEN
+          python -m streamlit run app.py --server.address 127.0.0.1 --server.port 8766 --server.headless true > qa_artifacts/streamlit.log 2>&1 &
+          echo $! > qa_artifacts/streamlit.pid
+          for i in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:8766/_stcore/health > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          tail -100 qa_artifacts/streamlit.log
+          exit 1
+      - name: Test 5-step form in Chromium and download synthetic JSON
+        run: python qa/streamlit_0401_e2e.py
+      - name: Upload QA evidence even if checks fail
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: puente-0401-streamlit-qa-evidence
+          path: qa_artifacts/
+          retention-days: 14

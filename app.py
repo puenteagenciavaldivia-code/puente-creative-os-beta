@@ -142,11 +142,10 @@ if not st.session_state.finished:
             st.markdown("#### Archivos de tu marca (opcional)")
             st.caption("PNG, JPG, WEBP o PDF. Máximo 3 MB por archivo y 5 archivos. No incluyas datos personales sensibles.")
             uploaded=st.file_uploader("Adjunta logotipos, fotografías o referencias",type=["png","jpg","jpeg","webp","pdf"],accept_multiple_files=True,key="brand_uploads")
-            if uploaded:
-                if len(uploaded)>5 or any(x.size>3*1024*1024 for x in uploaded) or any((x.type not in ("image/png","image/jpeg","image/webp","application/pdf")) for x in uploaded):
-                    st.error("Se permiten hasta 5 archivos de máximo 3 MB cada uno. Ajusta los adjuntos antes de continuar.")
-                else:
-                    st.session_state.attachments_store=[{"name":x.name,"mime":x.type,"data":base64.b64encode(x.getvalue()).decode("ascii")} for x in uploaded]
+            from adjuntos_seguro import reconcile_selection
+            attachment_result=reconcile_selection(st.session_state,uploaded)
+            if not attachment_result["ok"]:
+                st.error("La selección de archivos no es válida. Se descartaron los adjuntos anteriores y debes volver a autorizar una selección válida.")
             if st.session_state.attachments_store:
                 st.caption(f"{len(st.session_state.attachments_store)} archivo(s) preparados para enviar al finalizar.")
             restore_widget("files_consent")

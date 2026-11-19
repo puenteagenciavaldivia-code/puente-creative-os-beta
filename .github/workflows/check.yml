@@ -22,3 +22,40 @@ jobs:
         run: python -m pip install 'streamlit==${{ matrix.streamlit }}'
       - run: python -m compileall -q .
       - run: python -m unittest discover -s tests -v
+  streamlit-browser-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      STREAMLIT_BROWSER_GATHER_USAGE_STATS: 'false'
+      PUENTE_QA_OUT: qa_artifacts
+      PUENTE_QA_URL: http://127.0.0.1:8766
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Streamlit and Chromium
+        run: |
+          python -m pip install -r requirements.txt playwright
+          python -m playwright install --with-deps chromium
+      - name: Start Streamlit with no Google credentials
+        run: |
+          mkdir -p qa_artifacts
+          python -m streamlit run app.py --server.address 127.0.0.1 --server.port 8766 --server.headless true > qa_artifacts/streamlit.log 2>&1 &
+          for i in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:8766/_stcore/health > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          tail -100 qa_artifacts/streamlit.log
+          exit 1
+      - name: Real Chromium end-to-end navigation (synthetic only)
+        run: python qa/streamlit_0401_e2e.py
+      - name: Browser attachment consent revocation (synthetic only)
+        run: python qa/streamlit_0401_adjuntos_browser.py
+      - name: Save browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: puente-0401-browser-qa
+          path: qa_artifacts/
+          retention-days: 14
