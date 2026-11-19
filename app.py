@@ -2,6 +2,7 @@ import json
 import base64
 import uuid
 import requests
+from attachment_delivery import send_pending
 from datetime import datetime, timezone
 import streamlit as st
 
@@ -195,19 +196,8 @@ else:
             if not st.session_state.answers_store.get("files_consent"):
                 raise RuntimeError("Falta la autorización para compartir los archivos.")
             payload={"submission_id":st.session_state["export"]["submission_id"],"brand":st.session_state["export"]["answers"].get("nombre","Marca"),"files":st.session_state.attachments_store}
-            for item in payload["files"]:
-                try:
-                    r=requests.post(SHEETS_URL,json={"action":"attachments","token":SHEETS_TOKEN,"submission_id":payload["submission_id"],"brand":payload["brand"],"files":[item]},timeout=75)
-                except requests.exceptions.Timeout:
-                    raise RuntimeError("Tiempo de espera agotado al enviar el adjunto.")
-                except requests.exceptions.RequestException:
-                    raise RuntimeError("Error de comunicación HTTPS con el receptor de Google.")
-                response_code=r.text.strip()
-                if r.status_code!=200:
-                    raise RuntimeError(f"Respuesta HTTP {r.status_code} del receptor.")
-                if response_code!="OK":
-                    allowed_errors={"DENIED":"El receptor rechazó la autorización.","INVALID":"El receptor rechazó los datos o el tipo de archivo.","ERROR":"Error interno de Google Apps Script al procesar el adjunto."}
-                    raise RuntimeError(allowed_errors.get(response_code,"El receptor devolvió una respuesta inesperada (no OK)."))
+            st.session_state.setdefault("attachment_acknowledgements",{})
+            send_pending(payload["submission_id"],payload["brand"],payload["files"],st.session_state.attachment_acknowledgements,requests.post,SHEETS_URL,SHEETS_TOKEN)
             st.session_state.files_saved=True
             st.session_state.pop("files_error",None)
         except Exception as exc:
@@ -229,5 +219,5 @@ else:
     if st.button("Comenzar otro briefing"):
         for _,fs in SECTIONS:
             for key,_,_ in fs:st.session_state.pop(key,None)
-        for k in ["autorizacion","accion","consent","files_consent","brand_uploads","export","saved","files_saved","save_error","review_ready"]:st.session_state.pop(k,None)
+        for k in ["autorizacion","accion","consent","files_consent","brand_uploads","export","saved","files_saved","save_error","review_ready","attachments_store","attachment_acknowledgements","files_error"]:st.session_state.pop(k,None)
         st.session_state.attachments_store=[];st.session_state.answers_store={};st.session_state.step=0;st.session_state.finished=False;st.rerun()
