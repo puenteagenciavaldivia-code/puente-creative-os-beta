@@ -145,9 +145,12 @@ if not st.session_state.finished:
             uploaded=st.file_uploader("Adjunta logotipos, fotografías o referencias",type=["png","jpg","jpeg","webp","pdf"],accept_multiple_files=True,key="brand_uploads")
             if uploaded:
                 if len(uploaded)>5 or any(x.size>3*1024*1024 for x in uploaded) or any((x.type not in ("image/png","image/jpeg","image/webp","application/pdf")) for x in uploaded):
+                    st.session_state.attachments_store=[]
                     st.error("Se permiten hasta 5 archivos de máximo 3 MB cada uno. Ajusta los adjuntos antes de continuar.")
                 else:
                     st.session_state.attachments_store=[{"name":x.name,"mime":x.type,"data":base64.b64encode(x.getvalue()).decode("ascii")} for x in uploaded]
+            else:
+                st.session_state.attachments_store=[]
             if st.session_state.attachments_store:
                 st.caption(f"{len(st.session_state.attachments_store)} archivo(s) preparados para enviar al finalizar.")
             restore_widget("files_consent")
@@ -171,7 +174,7 @@ if not st.session_state.finished:
             if st.button("← Volver",disabled=p==0,use_container_width=True):
                 save_visible_page();st.session_state.step-=1;st.rerun()
         with right:
-            files_ok=not st.session_state.attachments_store or (st.session_state.get("files_consent",False) or st.session_state.answers_store.get("files_consent",False))
+            files_ok=not st.session_state.attachments_store or st.session_state.get("files_consent",False) is True
             if p<4:
                 if st.button("Continuar →",type="primary",disabled=(bool(missing) or (p==3 and not files_ok)),use_container_width=True):
                     save_visible_page();st.session_state.step+=1;st.rerun()
