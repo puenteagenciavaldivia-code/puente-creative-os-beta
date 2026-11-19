@@ -50,6 +50,8 @@ jobs:
           exit 1
       - name: Real Chromium end-to-end navigation (synthetic only)
         run: python qa/streamlit_0401_e2e.py
+      - name: Browser attachment consent revocation (synthetic only)
+        run: python qa/streamlit_0401_adjuntos_browser.py
       - name: Save browser evidence
         if: always()
         uses: actions/upload-artifact@v4
