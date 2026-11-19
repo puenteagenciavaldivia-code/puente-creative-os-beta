@@ -71,7 +71,13 @@ with sync_playwright() as pw:
         page.get_by_text("Conseguir consultas", exact=True).last.click()
         page.get_by_label("¿En qué redes o medios estás presente?", exact=True).click()
         page.get_by_text("Instagram", exact=True).last.click()
-        page.get_by_label("Acepto participar voluntariamente en esta prueba.", exact=True).check()
+        # Streamlit renders a visually styled label over the checkbox input.
+        # Use the visible user target rather than forcing a hidden-input click.
+        page.keyboard.press("Escape")
+        page.wait_for_timeout(450)
+        page.get_by_text("Acepto participar voluntariamente en esta prueba.", exact=True).click()
+        page.wait_for_timeout(450)
+        verify("consent_selected", page.get_by_label("Acepto participar voluntariamente en esta prueba.", exact=True).is_checked())
         click_ready(page, "Revisar respuestas →")
         page.get_by_text("Revisa tus respuestas antes de enviarlas").wait_for(timeout=30000)
         verify("review_screen", True)
