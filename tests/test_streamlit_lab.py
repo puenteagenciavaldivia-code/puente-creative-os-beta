@@ -24,3 +24,42 @@ class StreamlitLabSmoke(unittest.TestCase):
         forward[0].click().run()
         self.assertFalse(at.exception)
         self.assertTrue(any('Negocio' in x.value for x in at.subheader))
+
+    def test_five_step_offline_flow(self):
+        at = AppTest.from_file("app.py", default_timeout=30).run()
+        def fill(collection, key, value):
+            matches = [widget for widget in collection if widget.key == key]
+            self.assertEqual(len(matches), 1, (key, [x.key for x in collection]))
+            matches[0].set_value(value).run()
+            self.assertFalse(at.exception, [str(x.message) for x in at.exception])
+        def forward():
+            matches = [x for x in at.button if x.label == "Continuar →"]
+            self.assertEqual(len(matches), 1)
+            self.assertFalse(matches[0].disabled)
+            matches[0].click().run()
+            self.assertFalse(at.exception, [str(x.message) for x in at.exception])
+        fill(at.text_input, "nombre", "Marca ficticia")
+        fill(at.text_area, "negocio", "Servicios ficticios de prueba")
+        forward()
+        fill(at.text_area, "productos", "Producto ficticio")
+        fill(at.text_area, "diferencia", "Atencion ficticia y personalizada")
+        forward()
+        fill(at.text_area, "publico", "Personas adultas ficticias")
+        forward()
+        fill(at.selectbox, "identidad_visual", "No tenemos identidad visual")
+        forward()
+        fill(at.selectbox, "objetivo", "Conseguir consultas")
+        fill(at.multiselect, "canales", ["Instagram"])
+        fill(at.checkbox, "consent", True)
+        ready = [x for x in at.button if x.label == "Revisar respuestas →"]
+        self.assertEqual(len(ready), 1)
+        self.assertFalse(ready[0].disabled)
+        ready[0].click().run()
+        self.assertFalse(at.exception)
+        confirm = [x for x in at.button if x.label == "Confirmar y enviar"]
+        self.assertEqual(len(confirm), 1)
+        confirm[0].click().run()
+        self.assertFalse(at.exception, [str(x.message) for x in at.exception])
+        self.assertTrue(at.session_state["finished"])
+        self.assertFalse(at.session_state["saved"])
+        self.assertEqual(at.session_state["export"]["answers"]["nombre"], "Marca ficticia")
