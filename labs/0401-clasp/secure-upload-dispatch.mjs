@@ -5,6 +5,7 @@
  * forman parte de request ni se devuelven al cliente.
  */
 import { authorizeUploadRequest } from './upload-gateway.mjs';
+import { createHash } from 'node:crypto';
 
 const MAX_BYTES = 3 * 1024 * 1024;
 const TYPES = new Map([
@@ -16,14 +17,37 @@ function fail(code) {
   return Object.freeze({ ok: false, code });
 }
 
-function checkFile(file) {
+function sha256(data) {
+  return createHash('sha256').update(data).digest('hex');
+}
+
+function checkFile(file, attachmentKey) {
   if (!file || typeof file !== 'object' ||
-      typeof file.name !== 'string' || file.name.length > 100 ||
-      typeof file.mime !== 'string' || typeof file.data !== 'string') return false;
+      typeof file.name !== 'string' || file.name.length < 1 || file.name.length > 100 ||
+      !/^[\\p{L}\\p{N}][\\p{L}\\p{N}._ -]{0,99}$/u.test(file.name) ||
+      typeof file.mime !== 'string' || typeof file.data !== 'string' ||
+      typeof attachmentKey !== 'string' || !/^[a-f0-9]{64}$/.test(attachmentKey))
+    return false;
   const extension = TYPES.get(file.mime);
-  if (!extension || !extension.test(file.name) || !/^[A-Za-z0-9+/]*={0,2}$/.test(file.data) ||
-      file.data.length % 4 !== 0 || file.data.length > 4 * Math.ceil(MAX_BYTES / 3)) return false;
-  return true; // Validación exacta SHA, contenido y bytes debe repetirse en receptor.
+  if (!extension || !extension.test(file.name) ||
+      file.data.length === 0 || file.data.length % 4 !== 0 ||
+      file.data.length > 4 * Math.ceil(MAX_BYTES / 3) ||
+      !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(file.data))
+    return false;
+
+  const bytes = Buffer.from(file.data, 'base64');
+  if (!bytes.length || bytes.length > MAX_BYTES || bytes.toString('base64') !== file.data)
+    return false;
+  const header = bytes.subarray(0, 12).toString('hex');
+  const signature = {
+    'application/pdf': /^255044462d/,
+    'image/png': /^89504e470d0a1a0a/,
+    'image/jpeg': /^ffd8ff/,
+    'image/webp': /^52494646........57454250/,
+  }[file.mime];
+  if (!signature?.test(header)) return false;
+  const canonical = JSON.stringify([file.name, file.mime, sha256(bytes)]);
+  return sha256(Buffer.from(canonical, 'utf8')) === attachmentKey;
 }
 
 /**
@@ -33,7 +57,7 @@ function checkFile(file) {
  * Está prohibido usar esto como prueba de un servicio real integrado.
  */
 export async function dispatchUpload(request, { identityServices, transport } = {}) {
-  if (!request || !checkFile(request.file)) return fail('INVALID_FILE');
+  if (!request || !checkFile(request.file, request.attachmentKey)) return fail('INVALID_FILE');
   if (typeof transport !== 'function') return fail('TRANSPORT_UNAVAILABLE');
 
   const decision = await authorizeUploadRequest(request, identityServices);
