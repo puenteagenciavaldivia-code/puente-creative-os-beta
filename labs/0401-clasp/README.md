@@ -1,66 +1,30 @@
-# PUENTE Creative OS 04.01 · Recuperación del receptor con clasp
+# PUENTE Creative OS 04.01 · Receptor aislado
 
-La etapa sigue abierta. La rama de referencia está en `3d9379e46563eaf6e33c5ee0a3ac2868ff747fce`. Su ejecución de [GitHub Actions](https://github.com/puenteagenciavaldivia-code/puente-creative-os-beta/actions/runs/44652180768) terminó correctamente. Se repitieron localmente las 45 pruebas de ese flujo (28 del motor, 14 de adjuntos y 3 de Streamlit). La suite Python completa pasó 224 pruebas con las dependencias de `requirements-test-oidc.txt`. Pasaron también las 6 pruebas Node de este directorio.
+Implementación de laboratorio basada en [el contrato 04.01](../../docs/0401-receptor-adjuntos-contrato.md). La rama de referencia remota estaba en `3d9379e46563eaf6e33c5ee0a3ac2868ff747fce` al validar. Sus archivos de pruebas y su flujo de auditoría se conservaron. La verificación real en Google Apps Script está pendiente.
 
-## Código disponible
+## Auditoría del receptor Beta
 
-Solo se encontró `apps_script.gs` en el historial alcanzable desde las ramas remotas revisadas. Es el receptor Beta y referencia una hoja fija. La rama de auditoría añade el cliente Python y el [contrato de aceptación](../../docs/0401-receptor-adjuntos-contrato.md). Faltan el código y el `appsscript.json` del proyecto aislado, su ID de Apps Script o un export revisado, y la configuración del laboratorio que identifique los recursos sintéticos y las cuentas de prueba. La descarga de clasp recupera código y manifiesto. Los permisos efectivos, propiedades de script y datos se revisan en Google por separado.
+La ruta Beta guarda en una hoja fija y reutiliza archivos por nombre. Un nombre repetido con bytes distintos puede devolver `OK` para el archivo equivocado. Ante una interrupción simulada después de crear el archivo, recupera su enlace por nombre. El token rechaza accesos inválidos y se exige un envío conocido, pero Beta acepta adjuntos sin consentimiento persistido y acepta texto declarado como PDF. Guarda enlaces en Sheets sin un registro durable de operaciones. El cliente Python genera una clave y guarda confirmaciones en sesión.
 
-| Control | Observado localmente | Pendiente en Google Apps Script |
-| --- | --- | --- |
-| Duplicados | Beta reutiliza por nombre en un mismo envío, incluso si cambian los bytes. El cliente calcula una clave y guarda confirmaciones en sesión. | Clave durable por envío y adjunto, reintentos con otra sesión, carrera concurrente y rechazo de la misma clave con bytes distintos. |
-| Interrupciones | El doble de Sheets falla al guardar el enlace tras crear el archivo. En el reintento, Beta encuentra ese archivo por nombre y guarda el enlace. | Reconciliación durable después de una interrupción y de un timeout tras confirmación. Comprobar recuento y hash en Drive. |
-| Consentimiento | Streamlit exporta un booleano explícito. Beta acepta un adjunto para un envío conocido aunque el payload declare `files_consent: false`. | Denegar por consentimiento ausente o revocado según el estado del servidor y comprobar que no aparece ningún archivo ni vínculo. |
-| Permisos y validación | Beta deniega un token incorrecto antes de abrir la hoja y rechaza un envío desconocido sin crear archivo. Acepta texto declarado como PDF. | Scopes efectivos, permisos de proyecto y Drive, revocación, aislamiento entre envíos y validación de contenido y límites. |
-| Auditoría | Beta registra un enlace en la hoja. La ruta de adjuntos revisada carece de un registro durable de estados y eventos. | Evidencia de intentos, denegaciones, reconciliación y confirmación correlacionadas, con política de retención. |
+## Receptor del laboratorio
 
-## Recuperar el proyecto desde macOS
+- `receiver/Receiver.js` conserva la forma de solicitud `attachments`, limita a un archivo por solicitud y calcula la misma clave que el cliente Python. Comprueba firma inicial, MIME, extensión, nombre, base64 canónico, SHA-256, 3 MiB por archivo y cinco reservas por envío. La firma inicial comprueba coherencia de tipo y permite archivos estructuralmente incompletos.
+- Verifica el hash del token de servicio y el consentimiento persistido del envío. El ensayo crea los UUID en el servidor y persiste su estado. La autoridad de escritura es una cuenta de laboratorio dedicada y la única credencial de transporte tendría alcance para los envíos autorizados del proyecto. La conexión con el alta de briefings y su flujo de revocación queda fuera del laboratorio. El ensayo revoca un UUID bajo el mismo script lock.
+- Bajo `LockService`, guarda en Script Properties un ID generado por Drive antes de crear el archivo. Todos los reintentos usan ese mismo ID. Confirma tras verificar SHA-256, nombre, MIME, carpeta y permisos. El mismo contenido en envíos diferentes usa reservas independientes. Una reserva ambigua sigue ocupando un cupo y queda disponible para reconciliación.
+- Drive avanzado v3 usa `drive.file`. La carpeta se crea en la unidad de la cuenta de laboratorio y se verifica que solo tenga el permiso del propietario antes de escribir. El receptor verifica también el archivo. Las propiedades contienen el estado actual, el ID, el hash y las marcas de tiempo. Cloud Logging recibe códigos fijos y un UUID de correlación, sin contenido, nombre, credenciales, IDs de envíos ni IDs de Drive.
+- Ante errores o cuotas de almacenamiento, el registro falla cerrado a `RETRY`. Las propiedades se conservan durante el ensayo para evitar que caduque la idempotencia mientras exista el archivo. Tras guardar evidencia sintética, retirar juntos la carpeta y el proyecto desechables. Las cuotas, la retención efectiva de Cloud Logging y la concurrencia entre ejecuciones reales requieren verificación en Google.
 
-Codex ejecutó `clasp show-authorized-user` con clasp 3.4.1 y obtuvo `Not logged in.` Usa Node 22 o superior y una cuenta Google con acceso al código del proyecto aislado. En Apps Script, confirma el ID de secuencia de comandos en la configuración del proyecto y habilita la API en [Configuración de Apps Script](https://script.google.com/home/usersettings).
+## Alta de un proyecto nuevo
 
-Desde la raíz de esta rama, ejecuta el siguiente bloque. La sesión OAuth se guarda temporalmente fuera del repositorio y se elimina al terminar. El navegador solicita consentimiento. Si la organización bloquea el acceso de clasp, el propietario puede exportar solo las fuentes y el manifiesto del laboratorio y entregarlos por un canal privado tras revisar su contenido.
+El mantenedor habilita la [API de Apps Script](https://script.google.com/home/usersettings) y autoriza clasp 3.4.1 con la cuenta Google dedicada al laboratorio. `node labs/0401-clasp/create-lab.mjs` crea un proyecto independiente desde un directorio nuevo bajo `.local/0401-clasp/` y sube únicamente las tres fuentes de `receiver/`. Rechaza IDs como argumentos. La configuración generada queda ignorada por Git. El comando prepara el código de un proyecto privado y no crea despliegues.
 
-```sh
-(
-  set -eu
-  umask 077
-  auth_dir=$(mktemp -d)
-  trap 'rm -rf -- "$auth_dir"' EXIT
-  export clasp_config_auth="$auth_dir/.clasprc.json"
-  npm exec --yes --package=@google/clasp@3.4.1 -- clasp login
-  printf 'ID del proyecto Apps Script 04.01 aislado: '
-  read -r script_id
-  node labs/0401-clasp/pull.mjs "$script_id"
-)
-```
+Tras esa autorización, abrir el proyecto nuevo y conceder `drive.file` a `runSyntheticLab0401` en el editor. Con un proyecto Cloud estándar asociado, su administrador debe habilitar también Google Drive API. El ensayo crea su propia carpeta y fixtures, ejecuta diez comprobaciones usando Drive real y elimina el hash de la credencial temporal al terminar. La ejecución del editor cubre la ruta `doPost` mediante eventos sintéticos. Una carrera real y un timeout de transporte requieren dos invocaciones independientes a un acceso privado del laboratorio. Las pruebas locales simulan contención y pérdida de confirmación.
 
-El comando crea una configuración local con `rootDir: src` y descarga a un directorio nuevo bajo `.local/0401-clasp/`. Cada intento tiene su propio directorio y el comando requiere que la descarga contenga `appsscript.json`. El directorio y los archivos locales de configuración y autenticación de clasp están ignorados por Git. Comparte solo fuentes y manifiesto revisados, sin propiedades de script, credenciales, tokens, datos ni URLs privadas. Si la rama local de Codex aún no está en tu Mac, puedes recuperar los mismos archivos directamente con clasp:
+## Evidencia local
 
-```sh
-(
-  set -eu
-  umask 077
-  auth_dir=$(mktemp -d)
-  trap 'rm -rf -- "$auth_dir"' EXIT
-  export clasp_config_auth="$auth_dir/.clasprc.json"
-  lab_dir=$(mktemp -d "$HOME/puente-0401.XXXXXXXX")
-  cd "$lab_dir"
-  npm exec --yes --package=@google/clasp@3.4.1 -- clasp login
-  printf 'ID del proyecto Apps Script 04.01 aislado: '
-  read -r script_id
-  npm exec --yes --package=@google/clasp@3.4.1 -- clasp clone-script --rootDir src "$script_id"
-  test -f src/appsscript.json
-  printf 'Fuentes y manifiesto: %s/src\n' "$lab_dir"
-)
-```
-
-## Validación siguiente
-
-1. Revisar las fuentes recuperadas, el manifiesto, los scopes y la identidad de ejecución. Confirmar en Google que hojas, carpeta, cuentas y permisos pertenecen al laboratorio aislado y usan datos sintéticos.
-2. Ejecutar los diez casos del contrato sobre ese receptor. Para los casos concurrentes y de interrupción, conservar el recuento en Drive, estado durable y resultados de ambos intentos. Para las denegaciones, medir la ausencia de efectos en Drive y Sheets. Para auditoría, guardar eventos y estados con identificadores sintéticos y sin secretos.
-3. Registrar el commit o versión probada y las evidencias de la ejecución real. La etapa 04.01 sigue pendiente hasta completar esa validación.
-
-Para repetir las comprobaciones locales desde la raíz:
+- GitHub Actions reportó éxito para la [ejecución de referencia](https://github.com/puenteagenciavaldivia-code/puente-creative-os-beta/actions/runs/44652180768). Localmente pasaron las mismas 45 pruebas (28 del motor, 14 de adjuntos y 3 de Streamlit), y la suite Python completa pasó 224 pruebas.
+- Pasaron 17 pruebas Node. Se ejecutó el código del receptor en una VM con dobles de Drive, Properties, ContentService y LockService, incluidos los diez controles del ejecutor del editor. También se probó el alta de un proyecto nuevo con un doble de clasp.
+- `clasp show-authorized-user` informó `Not logged in.` en Codex. El proyecto Google aún no se ha creado y las pruebas reales siguen pendientes.
 
 ```sh
 python -m pip install -r requirements-test-oidc.txt
