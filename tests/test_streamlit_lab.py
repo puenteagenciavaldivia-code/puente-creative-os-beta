@@ -11,7 +11,7 @@ class StreamlitLabSmoke(unittest.TestCase):
         self.assertTrue(at.title)
         self.assertTrue(any('Descubramos tu marca' in t.value for t in at.title))
         self.assertTrue(any('Identidad' in x.value for x in at.subheader))
-        self.assertTrue(any('recepción automática' in x.message for x in at.warning))
+        self.assertTrue(any('recepción automática' in x.value for x in at.warning))
 
     def test_first_step_requires_fields(self):
         at = AppTest.from_file(str(APP_FILE), default_timeout=30).run()
