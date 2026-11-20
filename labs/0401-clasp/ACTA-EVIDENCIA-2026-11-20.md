@@ -50,3 +50,12 @@ Fecha de revisión: 2026-11-20. Estado: validación real de un ensayo sintético
 | Administrador de laboratorio | Puede auditar sin publicar secretos, archivos ni clientes | Logs sintéticos parciales; revisión de acceso a registros pendiente |
 
 **Bloqueador de integración productiva:** el receptor de laboratorio utiliza un token de servicio y estados de consentimiento sintéticos. Se requiere un emisor confiable de permisos de envío y un control de acceso por rol/cliente antes de cualquier publicación. No desplegar un webhook público ni considerar concluida 04.01.
+
+## Tanda siguiente: autorización multioperador — diseño ejecutable aislado
+
+- Nuevo `access-policy.mjs`: política **fail-closed** para los roles Administrador, Dirección creativa, Producción y Consulta. El acceso depende conjuntamente de membresía activa del operador en el cliente, estado persistido del briefing, permiso de acción y consentimiento de adjuntos. Un Administrador no adquiere acceso automático a otros clientes.
+- Nuevo `access-policy.test.mjs`: ocho pruebas de autorización: administrador por ámbito, Producción, Dirección Creativa, Consulta, ámbito cruzado, membresía revocada, briefing revocado y contexto no confiable.
+- El flujo `lab-0401-security.yml` ejecuta `node --test labs/0401-clasp/*.test.mjs`, incluyendo las pruebas intercaladas del receptor y estas nuevas pruebas; **CI pendiente de inspección**.
+- **Límite esencial:** este módulo es una política pura de referencia. **NO está conectado al receptor GAS, a OIDC real ni a las cuentas de operadores**. No afirmar que el control multioperador esté desplegado o validado de extremo a extremo.
+- Integración pendiente: un backend de identidad verifica el token OIDC; resuelve el operador y sus membresías desde una fuente autorizada; localiza el cliente y estado del briefing desde almacenamiento persistente; aplica `authorize` antes de conceder una operación; revoca sesiones y permisos bajo política definida; evita exponer tokens de servicio compartidos a navegadores o clientes Streamlit.
+- El emisor de permisos de subida debe emitir un derecho efímero vinculado a `submission_id`, `attachment_key`, `client_id` y al actor autorizado, de alcance limitado, con revocación y auditoría. **No implementado**.
