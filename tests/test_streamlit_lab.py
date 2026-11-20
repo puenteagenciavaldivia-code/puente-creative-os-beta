@@ -66,3 +66,4 @@ class StreamlitLabSmoke(unittest.TestCase):
         self.assertTrue(at.session_state["finished"])
         self.assertFalse(at.session_state["saved"])
         self.assertEqual(at.session_state["export"]["answers"]["nombre"], "Marca ficticia")
+        self.assertIs(at.session_state["export"]["files_consent"], False)
