@@ -106,7 +106,7 @@ if not st.session_state.finished:
                 answer["accion"]=st.session_state.answers_store.get("accion","")
                 diagnostic=diagnose(answer)
                 diagnostic["strategic_audit"]=audit_briefing(answer,diagnostic)
-                record={"submission_id":str(uuid.uuid4()),"submitted_at":datetime.now(timezone.utc).isoformat(),"answers":answer,"diagnostic":diagnostic}
+                record={"submission_id":str(uuid.uuid4()),"submitted_at":datetime.now(timezone.utc).isoformat(),"answers":answer,"diagnostic":diagnostic,"files_consent":st.session_state.answers_store.get("files_consent") is True}
                 st.session_state.saved=False
                 st.session_state.files_saved=False
                 st.session_state.save_error=""
