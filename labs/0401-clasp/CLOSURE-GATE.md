@@ -41,3 +41,10 @@ Estado al 2026-11-20: **NO APTO PARA CIERRE DEFINITIVO**. No significa que las p
 4. Preparar procedimiento para ensayos G03 y G04 sin despliegue público, definiendo previamente identidad del proyecto nuevo, desecho, cuotas, permisos, autorización y evidencia.
 
 El cierre se permite únicamente cuando G01–G09 tienen respaldo real o una dispensa técnica explícita y aprobada, sin afirmar coberturas que no fueron ensayadas.
+
+## Avance: verificación criptográfica OIDC/JWT (2026-11-20)
+
+- Se incorporaron `oidc-verifier.mjs` y `oidc-verifier.test.mjs`: firma RS256 comprobada con clave pública JWK fijada desde configuración de servidor, `issuer`, `audience`, sujeto, `exp`, `iat`, `nbf`, `azp` en audiencias múltiples, rechazo de claves remotas indicadas por cabecera y de algoritmos alternativos.
+- **8/8 pruebas locales Node 22 pasaron** en entorno sintético independiente, con claves RSA efímeras. Los archivos de pruebas quedaron publicados en GitHub. La ejecución de GitHub Actions del último commit **continúa por verificar**.
+- La configuración no incluye proveedor real, credenciales ni conexión con `upload-gateway.mjs`, Google ni usuarios de Puente. G05 y G06 **siguen pendientes**. También queda pendiente la política operativa de rotación/descarga segura de JWKS del proveedor, validación real de tokens y revocación.
+- El módulo es RS256 estricto: debe comprobarse que la autoridad OIDC elegida use ese algoritmo y los claims de identidad requeridos; no aceptarlo como adaptación universal.
