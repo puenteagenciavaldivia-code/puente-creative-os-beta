@@ -24,7 +24,7 @@ function sha256(data) {
 function checkFile(file, attachmentKey) {
   if (!file || typeof file !== 'object' ||
       typeof file.name !== 'string' || file.name.length < 1 || file.name.length > 100 ||
-      !/^[\\p{L}\\p{N}][\\p{L}\\p{N}._ -]{0,99}$/u.test(file.name) ||
+      !/^[\p{L}\p{N}][\p{L}\p{N}._ -]{0,99}$/u.test(file.name) ||
       typeof file.mime !== 'string' || typeof file.data !== 'string' ||
       typeof attachmentKey !== 'string' || !/^[a-f0-9]{64}$/.test(attachmentKey))
     return false;
