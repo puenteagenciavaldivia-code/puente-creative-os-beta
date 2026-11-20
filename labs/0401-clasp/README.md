@@ -34,7 +34,25 @@ Desde la raíz de esta rama, ejecuta el siguiente bloque. La sesión OAuth se gu
 )
 ```
 
-El comando crea una configuración local con `rootDir: src` y descarga a un directorio nuevo bajo `.local/0401-clasp/`. Cada intento tiene su propio directorio y el comando requiere que la descarga contenga `appsscript.json`. El directorio y los archivos locales de configuración y autenticación de clasp están ignorados por Git. Comparte solo fuentes y manifiesto revisados, sin propiedades de script, credenciales, tokens, datos ni URLs privadas. Si no tienes esta rama en el Mac, el propietario también puede obtener los mismos dos insumos desde el editor de Apps Script.
+El comando crea una configuración local con `rootDir: src` y descarga a un directorio nuevo bajo `.local/0401-clasp/`. Cada intento tiene su propio directorio y el comando requiere que la descarga contenga `appsscript.json`. El directorio y los archivos locales de configuración y autenticación de clasp están ignorados por Git. Comparte solo fuentes y manifiesto revisados, sin propiedades de script, credenciales, tokens, datos ni URLs privadas. Si la rama local de Codex aún no está en tu Mac, puedes recuperar los mismos archivos directamente con clasp:
+
+```sh
+(
+  set -eu
+  umask 077
+  auth_dir=$(mktemp -d)
+  trap 'rm -rf -- "$auth_dir"' EXIT
+  export clasp_config_auth="$auth_dir/.clasprc.json"
+  lab_dir=$(mktemp -d "$HOME/puente-0401.XXXXXXXX")
+  cd "$lab_dir"
+  npm exec --yes --package=@google/clasp@3.4.1 -- clasp login
+  printf 'ID del proyecto Apps Script 04.01 aislado: '
+  read -r script_id
+  npm exec --yes --package=@google/clasp@3.4.1 -- clasp clone-script --rootDir src "$script_id"
+  test -f src/appsscript.json
+  printf 'Fuentes y manifiesto: %s/src\n' "$lab_dir"
+)
+```
 
 ## Validación siguiente
 
