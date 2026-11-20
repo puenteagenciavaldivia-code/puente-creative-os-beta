@@ -1,10 +1,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { createHash } from 'node:crypto';
 import { dispatchUpload } from './secure-upload-dispatch.mjs';
 
 const id = 'd0000000-0000-4000-8000-000000000001';
-const key = 'a'.repeat(64);
 const file = { name: 'prueba.pdf', mime: 'application/pdf', data: Buffer.from('%PDF-1.4\nprueba').toString('base64') };
+const sha = value => createHash('sha256').update(value).digest('hex');
+const fingerprint = item => sha(JSON.stringify([item.name, item.mime, sha(Buffer.from(item.data, 'base64'))]));
+const key = fingerprint(file);
 const request = { submissionId: id, attachmentKey: key, accessToken: 'legit', file };
 
 function setup() {
@@ -111,5 +114,37 @@ test('sin verificador o transporte no permite operación', async () => {
   assert.equal((await dispatchUpload(request, {
     transport: env.transport,
   })).code, 'UNTRUSTED_CONTEXT');
+  assert.equal(env.calls(), 0);
+});
+
+test('contenido manipulado con clave antigua se rechaza antes del transporte', async () => {
+  const env = setup();
+  const altered = { ...file, data: Buffer.from('%PDF-1.4\\ncontenido cambiado').toString('base64') };
+  const result = await run({ ...request, file: altered }, env);
+  assert.deepEqual(result, { ok: false, code: 'INVALID_FILE' });
+  assert.equal(env.calls(), 0);
+});
+
+test('nombre o MIME modificados invalidan la huella del adjunto', async () => {
+  const env = setup();
+  for (const changed of [
+    { ...file, name: 'otra.pdf' },
+    { ...file, mime: 'image/png', name: 'prueba.png' },
+    { ...file, name: '../prueba.pdf' },
+  ]) {
+    assert.equal((await run({ ...request, file: changed }, env)).code, 'INVALID_FILE');
+  }
+  assert.equal(env.calls(), 0);
+});
+
+test('base64 no canónico y firma MIME incoherente fallan antes de autorización', async () => {
+  const env = setup();
+  for (const changed of [
+    { ...file, data: 'YQ======' },
+    { ...file, data: Buffer.from('texto que no es PDF').toString('base64') },
+    { ...file, data: '' },
+  ]) {
+    assert.equal((await run({ ...request, file: changed }, env)).code, 'INVALID_FILE');
+  }
   assert.equal(env.calls(), 0);
 });
