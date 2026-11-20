@@ -68,3 +68,10 @@ Fecha de revisión: 2026-11-20. Estado: validación real de un ensayo sintético
 - El workflow existente `lab-0401-security.yml` descubre los archivos `*.test.mjs` y está preparado para estas nuevas pruebas. **Su ejecución y resultado siguen sin confirmación disponible en esta sesión**.
 - **Limitación crítica:** los métodos `verifyIdentity`, `findSubmission` y `membershipsFor` son interfaces inyectadas; las pruebas usan implementaciones sintéticas. **No existe aquí un validador real de OIDC, una BD de membresías conectada, ni un puente de autorización desplegado hacia Apps Script**. La política no protege el receptor por sí sola.
 - Requisitos pendientes antes de integración: validar emisor/audiencia/firma/expiración del token con bibliotecas y claves actualizadas; revocación de sesiones y permisos; ámbito inmutable de tenant/cliente; origen confiable de consentimiento; emisión de autorización efímera y verificación por servidor; ensayos de dos identidades reales y HTTP concurrente bajo entorno privado.
+
+## Tanda de integridad de adjuntos — 2026-11-20
+- El despachador aislado `secure-upload-dispatch.mjs` valida ahora el tamaño decodificado (3 MiB), base64 canónico, MIME por firma inicial, nombre seguro y la huella `attachment_key` derivada de nombre/MIME/SHA-256 de los bytes.
+- Se reemplazó la huella ficticia en `secure-upload-dispatch.test.mjs` por una calculada desde los bytes, y se incorporaron tres pruebas negativas: contenido alterado manteniendo la clave, cambios de nombre/MIME y base64/firma inválidos.
+- Tras revisar el archivo guardado se detectó y corrigió el escape de la expresión regular Unicode para nombres seguros, en commit `3d9fa7c`.
+- **Límite de certificación:** los cambios quedaron en GitHub; los resultados del CI de este commit aún no están verificados desde esta conversación. No elevar estatus de las pruebas a aprobadas sin inspeccionar los logs.
+- Esta validación es una barrera adicional del lado del despachador Node y **no sustituye** verificación redundante en el receptor GAS ni demuestra transporte o identidad real.
