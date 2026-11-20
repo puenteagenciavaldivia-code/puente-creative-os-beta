@@ -25,7 +25,7 @@ function harness({ fresh = false } = {}) {
   const props = new Map();
   const files = new Map();
   const logs = [];
-  const switches = { locked: false, public: false, uncertain: false, failedBeforeWrite: false };
+  const switches = { locked: false, public: false, uncertain: false, failedBeforeWrite: false, onCreate: null };
   let nextId = 0;
   let allocated = 0;
   let locked = false;
@@ -70,6 +70,7 @@ function harness({ fresh = false } = {}) {
           if (files.has(id) || switches.failedBeforeWrite) throw new Error('Create failed');
           if (blob) assert.ok([...props.values()].some(value =>
             value.includes('"state":"PENDING"') && value.includes('"fileId":"' + id + '"')));
+          if (blob && switches.onCreate) switches.onCreate();
           const file = { ...metadata, id, ...(blob ? { sha256Checksum: digest(blob) } : {}) };
           files.set(id, file);
           if (switches.uncertain) throw new Error('Response lost after commit');
@@ -204,4 +205,56 @@ test('el ejecutor del editor verifica pruebas con dobles y exige proyecto nuevo'
   assert.equal(env.props.has('0401:tokenHash'), false);
   assert.equal(env.files.size, 4);
   assert.throws(() => env.load().realChecks(), /fresh lab project/);
+});
+
+
+test('dos solicitudes intercaladas: la segunda espera y el replay no duplica', () => {
+  const env = harness();
+  const req = payload();
+  const next = env.load();
+  let competingResult;
+  let nestedCount = 0;
+  env.switches.onCreate = () => {
+    env.switches.onCreate = null;
+    nestedCount++;
+    competingResult = next.run(req);
+  };
+  assert.equal(env.load().run(req), 'OK');
+  assert.equal(nestedCount, 1);
+  assert.equal(competingResult, 'RETRY');
+  assert.equal(next.run(req), 'OK');
+  assert.equal(env.allocated(), 1);
+  assert.equal(env.files.size, 2);
+  assert.equal(env.logs.filter(e => e.event === 'confirmed').length, 1);
+  assert.equal(env.logs.filter(e => e.event === 'replayed').length, 1);
+});
+
+test('otro envío concurrente no escribe mientras uno mantiene el lock', () => {
+  const env = harness();
+  const another = env.load();
+  let competingResult;
+  env.switches.onCreate = () => {
+    env.switches.onCreate = null;
+    competingResult = another.run(payload({ id: second, name: 'otro.pdf' }));
+  };
+  assert.equal(env.load().run(payload()), 'OK');
+  assert.equal(competingResult, 'RETRY');
+  assert.equal(env.allocated(), 1);
+  assert.equal(another.run(payload({ id: second, name: 'otro.pdf' })), 'OK');
+  assert.equal(env.allocated(), 2);
+  assert.equal(env.files.size, 3);
+});
+
+test('un archivo confirmado exige comprobar permisos y revocación en reintentos', () => {
+  const env = harness();
+  const req = payload();
+  assert.equal(env.load().run(req), 'OK');
+  const createdCount = env.allocated();
+  env.switches.public = true;
+  assert.equal(env.load().run(req), 'DENIED');
+  env.switches.public = false;
+  env.props.set('0401:submission:' + first, 'revoked');
+  assert.equal(env.load().run(req), 'DENIED');
+  assert.equal(env.allocated(), createdCount);
+  assert.equal(env.files.size, 2);
 });
