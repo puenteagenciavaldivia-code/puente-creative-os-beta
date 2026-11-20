@@ -31,3 +31,22 @@ Fecha de revisión: 2026-11-20. Estado: validación real de un ensayo sintético
 - **No afirmar:** exactamente-una-vez de extremo a extremo en producción, permiso multioperador resuelto, receptor conectado a briefings reales o cierre de 04.01.
 - No modificar `main`, no hacer merge, no reutilizar GAS-AUTH01/GAS-AUDIT01, no cargar datos reales, no repetir `runSyntheticLab0401` sobre el proyecto ya usado.
 - Próximo bloque seguro: diseñar el ensayo de concurrencia y timeout para un **cuarto proyecto nuevo**, con validación previa de permisos y control de limpieza; no ejecutar ni desplegar sin autorización expresa.
+
+## Tanda adicional: concurrencia simulada y autorización — 2026-11-20
+
+- Se agregaron tres pruebas a `receiver.test.mjs` para verificar intercalación determinista bajo un bloqueo compartido: mismo adjunto, envío distinto y revocación/permisos tras confirmación. El segundo intento devuelve `RETRY` mientras la primera invocación mantiene el lock; después debe completar o rechazar sin reservar un segundo ID para el mismo adjunto.
+- Se creó el flujo de GitHub Actions [PUENTE 04.01 seguridad y concurrencia simulada](../../.github/workflows/lab-0401-security.yml) para ejecutar `node --test labs/0401-clasp/*.test.mjs` en cada push de `lab/0401-clasp`, con evidencia sintética como artefacto.
+- **Estado de esta tanda al registrar el acta:** código de las pruebas y workflow comprometidos en GitHub; **el resultado del nuevo CI no se ha verificado**. No marcar las tres pruebas como aprobadas hasta inspeccionar su ejecución.
+- Estas pruebas **no representan dos solicitudes HTTP reales a Apps Script**; tampoco validan autorizaciones entre distintas cuentas Google. Esos controles permanecen pendientes.
+
+## Matriz mínima de cierre de seguridad multioperador
+
+| Identidad/escenario | Requisito de seguridad | Estado |
+| --- | --- | --- |
+| Operador A autorizado sobre envío A | Puede registrar adjunto A con consentimiento persistido | Por validar con identidades reales de laboratorio |
+| Operador B sin permiso sobre envío A | No puede crear, leer ni confirmar adjunto A | No implementado en el modelo del receptor actual: autenticación por token de servicio compartido |
+| Operador A revocado | Reintentos posteriores rechazados sin nuevas escrituras | Ensayo sintético Google con UUID revocado; falta end-to-end |
+| Operador con permiso sobre envío B | Mismo contenido no se confunde con envío A | Ensayo sintético Google completo; falta identidad por operador |
+| Administrador de laboratorio | Puede auditar sin publicar secretos, archivos ni clientes | Logs sintéticos parciales; revisión de acceso a registros pendiente |
+
+**Bloqueador de integración productiva:** el receptor de laboratorio utiliza un token de servicio y estados de consentimiento sintéticos. Se requiere un emisor confiable de permisos de envío y un control de acceso por rol/cliente antes de cualquier publicación. No desplegar un webhook público ni considerar concluida 04.01.
