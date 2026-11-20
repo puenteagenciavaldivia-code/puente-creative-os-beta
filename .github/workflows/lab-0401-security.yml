@@ -1,0 +1,30 @@
+name: PUENTE 04.01 seguridad y concurrencia simulada
+on:
+  push:
+    branches:
+      - 'lab/0401-clasp'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  security-node-lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Pruebas del receptor aislado y concurrencia intercalada
+        shell: bash
+        run: |
+          set -o pipefail
+          node --test labs/0401-clasp/*.test.mjs 2>&1 | tee lab-0401-node.log
+      - name: Conservar log sintético
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: puente-0401-security-node-log
+          path: lab-0401-node.log
+          if-no-files-found: warn
+          retention-days: 14
