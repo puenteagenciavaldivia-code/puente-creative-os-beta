@@ -24,7 +24,7 @@ Tras esa autorización, abrir el proyecto nuevo y conceder `drive.file` a `runSy
 
 - GitHub Actions reportó éxito para la [ejecución de referencia](https://github.com/puenteagenciavaldivia-code/puente-creative-os-beta/actions/runs/44652180768). Localmente pasaron las mismas 45 pruebas (28 del motor, 14 de adjuntos y 3 de Streamlit), y la suite Python completa pasó 224 pruebas.
 - Pasaron 17 pruebas Node. Se ejecutó el código del receptor en una VM con dobles de Drive, Properties, ContentService y LockService, incluidos los diez controles del ejecutor del editor. También se probó el alta de un proyecto nuevo con un doble de clasp.
-- `clasp show-authorized-user` informó `Not logged in.` en Codex. El proyecto Google aún no se ha creado y las pruebas reales siguen pendientes.
+- En el entorno Codex, `clasp show-authorized-user` inicialmente informó `Not logged in.`. Posteriormente el operador autorizó `clasp` desde su Mac, creó tres proyectos aislados y mostró una ejecución completada de `runSyntheticLab0401` en Google Apps Script/Drive real. **La ejecución sintética real terminó correctamente, pero concurrencia independiente, timeout de transporte y cierre integral continúan pendientes**. Véase [acta de evidencia del 20-11-2026](ACTA-EVIDENCIA-2026-11-20.md).
 
 ```sh
 python -m pip install -r requirements-test-oidc.txt
