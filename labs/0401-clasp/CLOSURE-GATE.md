@@ -48,3 +48,11 @@ El cierre se permite únicamente cuando G01–G09 tienen respaldo real o una dis
 - **8/8 pruebas locales Node 22 pasaron** en entorno sintético independiente, con claves RSA efímeras. Los archivos de pruebas quedaron publicados en GitHub. La ejecución de GitHub Actions del último commit **continúa por verificar**.
 - La configuración no incluye proveedor real, credenciales ni conexión con `upload-gateway.mjs`, Google ni usuarios de Puente. G05 y G06 **siguen pendientes**. También queda pendiente la política operativa de rotación/descarga segura de JWKS del proveedor, validación real de tokens y revocación.
 - El módulo es RS256 estricto: debe comprobarse que la autoridad OIDC elegida use ese algoritmo y los claims de identidad requeridos; no aceptarlo como adaptación universal.
+
+## Nueva integración preparada — Google como proveedor OIDC (2026-11-20)
+
+- `google-identity-adapter.mjs` utiliza JWKS del endpoint oficial de Google, verifica tokens RS256 con `oidc-verifier.mjs`, cachea según `Cache-Control` y falla cerrado ante errores de descarga.
+- Se agregaron ocho pruebas sintéticas en `google-identity-adapter.test.mjs`; **no declarar aprobadas hasta comprobar CI**.
+- [Procedimiento de configuración Google OAuth](GOOGLE-OIDC-SETUP.md). Necesitamos un OAuth Client ID propio, proyecto de prueba y backend privado para obtener tokens reales; el acceso `clasp` existente no cumple esa función.
+- **G05 sigue PENDIENTE:** sin login Google real, tokens de usuarios de prueba verificables ni directorio de membresías conectado.
+- **G01 sigue PENDIENTE de comprobación** del último workflow; el conector disponible no expone la lista de runs de push y no se cuenta aún con enlace de ejecución verificada.
