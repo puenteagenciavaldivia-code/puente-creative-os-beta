@@ -7,3 +7,7 @@ __pycache__/
 *.sqlite-journal
 *.sqlite-wal
 *.sqlite-shm
+
+# Configuración y credenciales locales de clasp
+.clasp.json
+.clasprc.json
