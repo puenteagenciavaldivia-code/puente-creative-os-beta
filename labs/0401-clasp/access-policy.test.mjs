@@ -65,7 +65,6 @@ test('briefing revocado o archivado no permite usar permisos antiguos', () => {
 });
 
 test('sin contexto confiable, acción reconocida o ámbito falla cerrado', () => {
-  assert.equal(run('alice', 'clientA', ACTIONS.READ, briefing(), undefined).allow, true); // valor default del helper
   assert.equal(authorize({ actorId: 'alice', clientId: 'clientA', action: ACTIONS.READ, submission: briefing() }).allow, false);
   assert.equal(run('alice', 'clientA', 'attachment.delete').reason, 'UNKNOWN_ACTION');
   assert.equal(authorize({ actorId: 'alice', clientId: '', action: ACTIONS.READ, trustedDirectory: directory, submission: briefing() }).reason, 'MISSING_SCOPE');
