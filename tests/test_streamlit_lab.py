@@ -1,9 +1,12 @@
 import unittest
+from pathlib import Path
 from streamlit.testing.v1 import AppTest
+
+APP_FILE = Path(__file__).resolve().parents[1] / 'app.py'
 
 class StreamlitLabSmoke(unittest.TestCase):
     def test_initial_screen_offline(self):
-        at = AppTest.from_file("app.py", default_timeout=30).run()
+        at = AppTest.from_file(str(APP_FILE), default_timeout=30).run()
         self.assertFalse(at.exception, [str(x.message) for x in at.exception])
         self.assertTrue(at.title)
         self.assertTrue(any('Descubramos tu marca' in t.value for t in at.title))
@@ -11,7 +14,7 @@ class StreamlitLabSmoke(unittest.TestCase):
         self.assertTrue(any('recepción automática' in x.message for x in at.warning))
 
     def test_first_step_requires_fields(self):
-        at = AppTest.from_file("app.py", default_timeout=30).run()
+        at = AppTest.from_file(str(APP_FILE), default_timeout=30).run()
         self.assertFalse(at.exception)
         forward = [x for x in at.button if x.label == 'Continuar →']
         self.assertEqual(len(forward), 1)
@@ -26,7 +29,7 @@ class StreamlitLabSmoke(unittest.TestCase):
         self.assertTrue(any('Negocio' in x.value for x in at.subheader))
 
     def test_five_step_offline_flow(self):
-        at = AppTest.from_file("app.py", default_timeout=30).run()
+        at = AppTest.from_file(str(APP_FILE), default_timeout=30).run()
         def fill(collection, key, value):
             matches = [widget for widget in collection if widget.key == key]
             self.assertEqual(len(matches), 1, (key, [x.key for x in collection]))
