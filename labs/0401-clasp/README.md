@@ -31,3 +31,13 @@ python -m pip install -r requirements-test-oidc.txt
 STREAMLIT_BROWSER_GATHER_USAGE_STATS=false python -m unittest discover -s tests
 node --test labs/0401-clasp/*.test.mjs
 ```
+
+## Integración de permisos: estado del laboratorio
+
+- `access-policy.mjs` y `access-policy.test.mjs`: matriz de autorizaciones puras por rol y cliente.
+- `upload-gateway.mjs` y `upload-gateway.test.mjs`: diseño de verificación de identidad de servidor y vinculación del briefing.
+- `secure-upload-dispatch.mjs` y `secure-upload-dispatch.test.mjs`: flujo sintético con transporte privado inyectado, rechazo de suplantación y manejo explícito de timeouts ambiguos.
+- **Estas piezas NO están conectadas a Apps Script ni constituyen OIDC real.** Debe verificarse identidad real de servidor, permisos de almacenamiento y revocación antes de habilitar clientes.
+- [Criterios de cierre G01–G09](CLOSURE-GATE.md) y [acta de evidencia](ACTA-EVIDENCIA-2026-11-20.md).
+
+El flujo de CI `lab-0401-security.yml` ejecuta los tests `*.test.mjs` al publicar cambios en la rama `lab/0401-clasp`. Comprobar que el último run sea verde antes de afirmar aprobación.
